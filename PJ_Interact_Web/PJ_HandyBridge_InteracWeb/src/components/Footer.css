@@ -1,0 +1,147 @@
+.footer {
+  background-color: var(--brand-color);
+  color: white;
+  padding: 50px 100px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1240px;
+  margin: 0 auto;
+  margin-bottom: 100px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  width: 300px;
+}
+
+.footer-brand-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
+
+.footer-brand-text {
+  font-family: var(--font-english);
+  font-size: 20px;
+  font-weight: 300;
+  color: white;
+}
+
+.footer-description {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 200;
+  color: white; /* เปลี่ยนเป็น white */
+  white-space: nowrap;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  gap: 100px;
+}
+
+.footer-column p {
+  font-family: var(--font-thai);
+  font-size: 15px;
+  font-weight: 200;
+  color: white; /* เปลี่ยนเป็น white */
+  margin: 0 0 30px;
+}
+
+.footer-column a {
+  display: block;
+  color: white; /* เปลี่ยนเป็น white */
+  text-decoration: none;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 200;
+  margin-bottom: 16px;
+  transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+  color: rgba(255, 255, 255, 0.8); /* hover เป็นสีขาวโปร่ง */
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.footer-bottom-left {
+  flex: 1;
+}
+
+.footer-bottom-left p {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 200;
+  color: white; /* เปลี่ยนเป็น white */
+  margin: 0;
+}
+
+.footer-bottom-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.footer-bottom-links a {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 200;
+  color: white; /* เปลี่ยนเป็น white */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: rgba(255, 255, 255, 0.8); /* hover เป็นสีขาวโปร่ง */
+}
+
+.footer-social {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  font-weight: 200;
+  transition: background-color 0.3s ease;
+}
+
+.social-icon:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}

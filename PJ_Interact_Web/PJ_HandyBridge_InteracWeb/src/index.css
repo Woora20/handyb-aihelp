@@ -1,0 +1,20 @@
+/* Global Font Variables */
+:root {
+  --font-english: "Merriweather", serif;
+  --font-thai: "Prompt", sans-serif;
+  --body-color: #f8f4f1;
+  --brand-color: #4b648b;
+  --text-dark: #000000;
+  --text-gray: #5d5d5d;
+}
+
+/* Global Typography */
+body {
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: -0.023em;
+  background-color: var(--body-color);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
