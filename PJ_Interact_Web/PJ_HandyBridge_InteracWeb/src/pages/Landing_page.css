@@ -1,27 +1,34 @@
-/* src/pages/Landing_page.css */
+/* Landing Page - Optimized */
 .landing-page {
   width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
+/* Common section styles */
+.hero-section,
+.sign-intro-section {
+  max-width: 1440px;
+  margin: 50px auto;
+  padding: 0 100px;
+}
+
 .hero-section {
   display: flex;
   flex-direction: column;
-  max-width: 1440px;
-  margin: 50px auto 100px;
-  padding: 0 100px;
   gap: 48px;
-  box-sizing: border-box;
+  margin-bottom: 100px;
 }
 
+/* Common heading styles */
 .hero-section h1,
-.sign-learning-section h1 {
+.sign-intro-section h1 {
   margin: 0;
-  font: 400 48px var(--font-thai);
+  font: 300 48px var(--font-thai);
   text-align: center;
 }
 
+/* Hero Buttons */
 .hero-buttons {
   display: flex;
   gap: 20px;
@@ -34,18 +41,18 @@
   justify-content: center;
   gap: 16px;
   width: 300px;
-  height: 60px;
   padding: 20px 24px;
-  background-color: var(--brand-color);
+  background: var(--brand-color);
   color: white;
   border: none;
   border-radius: 10px;
-  font-family: var(--font-thai);
+  font: 300 24px var(--font-thai);
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 .hero-btn:hover {
-  background-color: #3a5270;
+  background: #3a5270;
 }
 
 .btn-icon {
@@ -55,13 +62,214 @@
   flex-shrink: 0;
 }
 
-.btn-text {
-  font: 300 24px var(--font-thai);
-}
-
 .hero-image {
-  display: flex;
-  justify-content: center;
   max-width: 1240px;
   margin: 0 auto;
+}
+
+/* Category Navigation */
+.sign-list-intro {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 auto;
+}
+
+.category-nav {
+  max-width: 1240px;
+}
+
+.category-list {
+  display: flex;
+  justify-content: center;
+  gap: 39px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-btn {
+  font: 200 24px var(--font-thai);
+  color: #525c78;
+  background: none;
+  border: none;
+  padding: 10px 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.category-btn:hover {
+  color: var(--text-dark);
+}
+
+.category-item.active .category-btn {
+  color: var(--card-text);
+  font-weight: 400;
+}
+
+/* Active & Hover underline */
+.category-item.active .category-btn::after,
+.category-item:not(.active) .category-btn:hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+}
+
+.category-item.active .category-btn::after {
+  background: var(--brand-color);
+  animation: slideIn 0.3s;
+}
+
+.category-item:not(.active) .category-btn:hover::after {
+  background: rgba(75, 100, 139, 0.3);
+}
+
+@keyframes slideIn {
+  from {
+    width: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  to {
+    width: 100%;
+    left: 0;
+    transform: translateX(0);
+  }
+}
+
+/* Sign Cards Grid */
+.sign-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 295px);
+  gap: 20px;
+  justify-content: center;
+  margin: 40px 0;
+}
+/* Sign Card */
+.sign-card {
+  width: 295px;
+  height: 481px;
+  background: var(--card-bg);
+  border-radius: 25px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sign-card-video {
+  height: 350px;
+  overflow: hidden;
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.video-placeholder video,
+.video-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Card Content */
+.sign-card-content {
+  flex: 1;
+  padding: 19px 25px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sign-category,
+.sign-word {
+  font-family: var(--font-thai);
+  color: var(--card-text);
+  margin: 0;
+}
+
+.sign-category {
+  font-size: 18px;
+  font-weight: 300;
+  opacity: 0.7;
+}
+
+.sign-word {
+  font-size: 20px;
+  font-weight: 300;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.view-more-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 13px 40px;
+  background: var(--brand-color);
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Features Section with Infinite Scroll */
+.features-section {
+  width: 100vw;
+  margin: 100px 0;
+  overflow: hidden;
+  position: relative;
+  margin: 140px 0;
+}
+
+.features-container {
+  display: flex;
+  gap: 20px;
+  width: fit-content;
+  animation: scroll 30s linear infinite;
+}
+
+/* Duplicate container สำหรับ loop */
+.features-track {
+  display: flex;
+  gap: 20px;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pause on hover */
+/* .features-section:hover .features-container {
+  animation-play-state: paused;
+} */
+
+.feature-card {
+  width: 310px;
+  height: 620px;
+  border-radius: 20px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
 }

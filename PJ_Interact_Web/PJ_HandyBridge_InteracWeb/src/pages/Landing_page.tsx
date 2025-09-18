@@ -1,10 +1,12 @@
 // src/pages/Landing_page.tsx
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar_Handy from "../components/Navbar";
+import Navbar_Handy from "../components/common/Navbar";
+import Footer from "../components/common/Footer";
+import { HeroSection } from "../components/sections/HeroSection";
+import { SignIntroSection } from "../components/sections/SignIntroSection";
+import { FeaturesSection } from "../components/sections/FeaturesSection";
 import "./Landing_page.css";
-
-import Footer from "../components/Footer";
 
 export default function Landing_page() {
   const navigate = useNavigate();
@@ -17,43 +19,11 @@ export default function Landing_page() {
         onRegisterClick={() => navigate("/auth")}
       />
       <main>
-        <section className="hero-section">
-          <h1>
-            การเรียนรู้ภาษามือ 👋🏻,
-            <br />
-            เพื่อการศึกษาที่เท่าเทียมและเข้าถึงได้สำหรับทุกคน
-          </h1>
-
-          <div className="hero-buttons">
-            <button className="hero-btn">
-              <img
-                src="/src/assets/icons/text-icon.png"
-                className="btn-icon"
-                alt="ข้อความ"
-              />
-              <span className="btn-text">ค้นด้วยภาษาไทย</span>
-            </button>
-
-            <button className="hero-btn">
-              <img
-                src="/src/assets/icons/hand-icon.png"
-                className="btn-icon"
-                alt="ข้อความ"
-              />
-              <span className="btn-text">ค้นด้วยภาษามือไทย</span>
-            </button>
-          </div>
-
-          <div className="hero-image">
-            <img
-              src="/src/assets/images/hero-image.png"
-              alt="การเรียนรู้ภาษามือ"
-            />
-          </div>
-        </section>
-
-        <Footer />
+        <HeroSection />
+        <SignIntroSection />
+        <FeaturesSection />
       </main>
+      <Footer />
     </>
   );
 }

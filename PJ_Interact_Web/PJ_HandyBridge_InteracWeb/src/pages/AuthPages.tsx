@@ -1,7 +1,7 @@
 // src/pages/Auth.tsx
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Navbar_Handy from "../components/Navbar";
+import Navbar_Handy from "../components/common/Navbar";
 import "./AuthPages.css";
 
 export default function Auth() {
