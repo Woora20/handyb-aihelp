@@ -1,26 +1,30 @@
+// src/components/Navbar.tsx
 import React from "react";
+import { Link } from "react-router-dom";
 import { FaAngleDown } from "react-icons/fa";
 import "./Navbar.css";
 
 interface NavbarProps {
   isLoggedIn?: boolean;
+  onLoginClick?: () => void;
+  onRegisterClick?: () => void;
 }
 
-export default function Navbar_Handy({ isLoggedIn = false }: NavbarProps) {
-  const handleNavigation = (path: string) => {
-    window.location.href = path;
-  };
-
+export default function Navbar_Handy({
+  isLoggedIn = false,
+  onLoginClick,
+  onRegisterClick,
+}: NavbarProps) {
   return (
     <nav className="navbar">
-      <div className="logo" onClick={() => handleNavigation("/")}>
+      <Link to="/" className="logo">
         <img
           src="/src/assets/logo/logo_handy1.png"
           alt="Handy Bridge Logo"
           className="logo-icon"
         />
         <span className="logo-text">Handy Bridge</span>
-      </div>
+      </Link>
 
       <div className="navbar-menu">
         <a href="#" className="nav-link">
@@ -50,16 +54,10 @@ export default function Navbar_Handy({ isLoggedIn = false }: NavbarProps) {
           </>
         ) : (
           <div className="auth-buttons">
-            <button
-              className="login-btn"
-              onClick={() => handleNavigation("/login")}
-            >
+            <button className="login-btn" onClick={onLoginClick}>
               เข้าสู่ระบบ
             </button>
-            <button
-              className="register-btn"
-              onClick={() => handleNavigation("/register")}
-            >
+            <button className="register-btn" onClick={onRegisterClick}>
               สมัครสมาชิก
             </button>
           </div>

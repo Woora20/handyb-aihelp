@@ -1,3 +1,17 @@
+/* src/components/Navbar.css - เพิ่ม style สำหรับ Link */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo:hover {
+  text-decoration: none;
+}
+
+/* เหลือทุกอย่างเหมือนเดิม... */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -8,7 +22,6 @@
   box-sizing: border-box;
 }
 
-/* Base Typography */
 .logo-text {
   font-family: var(--font-english);
   font-weight: 400;
@@ -23,8 +36,6 @@
   font-size: 20px;
 }
 
-/* Layout Components */
-.logo,
 .navbar-menu,
 .navbar-profile {
   display: flex;
@@ -32,14 +43,12 @@
   gap: 12px;
 }
 
-/* Logo */
 .logo-icon {
   width: 32px;
   height: 32px;
   object-fit: contain;
 }
 
-/* Navigation */
 .nav-link {
   font-weight: 300;
   color: var(--text-dark);
@@ -54,7 +63,6 @@
   color: white;
 }
 
-/* Dropdown Icon */
 .dropdown-icon {
   color: var(--text-gray);
   font-size: 14px;
@@ -68,7 +76,6 @@
   transform: rotate(-90deg);
 }
 
-/* Profile */
 .profile-avatar {
   width: 50px;
   height: 50px;

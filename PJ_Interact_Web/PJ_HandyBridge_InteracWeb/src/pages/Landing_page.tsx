@@ -1,17 +1,21 @@
-import React from "react";
-import { TbTextSize } from "react-icons/tb";
-import { IoHandRightOutline } from "react-icons/io5";
+// src/pages/Landing_page.tsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar_Handy from "../components/Navbar";
 import "./Landing_page.css";
+
 import Footer from "../components/Footer";
 
-type Props = {};
+export default function Landing_page() {
+  const navigate = useNavigate();
 
-export default function Landing_page({}: Props) {
   return (
     <>
-      <Navbar_Handy isLoggedIn={false} />
-      <nav></nav>
+      <Navbar_Handy
+        isLoggedIn={false}
+        onLoginClick={() => navigate("/auth")}
+        onRegisterClick={() => navigate("/auth")}
+      />
       <main>
         <section className="hero-section">
           <h1>
@@ -47,6 +51,7 @@ export default function Landing_page({}: Props) {
             />
           </div>
         </section>
+
         <Footer />
       </main>
     </>
