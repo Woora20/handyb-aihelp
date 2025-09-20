@@ -1,11 +1,22 @@
-// src/pages/Auth.tsx
-import React, { useState } from "react";
+// src/pages/AuthPages.tsx
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Navbar_Handy from "../components/common/Navbar";
 import "./AuthPages.css";
 
 export default function Auth() {
-  const [currentPage, setCurrentPage] = useState<"login" | "register">("login");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // ดึง mode จาก URL
+  const mode = searchParams.get("mode");
+
+  // ถ้าไม่มี mode ให้ default เป็น login
+  const [currentPage, setCurrentPage] = useState<"login" | "register">(
+    mode === "register" ? "register" : "login"
+  );
 
   // Login State
   const [loginData, setLoginData] = useState({
@@ -24,9 +35,24 @@ export default function Auth() {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Simple Page Switch - ไม่มี animation
+  // Update page เมื่อ URL parameter เปลี่ยน
+  useEffect(() => {
+    const newMode = searchParams.get("mode");
+    if (newMode === "register") {
+      setCurrentPage("register");
+    } else if (newMode === "login") {
+      setCurrentPage("login");
+    } else {
+      // ถ้าไม่มี mode ให้เซ็ตเป็น login และ update URL
+      setCurrentPage("login");
+      setSearchParams({ mode: "login" });
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Function เปลี่ยนหน้าพร้อม update URL
   const switchPage = (page: "login" | "register") => {
     setCurrentPage(page);
+    setSearchParams({ mode: page });
   };
 
   // Form Handlers
@@ -43,6 +69,7 @@ export default function Auth() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Login:", loginData);
+    // TODO: Supabase login
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -52,6 +79,7 @@ export default function Auth() {
       return;
     }
     console.log("Register:", registerData);
+    // TODO: Supabase register
   };
 
   return (
@@ -63,7 +91,6 @@ export default function Auth() {
       />
 
       <div className={`auth-container ${currentPage}`}>
-        {/* รูปภาพ - เปลี่ยนแค่ src และ border-radius */}
         <div className="auth-image">
           <img
             src={
@@ -75,7 +102,6 @@ export default function Auth() {
           />
         </div>
 
-        {/* ฟอร์ม - เปลี่ยนแค่เนื้อหา */}
         <div className="auth-form-container">
           <div className="auth-brand">
             <div className="auth-logo">
@@ -87,8 +113,7 @@ export default function Auth() {
             <p>เรียนภาษามือฟรี สร้างสะพานสื่อสาร</p>
           </div>
 
-          {/* Login Form */}
-          {currentPage === "login" && (
+          {currentPage === "login" ? (
             <form className="auth-form" onSubmit={handleLoginSubmit}>
               <div className="form-field">
                 <label>อีเมล*</label>
@@ -134,17 +159,14 @@ export default function Auth() {
                 </button>
               </div>
             </form>
-          )}
-
-          {/* Register Form */}
-          {currentPage === "register" && (
+          ) : (
             <form className="auth-form" onSubmit={handleRegisterSubmit}>
               <div className="form-field">
                 <label>ชื่อ-สกุล*</label>
                 <input
                   type="text"
                   name="firstName"
-                  placeholder="ชื่อ-สกุล*"
+                  placeholder="ชื่อ-สกุล"
                   value={registerData.firstName}
                   onChange={handleRegisterChange}
                   required

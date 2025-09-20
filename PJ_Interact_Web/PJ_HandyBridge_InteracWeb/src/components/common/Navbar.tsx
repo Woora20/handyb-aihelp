@@ -1,6 +1,6 @@
-// src/components/Navbar.tsx
+// src/components/common/Navbar.tsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAngleDown } from "react-icons/fa";
 import "./Navbar.css";
 
@@ -15,6 +15,27 @@ export default function Navbar_Handy({
   onLoginClick,
   onRegisterClick,
 }: NavbarProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // ถ้าอยู่ในหน้า auth ให้ใช้ function ที่ส่งมา
+  // ถ้าไม่ใช่ให้ navigate ไปพร้อม query string
+  const handleLoginClick = () => {
+    if (location.pathname === "/auth" && onLoginClick) {
+      onLoginClick();
+    } else {
+      navigate("/auth?mode=login");
+    }
+  };
+
+  const handleRegisterClick = () => {
+    if (location.pathname === "/auth" && onRegisterClick) {
+      onRegisterClick();
+    } else {
+      navigate("/auth?mode=register");
+    }
+  };
+
   return (
     <nav className="navbar">
       <Link to="/" className="logo">
@@ -54,10 +75,10 @@ export default function Navbar_Handy({
           </>
         ) : (
           <div className="auth-buttons">
-            <button className="login-btn" onClick={onLoginClick}>
+            <button className="login-btn" onClick={handleLoginClick}>
               เข้าสู่ระบบ
             </button>
-            <button className="register-btn" onClick={onRegisterClick}>
+            <button className="register-btn" onClick={handleRegisterClick}>
               สมัครสมาชิก
             </button>
           </div>
