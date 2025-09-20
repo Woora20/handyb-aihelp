@@ -17,9 +17,8 @@ export default function Landing_page() {
   return (
     <>
       <Navbar_Handy
-        isLoggedIn={false}
-        onLoginClick={() => navigate("/auth")}
-        onRegisterClick={() => navigate("/auth")}
+        onLoginClick={() => navigate("/auth?mode=login")}
+        onRegisterClick={() => navigate("/auth?mode=register")}
       />
       <main>
         <HeroSection />

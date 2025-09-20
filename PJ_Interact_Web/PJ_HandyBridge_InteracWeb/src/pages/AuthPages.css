@@ -213,3 +213,43 @@
 .auth-link button:hover {
   color: #3a5270;
 }
+
+/* Error States */
+.form-field input.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.form-field input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.error-text {
+  font-family: var(--font-thai);
+  font-size: 14px;
+  color: #ef4444;
+  margin-top: 4px;
+  display: block;
+}
+
+.error-message {
+  padding: 12px 16px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-family: var(--font-thai);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.error-message.general {
+  text-align: center;
+}
+
+/* Loading state */
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

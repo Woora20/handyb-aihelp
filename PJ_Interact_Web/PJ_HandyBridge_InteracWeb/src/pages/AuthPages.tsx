@@ -1,91 +1,224 @@
 // src/pages/AuthPages.tsx
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Navbar_Handy from "../components/common/Navbar";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
 import "./AuthPages.css";
+
+// Validation functions
+const validateFullName = (name: string): string | null => {
+  const trimmed = name.trim();
+  const parts = trimmed.split(" ").filter(Boolean);
+
+  if (parts.length < 2) return "กรุณาใส่ชื่อและนามสกุล (คั่นด้วยช่องว่าง)";
+  if (parts.some((part) => part.length < 2))
+    return "ชื่อและนามสกุลต้องมีอย่างน้อย 2 ตัวอักษร";
+  if (trimmed.length > 100) return "ชื่อ-นามสกุลยาวเกินไป";
+  return null;
+};
+
+const validateEmail = (email: string): string | null => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ? null
+    : "รูปแบบอีเมลไม่ถูกต้อง";
+};
+
+const validatePassword = (password: string): string | null => {
+  return password.length < 6 ? "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร" : null;
+};
 
 export default function Auth() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { signUp, signIn, user } = useAuth();
 
-  // ดึง mode จาก URL
-  const mode = searchParams.get("mode");
-
-  // ถ้าไม่มี mode ให้ default เป็น login
   const [currentPage, setCurrentPage] = useState<"login" | "register">(
-    mode === "register" ? "register" : "login"
+    searchParams.get("mode") === "register" ? "register" : "login"
   );
 
-  // Login State
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
+  const [formData, setFormData] = useState({
+    login: { email: "", password: "" },
+    register: { fullName: "", email: "", password: "", confirmPassword: "" },
   });
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
-  // Register State
-  const [registerData, setRegisterData] = useState({
-    firstName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const [errors, setErrors] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    login: false,
+    register: false,
+    confirm: false,
   });
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Update page เมื่อ URL parameter เปลี่ยน
+  // Redirect if logged in
   useEffect(() => {
-    const newMode = searchParams.get("mode");
-    if (newMode === "register") {
-      setCurrentPage("register");
-    } else if (newMode === "login") {
-      setCurrentPage("login");
-    } else {
-      // ถ้าไม่มี mode ให้เซ็ตเป็น login และ update URL
-      setCurrentPage("login");
-      setSearchParams({ mode: "login" });
-    }
-  }, [searchParams, setSearchParams]);
+    if (user) navigate("/");
+  }, [user, navigate]);
 
-  // Function เปลี่ยนหน้าพร้อม update URL
+  // Sync URL with page
+  useEffect(() => {
+    const mode = searchParams.get("mode");
+    if (mode !== currentPage) {
+      setSearchParams({ mode: currentPage });
+    }
+  }, [currentPage, searchParams, setSearchParams]);
+
   const switchPage = (page: "login" | "register") => {
     setCurrentPage(page);
-    setSearchParams({ mode: page });
+    setErrors({});
   };
 
-  // Form Handlers
-  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginData((prev) => ({ ...prev, [name]: value }));
+  const handleInputChange = (
+    form: "login" | "register",
+    field: string,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [form]: { ...prev[form], [field]: value },
+    }));
+    // Clear specific error
+    setErrors((prev: any) => ({ ...prev, [field]: "" }));
   };
 
-  const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRegisterData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login:", loginData);
-    // TODO: Supabase login
-  };
+    const { email, password } = formData.login;
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (registerData.password !== registerData.confirmPassword) {
-      alert("รหัสผ่านไม่ตรงกัน");
+    // Validate
+    const emailError = !email ? "กรุณากรอกอีเมล" : validateEmail(email);
+    const passwordError = !password ? "กรุณากรอกรหัสผ่าน" : null;
+
+    if (emailError || passwordError) {
+      setErrors({ email: emailError, password: passwordError });
       return;
     }
-    console.log("Register:", registerData);
-    // TODO: Supabase register
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const { error } = await signIn(email, password);
+
+      if (error) {
+        const message = error.message.includes("Invalid login credentials")
+          ? "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+          : error.message.includes("Email not confirmed")
+          ? "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ"
+          : "เกิดข้อผิดพลาด กรุณาลองใหม่";
+
+        setErrors({ general: message });
+      }
+    } catch {
+      setErrors({ general: "เกิดข้อผิดพลาดในการเชื่อมต่อ" });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { fullName, email, password, confirmPassword } = formData.register;
+
+    // Validate all fields
+    const validationErrors: any = {};
+
+    const fullNameError = validateFullName(fullName);
+    if (fullNameError) validationErrors.fullName = fullNameError;
+
+    const emailError = validateEmail(email);
+    if (emailError) validationErrors.email = emailError;
+
+    const passwordError = validatePassword(password);
+    if (passwordError) validationErrors.password = passwordError;
+
+    if (password !== confirmPassword) {
+      validationErrors.confirmPassword = "รหัสผ่านไม่ตรงกัน";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      // Check if email exists using RPC function
+      const { data: emailExists } = await supabase.rpc("check_email_exists", {
+        check_email: email,
+      });
+
+      if (emailExists) {
+        setErrors({ email: "อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น" });
+        setIsLoading(false);
+        return;
+      }
+
+      // Register new user
+      const { error } = await signUp(email, password, fullName.trim());
+
+      if (error) {
+        if (error.message.includes("already")) {
+          setErrors({ email: "อีเมลนี้ถูกใช้งานแล้ว" });
+        } else {
+          setErrors({ general: error.message });
+        }
+      } else {
+        // Auto login after successful registration
+        alert("สมัครสมาชิกสำเร็จ! กำลังเข้าสู่ระบบ...");
+        await signIn(email, password);
+        navigate("/");
+      }
+    } catch {
+      setErrors({ general: "เกิดข้อผิดพลาดในการเชื่อมต่อ" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderPasswordInput = (
+    type: "login" | "register" | "confirm",
+    value: string,
+    onChange: (value: string) => void,
+    placeholder: string = "รหัสผ่าน"
+  ) => (
+    <div className="password-container">
+      <input
+        type={
+          showPassword[type as keyof typeof showPassword] ? "text" : "password"
+        }
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        disabled={isLoading}
+        required
+      />
+      <button
+        type="button"
+        className="password-toggle"
+        onClick={() =>
+          setShowPassword((prev) => ({
+            ...prev,
+            [type]: !prev[type as keyof typeof showPassword],
+          }))
+        }
+        disabled={isLoading}
+      >
+        {showPassword[type as keyof typeof showPassword] ? (
+          <FaEyeSlash />
+        ) : (
+          <FaEye />
+        )}
+      </button>
+    </div>
+  );
 
   return (
     <div className="auth-page">
       <Navbar_Handy
-        isLoggedIn={false}
         onLoginClick={() => switchPage("login")}
         onRegisterClick={() => switchPage("register")}
       />
@@ -93,11 +226,7 @@ export default function Auth() {
       <div className={`auth-container ${currentPage}`}>
         <div className="auth-image">
           <img
-            src={
-              currentPage === "login"
-                ? "/src/assets/images/login-hero.jpg"
-                : "/src/assets/images/register-hero.jpg"
-            }
+            src={`/src/assets/images/${currentPage}-hero.jpg`}
             alt="Sign language learning"
           />
         </div>
@@ -114,42 +243,47 @@ export default function Auth() {
           </div>
 
           {currentPage === "login" ? (
-            <form className="auth-form" onSubmit={handleLoginSubmit}>
+            <form className="auth-form" onSubmit={handleLogin}>
+              {errors.general && (
+                <div className="error-message general">{errors.general}</div>
+              )}
+
               <div className="form-field">
                 <label>อีเมล*</label>
                 <input
                   type="email"
-                  name="email"
+                  value={formData.login.email}
+                  onChange={(e) =>
+                    handleInputChange("login", "email", e.target.value)
+                  }
                   placeholder="เช่น john@email.com"
-                  value={loginData.email}
-                  onChange={handleLoginChange}
+                  className={errors.email ? "error" : ""}
+                  disabled={isLoading}
                   required
                 />
+                {errors.email && (
+                  <span className="error-text">{errors.email}</span>
+                )}
               </div>
 
               <div className="form-field">
                 <label>รหัสผ่าน*</label>
-                <div className="password-container">
-                  <input
-                    type={showLoginPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="รหัสผ่าน"
-                    value={loginData.password}
-                    onChange={handleLoginChange}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowLoginPassword(!showLoginPassword)}
-                  >
-                    {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
+                {renderPasswordInput(
+                  "login",
+                  formData.login.password,
+                  (value) => handleInputChange("login", "password", value)
+                )}
+                {errors.password && (
+                  <span className="error-text">{errors.password}</span>
+                )}
               </div>
 
-              <button type="submit" className="auth-button">
-                เข้าสู่ระบบ
+              <button
+                type="submit"
+                className="auth-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
               </button>
 
               <div className="auth-link">
@@ -160,77 +294,79 @@ export default function Auth() {
               </div>
             </form>
           ) : (
-            <form className="auth-form" onSubmit={handleRegisterSubmit}>
+            <form className="auth-form" onSubmit={handleRegister}>
+              {errors.general && (
+                <div className="error-message general">{errors.general}</div>
+              )}
+
               <div className="form-field">
-                <label>ชื่อ-สกุล*</label>
+                <label>ชื่อ-นามสกุล* (คั่นด้วยช่องว่าง)</label>
                 <input
                   type="text"
-                  name="firstName"
-                  placeholder="ชื่อ-สกุล"
-                  value={registerData.firstName}
-                  onChange={handleRegisterChange}
+                  value={formData.register.fullName}
+                  onChange={(e) =>
+                    handleInputChange("register", "fullName", e.target.value)
+                  }
+                  placeholder="ตัวอย่าง: สมชาย ใจดี"
+                  className={errors.fullName ? "error" : ""}
+                  disabled={isLoading}
                   required
                 />
+                {errors.fullName && (
+                  <span className="error-text">{errors.fullName}</span>
+                )}
               </div>
 
               <div className="form-field">
                 <label>อีเมล*</label>
                 <input
                   type="email"
-                  name="email"
+                  value={formData.register.email}
+                  onChange={(e) =>
+                    handleInputChange("register", "email", e.target.value)
+                  }
                   placeholder="เช่น john@email.com"
-                  value={registerData.email}
-                  onChange={handleRegisterChange}
+                  className={errors.email ? "error" : ""}
+                  disabled={isLoading}
                   required
                 />
+                {errors.email && (
+                  <span className="error-text">{errors.email}</span>
+                )}
               </div>
 
               <div className="form-field">
-                <label>รหัสผ่าน*</label>
-                <div className="password-container">
-                  <input
-                    type={showRegisterPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="รหัสผ่าน"
-                    value={registerData.password}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() =>
-                      setShowRegisterPassword(!showRegisterPassword)
-                    }
-                  >
-                    {showRegisterPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
+                <label>รหัสผ่าน* (ขั้นต่ำ 6 ตัวอักษร)</label>
+                {renderPasswordInput(
+                  "register",
+                  formData.register.password,
+                  (value) => handleInputChange("register", "password", value)
+                )}
+                {errors.password && (
+                  <span className="error-text">{errors.password}</span>
+                )}
               </div>
 
               <div className="form-field">
                 <label>ยืนยันรหัสผ่าน*</label>
-                <div className="password-container">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="ยืนยันรหัสผ่าน"
-                    value={registerData.confirmPassword}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
+                {renderPasswordInput(
+                  "confirm",
+                  formData.register.confirmPassword,
+                  (value) =>
+                    handleInputChange("register", "confirmPassword", value),
+                  "ยืนยันรหัสผ่าน"
+                )}
+                {errors.confirmPassword && (
+                  <span className="error-text">{errors.confirmPassword}</span>
+                )}
               </div>
 
-              <button type="submit" className="auth-button">
-                สมัครสมาชิก
+              <button
+                type="submit"
+                className="auth-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "กำลังสมัครสมาชิก..." : "สมัครสมาชิก"}
               </button>
 
               <div className="auth-link">
@@ -243,6 +379,12 @@ export default function Auth() {
           )}
         </div>
       </div>
+
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
     </div>
   );
 }
