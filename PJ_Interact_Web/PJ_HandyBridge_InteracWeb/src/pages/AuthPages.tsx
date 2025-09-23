@@ -1,4 +1,4 @@
-// src/pages/AuthPages.tsx
+// src/pages/AuthPages.tsx - แบบลบโค้ดสีเขียวออก สมัครเสร็จเข้าเลย
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -78,7 +78,6 @@ export default function Auth() {
       ...prev,
       [form]: { ...prev[form], [field]: value },
     }));
-    // Clear specific error
     setErrors((prev: any) => ({ ...prev, [field]: "" }));
   };
 
@@ -86,7 +85,6 @@ export default function Auth() {
     e.preventDefault();
     const { email, password } = formData.login;
 
-    // Validate
     const emailError = !email ? "กรุณากรอกอีเมล" : validateEmail(email);
     const passwordError = !password ? "กรุณากรอกรหัสผ่าน" : null;
 
@@ -104,10 +102,7 @@ export default function Auth() {
       if (error) {
         const message = error.message.includes("Invalid login credentials")
           ? "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
-          : error.message.includes("Email not confirmed")
-          ? "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ"
           : "เกิดข้อผิดพลาด กรุณาลองใหม่";
-
         setErrors({ general: message });
       }
     } catch {
@@ -117,22 +112,19 @@ export default function Auth() {
     }
   };
 
+  // 🔴 handleRegister แบบสมัครเสร็จ auto login เลย ไม่มี delay
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     const { fullName, email, password, confirmPassword } = formData.register;
 
-    // Validate all fields
+    // Validate
     const validationErrors: any = {};
-
     const fullNameError = validateFullName(fullName);
     if (fullNameError) validationErrors.fullName = fullNameError;
-
     const emailError = validateEmail(email);
     if (emailError) validationErrors.email = emailError;
-
     const passwordError = validatePassword(password);
     if (passwordError) validationErrors.password = passwordError;
-
     if (password !== confirmPassword) {
       validationErrors.confirmPassword = "รหัสผ่านไม่ตรงกัน";
     }
@@ -146,7 +138,7 @@ export default function Auth() {
     setErrors({});
 
     try {
-      // Check if email exists using RPC function
+      // Check email exists
       const { data: emailExists } = await supabase.rpc("check_email_exists", {
         check_email: email,
       });
@@ -157,24 +149,23 @@ export default function Auth() {
         return;
       }
 
-      // Register new user
+      // Register
       const { error } = await signUp(email, password, fullName.trim());
 
       if (error) {
-        if (error.message.includes("already")) {
-          setErrors({ email: "อีเมลนี้ถูกใช้งานแล้ว" });
-        } else {
-          setErrors({ general: error.message });
-        }
+        setErrors({
+          general: error.message.includes("already")
+            ? "อีเมลนี้ถูกใช้งานแล้ว"
+            : error.message,
+        });
+        setIsLoading(false);
       } else {
-        // Auto login after successful registration
-        alert("สมัครสมาชิกสำเร็จ! กำลังเข้าสู่ระบบ...");
+        // 🔴 สมัครสำเร็จ - auto login ทันที ไม่มี delay
         await signIn(email, password);
-        navigate("/");
+        // User effect จะ redirect อัตโนมัติ
       }
     } catch {
       setErrors({ general: "เกิดข้อผิดพลาดในการเชื่อมต่อ" });
-    } finally {
       setIsLoading(false);
     }
   };

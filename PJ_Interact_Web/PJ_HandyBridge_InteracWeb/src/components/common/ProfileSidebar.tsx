@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./ProfileSidebar.css";
+import { IoLogOutOutline } from "react-icons/io5";
 
 interface ProfileSidebarProps {
   isOpen: boolean;
@@ -80,25 +81,17 @@ export default function ProfileSidebar({
           )}
         </div>
 
-        {/* Profile Title */}
-        <h2 className="sidebar-title">โปรไฟล์</h2>
-
-        {/* Profile Info */}
-        <div className="sidebar-info">
-          <div className="info-row">
-            <span className="info-label">ชื่อ-สกุล:</span>
-            <span className="info-value">{profile.full_name}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-label">อีเมล:</span>
-            <span className="info-value">{profile.email}</span>
-          </div>
+        {/* 🔴 รวม Title และ Info ไว้ใน container เดียว */}
+        <div className="sidebar-content">
+          <h2 className="sidebar-title">โปรไฟล์</h2>
+          <p className="info-text">ชื่อ-สกุล: {profile.full_name}</p>
+          <p className="info-text">อีเมล: {profile.email}</p>
+          <button className="sidebar-signout" onClick={handleSignOut}>
+            ออกจากระบบ <IoLogOutOutline size={24} />
+          </button>
         </div>
 
         {/* Sign Out Button */}
-        <button className="sidebar-signout" onClick={handleSignOut}>
-          ออกจากระบบ
-        </button>
       </div>
     </>
   );

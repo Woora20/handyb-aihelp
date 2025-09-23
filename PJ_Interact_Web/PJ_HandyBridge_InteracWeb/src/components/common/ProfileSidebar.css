@@ -89,45 +89,40 @@
   background: #3a5270;
 }
 
+.sidebar-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 40px;
+  margin-bottom: auto;
+}
+
 .sidebar-title {
   font-family: var(--font-thai);
   font-size: 36px;
   font-weight: 300;
   color: var(--text-dark);
-  margin: 40px 0 0;
+  margin: 0;
 }
 
 .sidebar-info {
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-bottom: auto;
 }
 
-.info-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.info-label {
+.info-text {
   font-family: var(--font-thai);
   font-size: 18px;
   font-weight: 300;
-  color: #6b7280;
-}
-
-.info-value {
-  font-family: var(--font-thai);
-  font-size: 18px;
-  font-weight: 400;
   color: var(--text-dark);
+  margin: 0;
 }
 
 .sidebar-signout {
-  width: 100%;
-  padding: 14px;
+  width: auto;
+  padding: 12px 30px;
   background-color: #000000;
   color: white;
   border: none;
@@ -137,6 +132,11 @@
   font-weight: 300;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin-top: 50px;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .sidebar-signout:hover {
