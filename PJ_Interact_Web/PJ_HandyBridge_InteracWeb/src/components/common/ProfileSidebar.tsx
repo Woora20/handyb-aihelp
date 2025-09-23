@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import "./ProfileSidebar.css";
 import { IoLogOutOutline } from "react-icons/io5";
+import "./ProfileSidebar.css";
 
 interface ProfileSidebarProps {
   isOpen: boolean;
@@ -81,7 +81,7 @@ export default function ProfileSidebar({
           )}
         </div>
 
-        {/* 🔴 รวม Title และ Info ไว้ใน container เดียว */}
+        {/* Profile Content */}
         <div className="sidebar-content">
           <h2 className="sidebar-title">โปรไฟล์</h2>
           <p className="info-text">ชื่อ-สกุล: {profile.full_name}</p>
@@ -90,8 +90,6 @@ export default function ProfileSidebar({
             ออกจากระบบ <IoLogOutOutline size={24} />
           </button>
         </div>
-
-        {/* Sign Out Button */}
       </div>
     </>
   );

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAngleDown } from "react-icons/fa";
+import { PiArrowCircleRightFill } from "react-icons/pi";
 import { useAuth } from "../../contexts/AuthContext";
 import ProfileSidebar from "./ProfileSidebar";
 import "./Navbar.css";
@@ -11,6 +12,24 @@ interface NavbarProps {
   onRegisterClick?: () => void;
 }
 
+// Menu Structure
+const menuItems = {
+  เรียนรู้: [
+    { title: "ค้นหาภาษามือ", path: "/search" },
+    { title: "AI ตอบคำถาม", path: "/ai-assistant" },
+    { title: "ฝึกฝนภาษามือ", path: "/practice" },
+  ],
+  เกี่ยวกับเรา: [{ title: "วัตถุประสงค์", path: "/purpose" }],
+  ช่วยเหลือ: [
+    { title: "คำถามที่พบบ่อย", path: "/faq" },
+    { title: "ข่าวสาร", path: "/news" },
+  ],
+  ร่วมพัฒนา: [
+    { title: "ส่งคำศัพท์ใหม่", path: "/submit-word" },
+    { title: "รีวิวเว็บไซต์", path: "/review" },
+  ],
+};
+
 export default function Navbar_Handy({
   onLoginClick,
   onRegisterClick,
@@ -19,23 +38,26 @@ export default function Navbar_Handy({
   const location = useLocation();
   const { profile } = useAuth();
   const [showProfileSidebar, setShowProfileSidebar] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+  // Handle Auth Actions
   const handleLoginClick = () => {
-    if (location.pathname === "/auth" && onLoginClick) {
-      onLoginClick();
-    } else {
-      navigate("/auth?mode=login");
-    }
+    location.pathname === "/auth" && onLoginClick
+      ? onLoginClick()
+      : navigate("/auth?mode=login");
   };
 
   const handleRegisterClick = () => {
-    if (location.pathname === "/auth" && onRegisterClick) {
-      onRegisterClick();
-    } else {
-      navigate("/auth?mode=register");
-    }
+    location.pathname === "/auth" && onRegisterClick
+      ? onRegisterClick()
+      : navigate("/auth?mode=register");
   };
 
+  // Handle Dropdown
+  const handleMouseEnter = (menu: string) => setActiveDropdown(menu);
+  const handleMouseLeave = () => setActiveDropdown(null);
+
+  // Default Avatar
   const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
     profile?.full_name || "User"
   )}&background=4b648b&color=fff&size=100`;
@@ -43,6 +65,7 @@ export default function Navbar_Handy({
   return (
     <>
       <nav className="navbar">
+        {/* Logo */}
         <Link to="/" className="logo">
           <img
             src="/src/assets/logo/logo_handy1.png"
@@ -52,21 +75,47 @@ export default function Navbar_Handy({
           <span className="logo-text">Handy Bridge</span>
         </Link>
 
+        {/* Navigation Menu */}
         <div className="navbar-menu">
-          <a href="#" className="nav-link">
-            เรียนรู้ <FaAngleDown className="dropdown-icon" />
-          </a>
-          <a href="#" className="nav-link">
-            เกี่ยวกับเรา <FaAngleDown className="dropdown-icon" />
-          </a>
-          <a href="#" className="nav-link">
-            ช่วยเหลือ <FaAngleDown className="dropdown-icon" />
-          </a>
-          <a href="#" className="nav-link">
-            ร่วมพัฒนา <FaAngleDown className="dropdown-icon" />
-          </a>
+          {Object.entries(menuItems).map(([key, items]) => (
+            <div
+              key={key}
+              className="nav-item-wrapper"
+              onMouseEnter={() => handleMouseEnter(key)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <button className="nav-link">
+                {key}
+                <FaAngleDown className="dropdown-icon" />
+              </button>
+
+              {/* Dropdown Menu */}
+              <div
+                className={`dropdown-menu ${
+                  activeDropdown === key ? "active" : ""
+                }`}
+              >
+                <div className="dropdown-content">
+                  {items.map((item, index) => (
+                    <Link
+                      key={index}
+                      to={item.path}
+                      className={`dropdown-item ${
+                        location.pathname === item.path ? "active" : ""
+                      }`}
+                      onClick={() => setActiveDropdown(null)}
+                    >
+                      <span className="dropdown-text">{item.title}</span>
+                      <PiArrowCircleRightFill className="dropdown-arrow-icon" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
+        {/* Profile/Auth Section */}
         <div className="navbar-profile">
           {profile ? (
             <div className="user-menu">
@@ -95,6 +144,7 @@ export default function Navbar_Handy({
         </div>
       </nav>
 
+      {/* Profile Sidebar */}
       {profile && (
         <ProfileSidebar
           isOpen={showProfileSidebar}
