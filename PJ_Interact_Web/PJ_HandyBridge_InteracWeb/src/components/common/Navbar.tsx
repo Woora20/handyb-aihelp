@@ -57,7 +57,7 @@ export default function Navbar_Handy({
             เรียนรู้ <FaAngleDown className="dropdown-icon" />
           </a>
           <a href="#" className="nav-link">
-            เก็บกำไร <FaAngleDown className="dropdown-icon" />
+            เกี่ยวกับเรา <FaAngleDown className="dropdown-icon" />
           </a>
           <a href="#" className="nav-link">
             ช่วยเหลือ <FaAngleDown className="dropdown-icon" />

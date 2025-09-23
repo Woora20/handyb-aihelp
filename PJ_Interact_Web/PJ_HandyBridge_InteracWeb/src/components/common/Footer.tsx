@@ -24,12 +24,12 @@ export default function Footer() {
             <p>เรียนรู้</p>
             <a href="#">คำภาษามือ</a>
             <a href="#">AI ตอบคำถาม</a>
-            <a href="#">ฝึกผมภาษามือ</a>
+            <a href="#">ฝึกฝนภาษามือ</a>
           </div>
 
           <div className="footer-column">
-            <p>เก็บกำไร</p>
-            <a href="#">วิตถุประสงค์</a>
+            <p>เกี่ยวกับเรา</p>
+            <a href="#">วัตถุประสงค์</a>
           </div>
 
           <div className="footer-column">
@@ -40,8 +40,8 @@ export default function Footer() {
 
           <div className="footer-column">
             <p>ร่วมพัฒนา</p>
-            <a href="#">สั่งทำศพที่พัฒน์</a>
-            <a href="#">ร่วงเว็บไซต์</a>
+            <a href="#">ส่งคำศัพท์ใหม่</a>
+            <a href="#">รีวิวเว็บไซต์</a>
           </div>
         </div>
       </div>
