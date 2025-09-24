@@ -13,20 +13,20 @@ export const HeroSection: React.FC = () => {
       <div className="hero-buttons">
         <button className="hero-btn">
           <img
-            src="/src/assets/icons/text-icon.png"
+            src="/src/assets/icons/search-icon.png"
             className="btn-icon"
             alt="ข้อความ"
           />
-          <span className="btn-text">ค้นด้วยภาษาไทย</span>
+          <span className="btn-text">ค้นหาภาษามือ</span>
         </button>
 
         <button className="hero-btn">
           <img
-            src="/src/assets/icons/hand-icon.png"
+            src="/src/assets/icons/chatai-icon.png"
             className="btn-icon"
             alt="ข้อความ"
           />
-          <span className="btn-text">ค้นด้วยภาษามือไทย</span>
+          <span className="btn-text">AI ผู้ช่วยภาษามือ</span>
         </button>
       </div>
 
