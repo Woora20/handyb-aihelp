@@ -1,0 +1,68 @@
+/* ==================== LAYOUT FOUNDATION ==================== */
+:root {
+  /* Layout Variables */
+  --header-height: 92px;
+  --sidebar-width: 290px;
+  --content-spacing: 6px;
+  --border-radius-bd: 30px;
+  --border-radius-slb: 20px;
+
+  /* Colors */
+  --color-background-primary: #f8f4f1;
+  --color-background-secondary: #eeeae7;
+  --color-sidebar: #6881a8;
+}
+
+/* ==================== MAIN CONTAINER ==================== */
+.ai-chatbot-page {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--body-color, var(--color-background-primary));
+  overflow-x: hidden;
+}
+
+/* ==================== CONTENT WRAPPER ==================== */
+.chatbot-main-content {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--color-background-secondary);
+  overflow: hidden;
+  border-radius: var(--border-radius-slb);
+}
+
+/* ==================== INNER CONTAINER ==================== */
+.chatbot-inner-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+/* ==================== SIDEBAR ==================== */
+.chatbot-sidebar {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--sidebar-width);
+  margin: var(--content-spacing) 0 var(--content-spacing) var(--content-spacing);
+  background-color: var(--color-sidebar);
+  border-radius: var(--border-radius-slb);
+  overflow: hidden;
+}
+
+/* ==================== MAIN CONTENT AREA ==================== */
+.chatbot-content {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  padding: var(--content-spacing) var(--content-spacing) var(--content-spacing)
+    0;
+  background-color: transparent;
+  overflow: hidden;
+}

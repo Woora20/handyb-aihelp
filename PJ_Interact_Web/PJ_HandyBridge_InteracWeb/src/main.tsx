@@ -6,6 +6,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
 import Landing_page from "./pages/Landing_page";
 import Auth from "./pages/AuthPages";
+import AIChatbot from "./pages/AIChatbot";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<Landing_page />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/ai-assistant" element={<AIChatbot />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
