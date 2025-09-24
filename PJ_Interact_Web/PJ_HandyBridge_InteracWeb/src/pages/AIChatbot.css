@@ -11,6 +11,9 @@
   --color-background-primary: #f8f4f1;
   --color-background-secondary: #eeeae7;
   --color-sidebar: #6881a8;
+
+  /* Shadow Variable - ใช้บ่อย */
+  --box-shadow: 1px 2px 10px 0px rgba(112, 112, 112, 0.25);
 }
 
 /* ==================== MAIN CONTAINER ==================== */
@@ -20,20 +23,22 @@
   display: flex;
   flex-direction: column;
   background-color: var(--body-color, var(--color-background-primary));
-  overflow-x: hidden;
+  overflow: visible;
 }
 
 /* ==================== CONTENT WRAPPER ==================== */
 .chatbot-main-content {
   position: relative;
   width: 100vw;
-  height: calc(100vh - var(--header-height));
+
   display: flex;
   justify-content: center;
   align-items: flex-start;
   background-color: var(--color-background-secondary);
-  overflow: hidden;
-  border-radius: var(--border-radius-slb);
+  overflow: visible;
+  padding: var(--content-spacing);
+  box-sizing: border-box;
+  border-radius: var(--border-radius-bd);
 }
 
 /* ==================== INNER CONTAINER ==================== */
@@ -42,7 +47,10 @@
   display: flex;
   width: 100%;
   height: 100%;
+
   background-color: transparent;
+  gap: var(--content-spacing);
+  overflow: visible;
 }
 
 /* ==================== SIDEBAR ==================== */
@@ -50,10 +58,97 @@
   position: relative;
   flex-shrink: 0;
   width: var(--sidebar-width);
-  margin: var(--content-spacing) 0 var(--content-spacing) var(--content-spacing);
+  height: 100%;
   background-color: var(--color-sidebar);
   border-radius: var(--border-radius-slb);
   overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+/* ==================== SIDEBAR CONTENT ==================== */
+.chatbot-sidebar-content {
+  padding: 36px;
+  height: 922px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  box-sizing: border-box;
+}
+
+/* Header Section */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-icon {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
+}
+
+.sidebar-title {
+  font-family: var(--font-english);
+  font-size: 20px;
+  font-weight: 400;
+  color: white;
+}
+
+.sidebar-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Divider */
+.sidebar-divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin-bottom: 20px;
+}
+
+/* New Chat Button */
+.new-chat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.new-chat-btn:hover {
+  background-color: rgba(30, 41, 59, 1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.new-chat-icon {
+  font-size: 18px;
 }
 
 /* ==================== MAIN CONTENT AREA ==================== */
@@ -61,8 +156,301 @@
   position: relative;
   flex: 1;
   height: 100%;
-  padding: var(--content-spacing) var(--content-spacing) var(--content-spacing)
-    0;
   background-color: transparent;
+  border-radius: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 200px;
+}
+
+/* ==================== WELCOME SCREEN ==================== */
+.welcome-screen {
+  flex: 1;
+  padding: 50px 0 30px 0;
+  margin: 0 auto;
+  max-width: 1000px; /* กำหนด max-width ที่ต้องการ */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 50px;
+  overflow: visible;
+  background-color: transparent;
+  min-height: 0;
+}
+
+/* กลุ่ม welcome message (greeting + subtitle) */
+.welcome-message {
+  text-align: left;
+  margin-bottom: 0;
+  background-color: transparent;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.welcome-greeting {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  background-color: transparent;
+  margin-bottom: 0;
+}
+
+.wave-emoji {
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.welcome-greeting h1 {
+  font-family: var(--font-thai);
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--text-dark);
+  margin: 0;
+  background-color: transparent;
+  line-height: 1.1;
+}
+
+.welcome-subtitle {
+  font-family: var(--font-thai);
+  font-size: 24px;
+  font-weight: 300;
+  color: #6b7280;
+  margin: 0;
+  background-color: transparent;
+  line-height: 1.3;
+}
+
+/* Suggestions Grid */
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: none;
+  width: 100%;
+  background-color: transparent;
+  overflow: visible;
+  padding: 10px;
+  margin: -10px;
+  align-self: flex-start;
+}
+
+.suggestion-card {
+  background-color: var(--color-background-secondary);
+  border: 1px solid #c4c4c4;
+  border-radius: 30px;
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start; /* เปลี่ยนเป็น flex-end เพื่อชิดล่าง */
+  gap: 20px;
+  box-shadow: none;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  height: 170px;
+  box-sizing: border-box;
+}
+
+.suggestion-content {
+  flex: 1;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* ชิดล่าง */
+  gap: 0;
+  height: 100%; /* ให้ content ใช้ความสูงเต็มที่ */
+}
+.suggestion-card:hover {
+  border-color: var(--brand-color); /* เปลี่ยนสี border เมื่อ hover */
+  box-shadow: none; /* ไม่มีเงาแม้ hover */
+  transform: translateY(-2px);
+}
+
+.suggestion-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  margin-top: 0; /* ลบ margin-top */
+}
+
+.suggestion-title {
+  font-family: var(--font-thai);
+  font-size: 16px; /* ขนาด 16px */
+  font-weight: 400;
+  color: var(--text-dark);
+  margin: 0; /* เว้นระยะเล็กน้อยระหว่าง title และ description */
+  background-color: transparent;
+}
+
+.suggestion-description {
+  font-family: var(--font-thai);
+  font-size: 14px; /* ขนาด 14px */
+  font-weight: 300;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* เพิ่มบรรทัดเพราะมีความสูงมากขึ้น */
+  -webkit-box-orient: vertical;
   overflow: hidden;
+  background-color: transparent;
+}
+
+/* ==================== CHAT INPUT ใน WELCOME SCREEN ==================== */
+.chat-input-inline {
+  width: 100%;
+
+  align-self: flex-start;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: none;
+  border-radius: 30px;
+  padding: 22px;
+  width: 100%;
+  height: 161px;
+  box-sizing: border-box;
+  box-shadow: var(--box-shadow);
+  transition: box-shadow 0.2s ease;
+  justify-content: space-between;
+  position: relative;
+  overflow: visible;
+}
+
+.input-wrapper:focus-within {
+  box-shadow: var(--box-shadow),
+    0 0 0 2px color-mix(in srgb, var(--color-sidebar), transparent);
+}
+
+/* บรรทัดแรก: Input + Send */
+.input-row-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex: 1;
+  gap: 16px;
+  background-color: transparent;
+}
+
+.chat-textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text-dark);
+  line-height: 1.4;
+  outline: none;
+  padding: 0;
+  resize: none;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  vertical-align: top;
+  text-align: left;
+  width: 100%;
+  height: 100%;
+  max-height: 60px;
+}
+
+.chat-textarea::placeholder {
+  color: #73726c;
+  font-size: 20px;
+}
+
+.chat-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Send button 33x33px */
+.send-btn {
+  width: 33px;
+  height: 33px;
+  border: none;
+  background-color: #dee2e6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6c757d;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0;
+}
+
+.send-btn.active {
+  background-color: var(--brand-color);
+  color: white;
+}
+
+.send-btn.active:hover:not(:disabled) {
+  background-color: #3a5270;
+  transform: scale(1.05);
+}
+
+.send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* บรรทัดที่สอง: Attachment buttons */
+.input-row-attachments {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: auto;
+  flex-shrink: 0;
+  background-color: transparent;
+}
+
+.attachment-buttons {
+  display: flex;
+  gap: 12px;
+  background-color: transparent;
+}
+
+.attachment-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6c757d;
+  transition: all 0.15s ease;
+  padding: 0;
+  margin: 0;
+}
+
+.attachment-btn:hover:not(:disabled) {
+  color: var(--brand-color);
+  background: transparent;
+}
+
+.attachment-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ==================== ลบ CHAT INPUT แยกออกมา ==================== */
+.chat-input-container {
+  display: none; /* ซ่อนเพราะย้ายไปอยู่ใน welcome screen แล้ว */
 }
