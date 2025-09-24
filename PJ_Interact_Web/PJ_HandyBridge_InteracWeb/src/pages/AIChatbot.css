@@ -180,10 +180,10 @@
   justify-content: center;
   gap: 12px;
   width: 100%;
-  padding: 12px 20px;
-  background-color: rgba(30, 41, 59, 0.8);
+  padding: 7px 20px;
+  background-color: #10214b;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 10px;
   color: white;
   font-family: var(--font-thai);
   font-size: 16px;
