@@ -715,3 +715,76 @@
   background: #d1d5db;
   border-radius: 3px;
 }
+
+.suggestion-image {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+}
+
+.suggestion-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  filter: grayscale(20%);
+}
+
+.suggestion-card:hover .suggestion-image img {
+  opacity: 1;
+  filter: grayscale(0%);
+}
+
+/* แก้ไข CSS สำหรับรูปภาพใน AIChatbot.css */
+.suggestion-image {
+  flex-shrink: 0;
+  width: 100px; /* เพิ่มขนาดจาก 80px เป็น 100px */
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  background: rgba(255, 255, 255, 0.1); /* เพิ่ม background เพื่อดู container */
+  border-radius: 12px; /* เพิ่มมุมมน */
+  overflow: hidden; /* ป้องกันรูปล้น */
+}
+
+.suggestion-image img {
+  width: 80px; /* กำหนดขนาดคงที่ */
+  height: 80px; /* กำหนดขนาดคงที่ */
+  object-fit: contain; /* รักษาอัตราส่วน */
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  filter: grayscale(10%);
+}
+
+.suggestion-card:hover .suggestion-image img {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.05); /* เพิ่ม effect เมื่อ hover */
+}
+
+/* ปรับ suggestion card ให้มีพื้นที่เพียงพอ */
+.suggestion-card {
+  background-color: var(--color-background-secondary);
+  border: 1px solid #c4c4c4;
+  border-radius: 30px;
+  padding: 20px; /* เพิ่ม padding จาก 18px */
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px; /* เพิ่ม gap จาก 20px */
+  box-shadow: none;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  height: 180px; /* เพิ่มความสูงจาก 170px */
+  box-sizing: border-box;
+}

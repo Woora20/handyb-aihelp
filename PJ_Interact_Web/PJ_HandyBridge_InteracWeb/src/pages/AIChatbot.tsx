@@ -1,17 +1,22 @@
 // src/pages/AIChatbot.tsx
 import React, { useState, useRef } from "react";
-import { FiPlus, FiX, FiPaperclip, FiImage, FiArrowUp } from "react-icons/fi";
+import { FiPaperclip, FiImage, FiArrowUp, FiPlus } from "react-icons/fi";
 import { GoTable } from "react-icons/go";
 import Navbar from "../components/common/Navbar";
 import { ChatHistory } from "../components/chat/ChatHistory";
 import { useAuth } from "../contexts/AuthContext";
 import { useChat } from "../hooks/useChat";
 import "./AIChatbot.css";
-
+// เพิ่มที่ด้านบนของ AIChatbot.tsx
+import signLanguage1 from "../assets/images/hand-img/sign-language-1.png";
+import signLanguage2 from "../assets/images/hand-img/sign-language-2.png";
+import signLanguage3 from "../assets/images/hand-img/sign-language-3.png";
+import signLanguage4 from "../assets/images/hand-img/sign-language-4.png";
 interface SuggestionCard {
   icon: string;
   title: string;
   description: string;
+  image?: string;
 }
 
 export default function AIChatbot() {
@@ -36,24 +41,28 @@ export default function AIChatbot() {
       title: "ภาษามือคืออะไร?",
       description:
         "ฉันอยากเรียนรู้พื้นฐานภาษามือ ช่วยอธิบายให้ฟังหน่อยได้ไหม? เริ่มต้นยังไงดี?",
+      image: signLanguage1,
     },
     {
       icon: "🤟",
       title: "สอนคำทักทายให้หน่อย",
       description:
         "อยากเรียนคำพื้นฐานที่ใช้ทุกวัน เช่น สวัสดี ขอบคุณ ขอโทษ ทำท่าทางยังไง?",
+      image: signLanguage2,
     },
     {
       icon: "☝️",
       title: "เว็บนี้มีอะไรบ้าง?",
       description:
         "ช่วยแนะนำฟีเจอร์ต่างๆ ในเว็บไซต์ และบอกวิธีใช้งานให้เข้าใจง่ายหน่อย",
+      image: signLanguage3,
     },
     {
       icon: "🤚",
       title: "แนะนำการฝึกฝน",
       description:
         "วิธีฝึกภาษามืออย่างมีประสิทธิภาพ เทคนิคการจำท่ามือ และแบบฝึกหัดที่เหมาะกับผู้เริ่มต้น",
+      image: signLanguage4,
     },
   ];
 
@@ -123,6 +132,7 @@ export default function AIChatbot() {
                   </button>
                 </div>
               </div>
+
               {!isSidebarCollapsed && (
                 <>
                   <div className="sidebar-divider"></div>
@@ -170,6 +180,19 @@ export default function AIChatbot() {
                           {suggestion.description}
                         </p>
                       </div>
+                      {suggestion.image && (
+                        <div className="suggestion-image">
+                          <img
+                            src={suggestion.image}
+                            alt={suggestion.title}
+                            onError={(e) => {
+                              // ถ้าโหลดรูปไม่ได้ ให้ซ่อน element นี้
+                              (e.target as HTMLImageElement).style.display =
+                                "none";
+                            }}
+                          />
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -208,6 +231,12 @@ export default function AIChatbot() {
                             className="attachment-btn"
                             disabled={isLoading}
                             aria-label="แนบไฟล์"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.accept = ".pdf,.doc,.docx,.txt";
+                              input.click();
+                            }}
                           >
                             <FiPaperclip size={24} />
                           </button>
@@ -216,6 +245,12 @@ export default function AIChatbot() {
                             className="attachment-btn"
                             disabled={isLoading}
                             aria-label="แนบรูปภาพ"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.accept = "image/*";
+                              input.click();
+                            }}
                           >
                             <FiImage size={24} />
                           </button>
@@ -302,6 +337,12 @@ export default function AIChatbot() {
                             className="attachment-btn"
                             disabled={isLoading}
                             aria-label="แนบไฟล์"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.accept = ".pdf,.doc,.docx,.txt";
+                              input.click();
+                            }}
                           >
                             <FiPaperclip size={24} />
                           </button>
@@ -310,6 +351,12 @@ export default function AIChatbot() {
                             className="attachment-btn"
                             disabled={isLoading}
                             aria-label="แนบรูปภาพ"
+                            onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file";
+                              input.accept = "image/*";
+                              input.click();
+                            }}
                           >
                             <FiImage size={24} />
                           </button>
