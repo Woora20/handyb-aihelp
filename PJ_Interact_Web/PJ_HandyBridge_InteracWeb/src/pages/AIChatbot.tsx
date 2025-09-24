@@ -14,6 +14,7 @@ export default function AIChatbot() {
   const { profile } = useAuth();
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState("");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Mock suggestions data
@@ -50,15 +51,12 @@ export default function AIChatbot() {
     console.log("เริ่มแชทใหม่");
   };
 
-  const handleCloseSidebar = () => {
-    console.log("ปิด sidebar");
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const handleSuggestionClick = (suggestion: SuggestionCard) => {
-    // ใส่ description ลงใน text form
     setMessage(suggestion.description);
-
-    // Focus ที่ textarea หลังจากใส่ข้อความ
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 100);
@@ -93,7 +91,6 @@ export default function AIChatbot() {
     }
   };
 
-  // ใช้ชื่อจาก profile หรือ default
   const userName = profile?.full_name?.split(" ")[0] || "username";
 
   return (
@@ -102,8 +99,12 @@ export default function AIChatbot() {
 
       <div className="chatbot-main-content">
         <div className="chatbot-inner-container">
-          {/* Sidebar ซ้ายมือ */}
-          <aside className="chatbot-sidebar">
+          {/* ✅ Sidebar - กลับไปใช้ structure เดิม */}
+          <aside
+            className={`chatbot-sidebar ${
+              isSidebarCollapsed ? "collapsed" : ""
+            }`}
+          >
             <div className="chatbot-sidebar-content">
               {/* Header Section */}
               <div className="sidebar-header">
@@ -118,21 +119,32 @@ export default function AIChatbot() {
 
                 <button
                   className="sidebar-close-btn"
-                  onClick={handleCloseSidebar}
-                  aria-label="ปิด sidebar"
+                  onClick={handleToggleSidebar}
+                  aria-label={
+                    isSidebarCollapsed ? "เปิด sidebar" : "ปิด sidebar"
+                  }
                 >
-                  <FiX size={20} />
+                  {isSidebarCollapsed ? (
+                    <FiPlus size={20} />
+                  ) : (
+                    <FiX size={20} />
+                  )}
                 </button>
               </div>
 
-              {/* Divider */}
-              <div className="sidebar-divider"></div>
+              {/* ✅ Content ส่วนที่เหลือ - อยู่ใน chatbot-sidebar-content */}
+              {!isSidebarCollapsed && (
+                <>
+                  {/* Divider */}
+                  <div className="sidebar-divider"></div>
 
-              {/* New Chat Button */}
-              <button className="new-chat-btn" onClick={handleNewChat}>
-                <FiPlus className="new-chat-icon" />
-                <span>เพิ่มแชทใหม่</span>
-              </button>
+                  {/* New Chat Button */}
+                  <button className="new-chat-btn" onClick={handleNewChat}>
+                    <FiPlus className="new-chat-icon" />
+                    <span>เพิ่มแชทใหม่</span>
+                  </button>
+                </>
+              )}
             </div>
           </aside>
 
@@ -227,55 +239,6 @@ export default function AIChatbot() {
                 <div className="chat-messages">
                   {/* Chat Messages จะมาใส่ที่นี่ */}
                   <div>Chat Interface จะมาใส่ที่นี่</div>
-                </div>
-                {/* Chat Input สำหรับหน้า Chat */}
-                <div className="chat-input-container">
-                  <form className="chat-input-form" onSubmit={handleSubmit}>
-                    <div className="input-wrapper">
-                      <div className="input-row-main">
-                        <textarea
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          onKeyDown={handleKeyDown}
-                          placeholder="ถามฉันได้ทุกอย่างกับภาษามือเลย......"
-                          className="chat-textarea"
-                          rows={1}
-                        />
-
-                        <button
-                          type="submit"
-                          className={`send-btn ${
-                            message.trim() ? "active" : ""
-                          }`}
-                          disabled={!message.trim()}
-                          aria-label="ส่งข้อความ"
-                        >
-                          <FiArrowUp size={16} />
-                        </button>
-                      </div>
-
-                      <div className="input-row-attachments">
-                        <div className="attachment-buttons">
-                          <button
-                            type="button"
-                            className="attachment-btn"
-                            onClick={handleAttachFile}
-                            aria-label="แนบไฟล์"
-                          >
-                            <FiPaperclip size={24} />
-                          </button>
-                          <button
-                            type="button"
-                            className="attachment-btn"
-                            onClick={handleAttachImage}
-                            aria-label="แนบรูปภาพ"
-                          >
-                            <FiImage size={24} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
                 </div>
               </>
             )}

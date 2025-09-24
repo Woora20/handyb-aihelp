@@ -30,7 +30,6 @@
 .chatbot-main-content {
   position: relative;
   width: 100vw;
-
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -47,7 +46,6 @@
   display: flex;
   width: 100%;
   height: 100%;
-
   background-color: transparent;
   gap: var(--content-spacing);
   overflow: visible;
@@ -63,6 +61,13 @@
   border-radius: var(--border-radius-slb);
   overflow: hidden;
   box-shadow: var(--box-shadow);
+  transition: all 0.3s ease;
+}
+
+/* ✅ เมื่อ collapsed - ซ่อนพื้นหลังสีฟ้า */
+.chatbot-sidebar.collapsed {
+  background-color: transparent;
+  box-shadow: none;
 }
 
 /* ==================== SIDEBAR CONTENT ==================== */
@@ -73,6 +78,7 @@
   flex-direction: column;
   color: white;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Header Section */
@@ -81,6 +87,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  min-height: 32px;
 }
 
 .sidebar-brand {
@@ -93,6 +100,13 @@
   width: 32px;
   height: 32px;
   filter: brightness(0) invert(1);
+  flex-shrink: 0;
+  transition: filter 0.3s ease;
+}
+
+/* ✅ เมื่อ collapsed เปลี่ยนสี icon */
+.chatbot-sidebar.collapsed .sidebar-icon {
+  filter: none;
 }
 
 .sidebar-title {
@@ -100,6 +114,13 @@
   font-size: 20px;
   font-weight: 400;
   color: white;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+/* ✅ เมื่อ collapsed เปลี่ยนสีข้อความ */
+.chatbot-sidebar.collapsed .sidebar-title {
+  color: var(--color-sidebar);
 }
 
 .sidebar-close-btn {
@@ -109,11 +130,21 @@
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .sidebar-close-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ✅ เมื่อ collapsed เปลี่ยนสีปุ่ม */
+.chatbot-sidebar.collapsed .sidebar-close-btn {
+  color: var(--color-sidebar);
+}
+
+.chatbot-sidebar.collapsed .sidebar-close-btn:hover {
+  background-color: rgba(75, 100, 139, 0.1);
 }
 
 /* Divider */
@@ -165,12 +196,17 @@
   padding: 0 200px;
 }
 
+/* ✅ เมื่อ sidebar collapsed ให้ content เขยิบมาชิดซ้าย */
+.chatbot-sidebar.collapsed ~ .chatbot-content {
+  padding: 0 100px 0 50px; /* ลด padding ซ้าย */
+}
+
 /* ==================== WELCOME SCREEN ==================== */
 .welcome-screen {
   flex: 1;
   padding: 50px 0 30px 0;
   margin: 0 auto;
-  max-width: 1000px; /* กำหนด max-width ที่ต้องการ */
+  max-width: 1000px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -250,7 +286,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
-  align-items: flex-start; /* เปลี่ยนเป็น flex-end เพื่อชิดล่าง */
+  align-items: flex-start;
   gap: 20px;
   box-shadow: none;
   overflow: visible;
@@ -265,40 +301,41 @@
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* ชิดล่าง */
+  justify-content: flex-end;
   gap: 0;
-  height: 100%; /* ให้ content ใช้ความสูงเต็มที่ */
+  height: 100%;
 }
+
 .suggestion-card:hover {
-  border-color: var(--brand-color); /* เปลี่ยนสี border เมื่อ hover */
-  box-shadow: none; /* ไม่มีเงาแม้ hover */
+  border-color: var(--brand-color);
+  box-shadow: none;
   transform: translateY(-2px);
 }
 
 .suggestion-icon {
   font-size: 32px;
   flex-shrink: 0;
-  margin-top: 0; /* ลบ margin-top */
+  margin-top: 0;
 }
 
 .suggestion-title {
   font-family: var(--font-thai);
-  font-size: 16px; /* ขนาด 16px */
+  font-size: 16px;
   font-weight: 400;
   color: var(--text-dark);
-  margin: 0; /* เว้นระยะเล็กน้อยระหว่าง title และ description */
+  margin: 0;
   background-color: transparent;
 }
 
 .suggestion-description {
   font-family: var(--font-thai);
-  font-size: 14px; /* ขนาด 14px */
+  font-size: 14px;
   font-weight: 300;
   color: #6b7280;
   margin: 0;
   line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 4; /* เพิ่มบรรทัดเพราะมีความสูงมากขึ้น */
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   background-color: transparent;
@@ -307,7 +344,6 @@
 /* ==================== CHAT INPUT ใน WELCOME SCREEN ==================== */
 .chat-input-inline {
   width: 100%;
-
   align-self: flex-start;
 }
 
@@ -452,5 +488,5 @@
 
 /* ==================== ลบ CHAT INPUT แยกออกมา ==================== */
 .chat-input-container {
-  display: none; /* ซ่อนเพราะย้ายไปอยู่ใน welcome screen แล้ว */
+  display: none;
 }
