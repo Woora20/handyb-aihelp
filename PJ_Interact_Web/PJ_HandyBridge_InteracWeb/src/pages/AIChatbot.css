@@ -198,7 +198,7 @@
 
 /* ✅ เมื่อ sidebar collapsed ให้ content เขยิบมาชิดซ้าย */
 .chatbot-sidebar.collapsed ~ .chatbot-content {
-  padding: 0 100px 0 50px; /* ลด padding ซ้าย */
+  padding: 0 300px 0 100px; /* ลด padding ซ้าย */
 }
 
 /* ==================== WELCOME SCREEN ==================== */
