@@ -1,6 +1,6 @@
 // src/components/chat/ChatMessages.tsx - แก้ไขใหม่
 import React, { useEffect, useRef } from "react";
-import { type ChatMessage } from "../../services/geminiService";
+import { type ChatMessage } from "../../services/openaiService";
 import "./ChatMessages.css";
 
 interface ChatMessagesProps {

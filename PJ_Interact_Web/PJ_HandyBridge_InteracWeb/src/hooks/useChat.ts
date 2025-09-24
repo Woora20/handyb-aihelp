@@ -1,12 +1,33 @@
 // src/hooks/useChat.ts
-import { useState, useCallback } from 'react';
-import { geminiService, type ChatMessage } from '../services/geminiService';
+import { useState, useCallback, useEffect } from 'react';
+import { openaiService, type ChatMessage } from '../services/openaiService';
+import { chatHistoryService, type ChatSession } from '../services/chatHistoryService';
 import { v4 } from 'uuid';
 
 export const useChat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [chatHistory, setChatHistory] = useState<ChatSession[]>([]);
+
+  // โหลดประวัติเมื่อเริ่มต้น
+  useEffect(() => {
+    setChatHistory(chatHistoryService.getHistory());
+  }, []);
+
+  // บันทึกการสนทนาเมื่อมีการเปลี่ยนแปลง
+  useEffect(() => {
+    if (messages.length > 0) {
+      if (currentSessionId) {
+        chatHistoryService.updateSession(currentSessionId, messages);
+      } else {
+        const newSessionId = chatHistoryService.saveSession(messages);
+        setCurrentSessionId(newSessionId);
+      }
+      setChatHistory(chatHistoryService.getHistory());
+    }
+  }, [messages, currentSessionId]);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -23,15 +44,7 @@ export const useChat = () => {
     setError(null);
 
     try {
-      // 🔥 ใช้ callback เพื่อเข้าถึง messages ล่าสุด
-      const currentMessages = await new Promise<ChatMessage[]>((resolve) => {
-        setMessages(prev => {
-          resolve(prev);
-          return prev;
-        });
-      });
-
-      const response = await geminiService.sendMessage(content, currentMessages);
+      const response = await openaiService.sendMessage(content, messages);
       
       const aiMessage: ChatMessage = {
         id: v4(),
@@ -56,18 +69,42 @@ export const useChat = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []); // 👈 ไม่มี dependencies!
+  }, [messages]);
 
   const clearChat = useCallback(() => {
     setMessages([]);
     setError(null);
+    setCurrentSessionId(null);
   }, []);
+
+  const loadChat = useCallback((sessionId: string) => {
+    const session = chatHistoryService.getSession(sessionId);
+    if (session) {
+      setMessages(session.messages);
+      setCurrentSessionId(sessionId);
+      setError(null);
+    }
+  }, []);
+
+  const deleteChat = useCallback((sessionId: string) => {
+    chatHistoryService.deleteSession(sessionId);
+    setChatHistory(chatHistoryService.getHistory());
+    
+    // ถ้าลบ session ที่กำลังใช้อยู่ ให้เริ่มใหม่
+    if (sessionId === currentSessionId) {
+      clearChat();
+    }
+  }, [currentSessionId, clearChat]);
 
   return {
     messages,
     isLoading,
     error,
+    currentSessionId,
+    chatHistory,
     sendMessage,
-    clearChat
+    clearChat,
+    loadChat,
+    deleteChat
   };
 };

@@ -1,8 +1,11 @@
+// src/pages/AIChatbot.tsx
 import React, { useState, useRef } from "react";
 import { FiPlus, FiX, FiPaperclip, FiImage, FiArrowUp } from "react-icons/fi";
+import { GoTable } from "react-icons/go";
 import Navbar from "../components/common/Navbar";
+import { ChatHistory } from "../components/chat/ChatHistory";
 import { useAuth } from "../contexts/AuthContext";
-import { useChat } from "../hooks/useChat"; // เพิ่มบรรทัดนี้
+import { useChat } from "../hooks/useChat";
 import "./AIChatbot.css";
 
 interface SuggestionCard {
@@ -13,12 +16,20 @@ interface SuggestionCard {
 
 export default function AIChatbot() {
   const { profile } = useAuth();
-  const { messages, isLoading, sendMessage, clearChat } = useChat(); // เพิ่มบรรทัดนี้
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    clearChat,
+    currentSessionId,
+    chatHistory,
+    loadChat,
+    deleteChat,
+  } = useChat();
   const [message, setMessage] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Mock suggestions data
   const suggestions: SuggestionCard[] = [
     {
       icon: "👋",
@@ -47,7 +58,7 @@ export default function AIChatbot() {
   ];
 
   const handleNewChat = () => {
-    clearChat(); // เปลี่ยนจาก setMessages([])
+    clearChat();
     setMessage("");
   };
 
@@ -56,34 +67,26 @@ export default function AIChatbot() {
   };
 
   const handleSuggestionClick = (suggestion: SuggestionCard) => {
-    sendMessage(suggestion.description); // เปลี่ยนจากการ set message
+    sendMessage(suggestion.description);
   };
 
-  const handleSendMessage = (messageText: string) => {
+  const handleSendMessage = (messageText?: string) => {
     const textToSend = messageText || message.trim();
     if (textToSend && textToSend.length > 0 && !isLoading) {
-      sendMessage(textToSend); // ใช้ sendMessage จาก useChat
+      sendMessage(textToSend);
       setMessage("");
     }
   };
 
-  const handleAttachFile = () => {
-    console.log("แนบไฟล์");
-  };
-
-  const handleAttachImage = () => {
-    console.log("แนบรูปภาพ");
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSendMessage(message);
+    handleSendMessage();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e);
+      handleSendMessage();
     }
   };
 
@@ -109,30 +112,32 @@ export default function AIChatbot() {
                     className="sidebar-icon"
                   />
                   <span className="sidebar-title">AI Chatbot</span>
+                  <button
+                    className="sidebar-close-btn"
+                    onClick={handleToggleSidebar}
+                    aria-label={
+                      isSidebarCollapsed ? "เปิด sidebar" : "ปิด sidebar"
+                    }
+                  >
+                    <GoTable size={20} />
+                  </button>
                 </div>
-
-                <button
-                  className="sidebar-close-btn"
-                  onClick={handleToggleSidebar}
-                  aria-label={
-                    isSidebarCollapsed ? "เปิด sidebar" : "ปิด sidebar"
-                  }
-                >
-                  {isSidebarCollapsed ? (
-                    <FiPlus size={20} />
-                  ) : (
-                    <FiX size={20} />
-                  )}
-                </button>
               </div>
-
               {!isSidebarCollapsed && (
                 <>
                   <div className="sidebar-divider"></div>
+
                   <button className="new-chat-btn" onClick={handleNewChat}>
                     <FiPlus className="new-chat-icon" />
-                    <span>เพิ่มแชทใหม่</span>
+                    <span>เริ่มแชทใหม่</span>
                   </button>
+
+                  <ChatHistory
+                    sessions={chatHistory}
+                    currentSessionId={currentSessionId}
+                    onLoadChat={loadChat}
+                    onDeleteChat={deleteChat}
+                  />
                 </>
               )}
             </div>
@@ -201,7 +206,6 @@ export default function AIChatbot() {
                           <button
                             type="button"
                             className="attachment-btn"
-                            onClick={handleAttachFile}
                             disabled={isLoading}
                             aria-label="แนบไฟล์"
                           >
@@ -210,7 +214,6 @@ export default function AIChatbot() {
                           <button
                             type="button"
                             className="attachment-btn"
-                            onClick={handleAttachImage}
                             disabled={isLoading}
                             aria-label="แนบรูปภาพ"
                           >
@@ -223,7 +226,6 @@ export default function AIChatbot() {
                 </div>
               </div>
             ) : (
-              // Chat Interface ตาม Design ที่ต้องการ
               <div className="chat-interface">
                 <div className="chat-messages">
                   {messages.map((msg, index) => {
@@ -267,7 +269,6 @@ export default function AIChatbot() {
                   )}
                 </div>
 
-                {/* Chat Input สำหรับโหมด Chat */}
                 <div className="chat-input-fixed">
                   <form className="chat-input-form" onSubmit={handleSubmit}>
                     <div className="input-wrapper-fixed">
@@ -299,7 +300,6 @@ export default function AIChatbot() {
                           <button
                             type="button"
                             className="attachment-btn"
-                            onClick={handleAttachFile}
                             disabled={isLoading}
                             aria-label="แนบไฟล์"
                           >
@@ -308,7 +308,6 @@ export default function AIChatbot() {
                           <button
                             type="button"
                             className="attachment-btn"
-                            onClick={handleAttachImage}
                             disabled={isLoading}
                             aria-label="แนบรูปภาพ"
                           >
