@@ -1,0 +1,255 @@
+/* ==================== CHAT MESSAGES - แก้ไขใหม่ ==================== */
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+}
+
+.chat-message {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  animation: slideUp 0.3s ease-out;
+  position: relative; /* เพิ่มเพื่อให้ hover time ทำงาน */
+}
+
+.chat-message.new-conversation {
+  margin-top: 40px;
+}
+
+.chat-message:first-child.new-conversation {
+  margin-top: 0;
+}
+
+.chat-message.user {
+  justify-content: flex-end;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+/* ==================== MESSAGE BUBBLES - ลบเอฟเฟค ==================== */
+.message-bubble {
+  max-width: 75%;
+  border-radius: 40px;
+  padding: 18px;
+  word-wrap: break-word;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* ลบ box-shadow และ transition */
+}
+
+/* User bubble - สี #6881A8 ไม่มีเอฟเฟค */
+.chat-message.user .message-bubble {
+  background: #6881a8;
+  color: white;
+}
+
+/* Bot bubble - สีขาว ไม่มีกรอบ */
+.chat-message.assistant .message-bubble {
+  background: white;
+  color: #333333;
+  /* ลบ border */
+}
+
+.message-bubble.loading {
+  background: #f8f9fa;
+  max-width: 200px;
+}
+
+/* ==================== MESSAGE CONTENT ==================== */
+.message-content {
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+/* Bot หัวข้อ 24px */
+.chat-message.assistant .message-content h1,
+.chat-message.assistant .message-content h2,
+.chat-message.assistant .message-content h3,
+.chat-message.assistant .message-content strong {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+/* ==================== MESSAGE TIME - แสดงเมื่อ HOVER ==================== */
+.message-time {
+  position: absolute;
+  font-size: 12px;
+  font-weight: 300;
+  color: #9ca3af;
+  font-family: var(--font-thai);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* User message time - ด้านซ้าย */
+.chat-message.user .message-time {
+  left: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+/* Assistant message time - ด้านขวา */
+.chat-message.assistant .message-time {
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+/* แสดง time เมื่อ hover message */
+.chat-message:hover .message-time {
+  opacity: 1;
+}
+
+/* ==================== TYPING INDICATOR ==================== */
+.typing-dots {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+  align-items: center;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  background: #6881a8;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* ==================== FIXED CHAT INPUT ==================== */
+.chat-input-fixed {
+  position: sticky;
+  bottom: 0;
+  padding: 20px;
+  background: var(--color-background-secondary);
+  z-index: 10;
+}
+
+.input-wrapper-fixed {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 30px;
+  padding: 18px 22px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: var(--box-shadow);
+  gap: 12px;
+}
+
+/* ==================== ANIMATIONS - เก็บแค่ slideUp ==================== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== ลบ HOVER EFFECTS ==================== */
+/* ลบ hover effects ทั้งหมดของ bubble */
+
+/* ==================== SCROLLBAR ==================== */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .chat-message {
+    margin-bottom: 16px;
+  }
+
+  .chat-message.new-conversation {
+    margin-top: 32px;
+  }
+
+  .message-bubble {
+    max-width: 85%;
+    padding: 16px;
+    border-radius: 32px;
+  }
+
+  .message-content {
+    font-size: 18px;
+  }
+
+  .chat-message.assistant .message-content h1,
+  .chat-message.assistant .message-content h2,
+  .chat-message.assistant .message-content h3,
+  .chat-message.assistant .message-content strong {
+    font-size: 22px;
+  }
+
+  .chat-messages {
+    padding: 15px;
+  }
+
+  /* Mobile - แสดง time ด้านล่าง bubble แทน */
+  .message-time {
+    position: static;
+    opacity: 0.6;
+    font-size: 11px;
+    margin-top: 4px;
+    transform: none;
+  }
+
+  .chat-message.user .message-time {
+    text-align: right;
+  }
+
+  .chat-message.assistant .message-time {
+    text-align: left;
+  }
+}

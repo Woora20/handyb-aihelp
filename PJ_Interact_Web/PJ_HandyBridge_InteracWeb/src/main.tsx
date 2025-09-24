@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
+// import "./src/test-gemini";
 import Landing_page from "./pages/Landing_page";
 import Auth from "./pages/AuthPages";
 import AIChatbot from "./pages/AIChatbot";

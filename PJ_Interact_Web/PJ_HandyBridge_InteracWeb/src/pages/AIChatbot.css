@@ -1,22 +1,17 @@
 /* ==================== LAYOUT FOUNDATION ==================== */
 :root {
-  /* Layout Variables */
   --header-height: 92px;
   --sidebar-width: 290px;
   --content-spacing: 6px;
   --border-radius-bd: 30px;
   --border-radius-slb: 20px;
-
-  /* Colors */
   --color-background-primary: #f8f4f1;
   --color-background-secondary: #eeeae7;
   --color-sidebar: #6881a8;
-
-  /* Shadow Variable - ใช้บ่อย */
   --box-shadow: 1px 2px 10px 0px rgba(112, 112, 112, 0.25);
 }
 
-/* ==================== MAIN CONTAINER ==================== */
+/* ==================== MAIN LAYOUT ==================== */
 .ai-chatbot-page {
   width: 100vw;
   min-height: 100vh;
@@ -26,7 +21,6 @@
   overflow: visible;
 }
 
-/* ==================== CONTENT WRAPPER ==================== */
 .chatbot-main-content {
   position: relative;
   width: 100vw;
@@ -40,7 +34,6 @@
   border-radius: var(--border-radius-bd);
 }
 
-/* ==================== INNER CONTAINER ==================== */
 .chatbot-inner-container {
   position: relative;
   display: flex;
@@ -64,16 +57,14 @@
   transition: all 0.3s ease;
 }
 
-/* ✅ เมื่อ collapsed - ซ่อนพื้นหลังสีฟ้า */
 .chatbot-sidebar.collapsed {
   background-color: transparent;
   box-shadow: none;
 }
 
-/* ==================== SIDEBAR CONTENT ==================== */
 .chatbot-sidebar-content {
   padding: 36px;
-  height: 922px;
+  height: calc(100vh - var(--header-height) - 12px); /* ใช้ความสูงเต็ม */
   display: flex;
   flex-direction: column;
   color: white;
@@ -81,7 +72,6 @@
   overflow: hidden;
 }
 
-/* Header Section */
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -104,7 +94,6 @@
   transition: filter 0.3s ease;
 }
 
-/* ✅ เมื่อ collapsed เปลี่ยนสี icon */
 .chatbot-sidebar.collapsed .sidebar-icon {
   filter: none;
 }
@@ -118,7 +107,6 @@
   transition: color 0.3s ease;
 }
 
-/* ✅ เมื่อ collapsed เปลี่ยนสีข้อความ */
 .chatbot-sidebar.collapsed .sidebar-title {
   color: var(--color-sidebar);
 }
@@ -138,7 +126,6 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ✅ เมื่อ collapsed เปลี่ยนสีปุ่ม */
 .chatbot-sidebar.collapsed .sidebar-close-btn {
   color: var(--color-sidebar);
 }
@@ -147,14 +134,12 @@
   background-color: rgba(75, 100, 139, 0.1);
 }
 
-/* Divider */
 .sidebar-divider {
   height: 1px;
   background-color: rgba(255, 255, 255, 0.2);
   margin-bottom: 20px;
 }
 
-/* New Chat Button */
 .new-chat-btn {
   display: flex;
   align-items: center;
@@ -182,23 +167,21 @@
   font-size: 18px;
 }
 
-/* ==================== MAIN CONTENT AREA ==================== */
+/* ==================== MAIN CONTENT ==================== */
 .chatbot-content {
   position: relative;
   flex: 1;
-  height: 100%;
+  height: calc(100vh - var(--header-height) - 12px); /* กำหนดความสูงเต็ม */
   background-color: transparent;
   border-radius: 0;
-  overflow: visible;
+  overflow: hidden; /* เปลี่ยนจาก visible เป็น hidden */
   display: flex;
   flex-direction: column;
   min-width: 0;
   padding: 0 200px;
 }
-
-/* ✅ เมื่อ sidebar collapsed ให้ content เขยิบมาชิดซ้าย */
 .chatbot-sidebar.collapsed ~ .chatbot-content {
-  padding: 0 300px 0 100px; /* ลด padding ซ้าย */
+  padding: 0 300px 0 100px;
 }
 
 /* ==================== WELCOME SCREEN ==================== */
@@ -213,12 +196,11 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: 50px;
-  overflow: visible;
+  overflow-y: auto; /* เพิ่ม scroll ถ้าเนื้อหายาว */
   background-color: transparent;
-  min-height: 0;
+  min-height: calc(100vh - var(--header-height) - 180px);
 }
 
-/* กลุ่ม welcome message (greeting + subtitle) */
 .welcome-message {
   text-align: left;
   margin-bottom: 0;
@@ -263,7 +245,6 @@
   line-height: 1.3;
 }
 
-/* Suggestions Grid */
 .suggestions-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -312,12 +293,6 @@
   transform: translateY(-2px);
 }
 
-.suggestion-icon {
-  font-size: 32px;
-  flex-shrink: 0;
-  margin-top: 0;
-}
-
 .suggestion-title {
   font-family: var(--font-thai);
   font-size: 16px;
@@ -341,7 +316,178 @@
   background-color: transparent;
 }
 
-/* ==================== CHAT INPUT ใน WELCOME SCREEN ==================== */
+/* ==================== CHAT INTERFACE ==================== */
+.chat-interface {
+  height: calc(100vh - var(--header-height) - 12px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  padding-bottom: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  min-height: 0;
+}
+
+.chat-message {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  animation: slideUp 0.3s ease-out;
+  position: relative;
+}
+
+.chat-message.new-conversation {
+  margin-top: 40px;
+}
+
+.chat-message:first-child.new-conversation {
+  margin-top: 0;
+}
+
+.chat-message.user {
+  justify-content: flex-end;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+/* ==================== MESSAGE BUBBLES ==================== */
+.message-bubble {
+  max-width: 75%;
+  border-radius: 40px;
+  padding: 18px;
+  word-wrap: break-word;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-message.user .message-bubble {
+  background: #6881a8;
+  color: white;
+}
+
+.chat-message.assistant .message-bubble {
+  background: white;
+  color: #333333;
+}
+
+.message-bubble.loading {
+  background: #f8f9fa;
+  max-width: 200px;
+}
+
+.message-content {
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.chat-message.assistant .message-content h1,
+.chat-message.assistant .message-content h2,
+.chat-message.assistant .message-content h3,
+.chat-message.assistant .message-content strong {
+  font-size: 24px !important;
+  font-weight: 500 !important;
+  margin: 0 0 8px 0 !important;
+  color: inherit !important;
+  line-height: 1.3 !important;
+}
+
+.message-content p {
+  margin: 0 0 12px 0 !important;
+  font-size: 20px !important;
+  font-weight: 300 !important;
+  line-height: 1.5 !important;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.message-time {
+  position: absolute;
+  font-size: 12px;
+  font-weight: 300;
+  color: #9ca3af;
+  font-family: var(--font-thai);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.chat-message.user .message-time {
+  left: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+.chat-message.assistant .message-time {
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+.chat-message:hover .message-time {
+  opacity: 1;
+}
+
+/* ==================== TYPING INDICATOR ==================== */
+.typing-dots {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+  align-items: center;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  background: #6881a8;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* ==================== INPUT STYLES ==================== */
 .chat-input-inline {
   width: 100%;
   align-self: flex-start;
@@ -369,7 +515,30 @@
     0 0 0 2px color-mix(in srgb, var(--color-sidebar), transparent);
 }
 
-/* บรรทัดแรก: Input + Send */
+.chat-input-fixed {
+  position: sticky;
+  bottom: 0;
+  padding: 20px;
+  background: var(--color-background-secondary);
+  z-index: 10;
+  flex-shrink: 0; /* ไม่ให้หดขนาด */
+}
+
+.input-wrapper-fixed {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 30px;
+  padding: 18px 22px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: var(--box-shadow);
+  gap: 12px;
+  min-height: 60px;
+  max-height: 200px; /* คงขนาดเดิม */
+  transition: all 0.2s ease;
+}
+
 .input-row-main {
   display: flex;
   align-items: flex-start;
@@ -384,7 +553,7 @@
   border: none;
   background: transparent;
   font-family: var(--font-thai);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 300;
   color: var(--text-dark);
   line-height: 1.4;
@@ -394,16 +563,23 @@
   overflow-y: auto;
   word-wrap: break-word;
   white-space: pre-wrap;
-  vertical-align: top;
-  text-align: left;
   width: 100%;
-  height: 100%;
+  min-height: 24px;
+}
+
+.welcome-screen .chat-textarea {
+  font-size: 20px;
   max-height: 60px;
+  height: 100%;
+}
+
+.chat-input-fixed .chat-textarea {
+  max-height: 120px;
 }
 
 .chat-textarea::placeholder {
   color: #73726c;
-  font-size: 20px;
+  font-weight: 300;
 }
 
 .chat-textarea:disabled {
@@ -411,7 +587,6 @@
   cursor: not-allowed;
 }
 
-/* Send button 33x33px */
 .send-btn {
   width: 33px;
   height: 33px;
@@ -444,7 +619,6 @@
   cursor: not-allowed;
 }
 
-/* บรรทัดที่สอง: Attachment buttons */
 .input-row-attachments {
   display: flex;
   align-items: center;
@@ -486,7 +660,28 @@
   cursor: not-allowed;
 }
 
-/* ==================== ลบ CHAT INPUT แยกออกมา ==================== */
-.chat-input-container {
-  display: none;
+/* ==================== ANIMATIONS ==================== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== SCROLLBAR ==================== */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
 }

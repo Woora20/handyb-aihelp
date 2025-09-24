@@ -1,4 +1,4 @@
-// src/components/chat/ChatInput.tsx
+// src/components/chat/ChatInput.tsx - โค้ดเดิม (อยู่ใน documents)
 import React, { useState } from "react";
 import { FiPaperclip, FiImage, FiArrowUp } from "react-icons/fi";
 

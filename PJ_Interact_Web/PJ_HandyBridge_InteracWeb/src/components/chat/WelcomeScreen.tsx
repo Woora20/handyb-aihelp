@@ -1,72 +1,88 @@
-// src/components/chat/WelcomeScreen.tsx
-import React from "react";
+// src/components/chat/ChatInput.tsx - โค้ดเดิม (อยู่ใน documents)
+import React, { useState } from "react";
+import { FiPaperclip, FiImage, FiArrowUp } from "react-icons/fi";
 
-interface SuggestionCard {
-  icon: string;
-  title: string;
-  description: string;
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+  onAttachFile?: () => void;
+  onAttachImage?: () => void;
+  disabled?: boolean;
 }
 
-interface WelcomeScreenProps {
-  userName?: string;
-  onSuggestionClick: (suggestion: string) => void;
-}
-
-export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
-  userName = "username",
-  onSuggestionClick,
+export const ChatInput: React.FC<ChatInputProps> = ({
+  onSendMessage,
+  onAttachFile,
+  onAttachImage,
+  disabled = false,
 }) => {
-  const suggestions: SuggestionCard[] = [
-    {
-      icon: "👋",
-      title: "ภาษามือคืออะไร?",
-      description:
-        "เป็นภาษาที่ใช้รูปพิมพากษฎญมทีอธอารมาะเชรณญสารดถกการเบีอคือระเซกใท้เไซจอณะ นำนใกใช้เยกองใใส?",
-    },
-    {
-      icon: "🤟",
-      title: "สอนคำทักทายให้หน่อย",
-      description:
-        "อยากเรียนคำทักทายพื้นฐานภาษามือ เช่น สวัสดี ขอบคุณ ขอโทษ ทำภาษามือยังไง?",
-    },
-    {
-      icon: "☝️",
-      title: "เริ่มมือใหม่บาง?",
-      description: "ช่วยแนะนำพิจองรีเงิน ในเว็บไซต์ และช่วยอาการใช้งานส่วนน้อย",
-    },
-    {
-      icon: "🤚",
-      title: "แนะนำการฝึกใหม่",
-      description:
-        "วิธีการฝึกฝนภาษามือปรัปสำคัญราว และการควบคุมท่าทำด้วยใกลส่ำคัญศน",
-    },
-  ];
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim() && !disabled) {
+      onSendMessage(message.trim());
+      setMessage("");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
 
   return (
-    <div className="welcome-screen">
-      <div className="welcome-message">
-        <div className="welcome-greeting">
-          <span className="wave-emoji">👋</span>
-          <h1>สวัสดี, {userName}</h1>
-        </div>
-        <p className="welcome-subtitle">วันนี้มีอะไรให้ ดันจ่วยมั่ย?</p>
-      </div>
+    <div className="chat-input-container">
+      <form className="chat-input-form" onSubmit={handleSubmit}>
+        <div className="input-wrapper">
+          {/* บรรทัดแรก: Textarea + Send Button */}
+          <div className="input-row-main">
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="ถามฉันได้ทุกอย่างกับภาษามือเลย......"
+              className="chat-textarea"
+              disabled={disabled}
+              rows={1}
+            />
 
-      <div className="suggestions-grid">
-        {suggestions.map((suggestion, index) => (
-          <button
-            key={index}
-            className="suggestion-card"
-            onClick={() => onSuggestionClick(suggestion.title)}
-          >
-            <div className="suggestion-icon">{suggestion.icon}</div>
-            <div className="suggestion-content">
-              <h3 className="suggestion-title">{suggestion.title}</h3>
-              <p className="suggestion-description">{suggestion.description}</p>
+            <button
+              type="submit"
+              className={`send-btn ${message.trim() ? "active" : ""}`}
+              disabled={!message.trim() || disabled}
+              aria-label="ส่งข้อความ"
+            >
+              <FiArrowUp size={16} />
+            </button>
+          </div>
+
+          {/* บรรทัดที่สอง: Attachment Buttons */}
+          <div className="input-row-attachments">
+            <div className="attachment-buttons">
+              <button
+                type="button"
+                className="attachment-btn"
+                onClick={onAttachFile}
+                disabled={disabled}
+                aria-label="แนบไฟล์"
+              >
+                <FiPaperclip size={24} />
+              </button>
+              <button
+                type="button"
+                className="attachment-btn"
+                onClick={onAttachImage}
+                disabled={disabled}
+                aria-label="แนบรูปภาพ"
+              >
+                <FiImage size={24} />
+              </button>
             </div>
-          </button>
-        ))}
-      </div>
+          </div>
+        </div>
+      </form>
     </div>
   );
 };
