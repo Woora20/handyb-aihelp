@@ -13,7 +13,6 @@ interface KnowledgeItem {
   answer: string;
 }
 
-// Knowledge Base สำหรับคำตอบที่กำหนดไว้
 const knowledgeBase: KnowledgeItem[] = [
   {
     keywords: ["เว็บนี้", "เว็บไซต์", "handy bridge", "แพลตฟอร์ม", "ระบบ", "ฟีเจอร์", "มีอะไรบ้าง"],
@@ -73,7 +72,6 @@ export class OpenAIService {
         return knowledgeAnswer;
       }
 
-      // ถ้าไม่มีใน knowledge base ให้ใช้ OpenAI
       const messages = [
         {
           role: 'system' as const,
