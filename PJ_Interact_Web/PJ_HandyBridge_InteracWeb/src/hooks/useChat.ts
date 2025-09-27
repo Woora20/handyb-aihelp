@@ -1,5 +1,5 @@
 // src/hooks/useChat.ts
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { openaiService, type ChatMessage } from '../services/openaiService';
 import { chatHistoryService, type ChatSession } from '../services/chatHistoryService';
 import { v4 } from 'uuid';
@@ -10,23 +10,67 @@ export const useChat = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatSession[]>([]);
+  
+  // 🔥 เพิ่ม ref เพื่อป้องกันบันทึกซ้ำ
+  const isSavingRef = useRef(false);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // โหลดประวัติเมื่อเริ่มต้น
   useEffect(() => {
-    setChatHistory(chatHistoryService.getHistory());
+    const loadHistory = async () => {
+      console.log('📋 Loading history...');
+      const history = await chatHistoryService.getHistory();
+      setChatHistory(history);
+    };
+    loadHistory();
   }, []);
 
-  // บันทึกการสนทนาเมื่อมีการเปลี่ยนแปลง
+  // 🔥 บันทึกแบบ debounce (รอ 500ms ถึงบันทึก)
   useEffect(() => {
-    if (messages.length > 0) {
-      if (currentSessionId) {
-        chatHistoryService.updateSession(currentSessionId, messages);
-      } else {
-        const newSessionId = chatHistoryService.saveSession(messages);
-        setCurrentSessionId(newSessionId);
-      }
-      setChatHistory(chatHistoryService.getHistory());
+    if (messages.length === 0) return;
+
+    // ยกเลิก timeout เดิม (ถ้ามี)
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
+
+    // ตั้ง timeout ใหม่
+    saveTimeoutRef.current = setTimeout(async () => {
+      if (isSavingRef.current) {
+        console.log('⏭️ Skipping save (already saving)');
+        return;
+      }
+
+      isSavingRef.current = true;
+      console.log('💾 Saving session...', { currentSessionId, messageCount: messages.length });
+
+      try {
+        if (currentSessionId) {
+          // อัพเดท session เดิม
+          await chatHistoryService.updateSession(currentSessionId, messages);
+        } else {
+          // สร้าง session ใหม่
+          const newSessionId = await chatHistoryService.saveSession(messages);
+          setCurrentSessionId(newSessionId);
+        }
+
+        // โหลดประวัติใหม่
+        const freshHistory = await chatHistoryService.getHistory();
+        setChatHistory(freshHistory);
+        console.log('✅ History updated:', freshHistory.length);
+      } catch (err) {
+        console.error('❌ Save error:', err);
+      } finally {
+        isSavingRef.current = false;
+      }
+    }, 500); // 🔥 รอ 500ms ถึงจะบันทึก
+
+    // Cleanup
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, [messages, currentSessionId]);
 
   const sendMessage = useCallback(async (content: string) => {
@@ -77,8 +121,9 @@ export const useChat = () => {
     setCurrentSessionId(null);
   }, []);
 
-  const loadChat = useCallback((sessionId: string) => {
-    const session = chatHistoryService.getSession(sessionId);
+  const loadChat = useCallback(async (sessionId: string) => {
+    console.log('📂 Loading chat:', sessionId);
+    const session = await chatHistoryService.getSession(sessionId);
     if (session) {
       setMessages(session.messages);
       setCurrentSessionId(sessionId);
@@ -86,11 +131,13 @@ export const useChat = () => {
     }
   }, []);
 
-  const deleteChat = useCallback((sessionId: string) => {
-    chatHistoryService.deleteSession(sessionId);
-    setChatHistory(chatHistoryService.getHistory());
+  const deleteChat = useCallback(async (sessionId: string) => {
+    console.log('🗑️ Deleting chat:', sessionId);
+    await chatHistoryService.deleteSession(sessionId);
     
-    // ถ้าลบ session ที่กำลังใช้อยู่ ให้เริ่มใหม่
+    const freshHistory = await chatHistoryService.getHistory();
+    setChatHistory(freshHistory);
+    
     if (sessionId === currentSessionId) {
       clearChat();
     }

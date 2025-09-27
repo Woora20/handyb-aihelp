@@ -1,11 +1,5 @@
 // src/services/chatHistoryService.ts
-export interface ChatSession {
-  id: string;
-  title: string;
-  messages: ChatMessage[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { supabase } from '../lib/supabase';
 
 export interface ChatMessage {
   id: string;
@@ -14,100 +8,142 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
-export class ChatHistoryService {
-  private storageKey = 'chatbot-history';
+export interface ChatSession {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-  // ดึงประวัติทั้งหมด
-  getHistory(): ChatSession[] {
+export class ChatHistoryService {
+  // ดึงประวัติจาก Supabase
+  async getHistory(): Promise<ChatSession[]> {
     try {
-      const stored = localStorage.getItem(this.storageKey);
-      if (!stored) return [];
-      
-      const sessions: ChatSession[] = JSON.parse(stored);
-      return sessions.map(session => ({
-        ...session,
-        createdAt: new Date(session.createdAt),
-        updatedAt: new Date(session.updatedAt),
-        messages: session.messages.map(msg => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
-        }))
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log('❌ No user logged in');
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        throw error;
+      }
+
+      console.log('✅ Loaded sessions:', data?.length || 0);
+
+      return (data || []).map(session => ({
+        id: session.id,
+        title: session.title,
+        messages: session.messages as ChatMessage[],
+        createdAt: new Date(session.created_at),
+        updatedAt: new Date(session.updated_at)
       }));
     } catch (error) {
-      console.error('Error loading chat history:', error);
+      console.error('❌ Error loading chat history:', error);
       return [];
     }
   }
 
   // บันทึก session ใหม่
-  saveSession(messages: ChatMessage[]): string {
+  async saveSession(messages: ChatMessage[]): Promise<string> {
     if (messages.length === 0) return '';
 
-    const sessions = this.getHistory();
-    const sessionId = this.generateId();
-    const title = this.generateTitle(messages[0]?.content || 'การสนทนาใหม่');
-    
-    const newSession: ChatSession = {
-      id: sessionId,
-      title,
-      messages: [...messages],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('❌ User not authenticated');
+        throw new Error('User not authenticated');
+      }
 
-    sessions.unshift(newSession); // เพิ่มที่ด้านบน
-    this.saveToStorage(sessions.slice(0, 20)); // เก็บแค่ 20 session ล่าสุด
-    
-    return sessionId;
+      const title = this.generateTitle(messages[0]?.content || 'การสนทนาใหม่');
+
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .insert({
+          user_id: user.id,
+          title,
+          messages: messages,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      console.log('✅ Session created:', data.id);
+      return data.id;
+    } catch (error) {
+      console.error('❌ Error saving session:', error);
+      return '';
+    }
   }
 
-  // อัพเดท session ที่มีอยู่
-  updateSession(sessionId: string, messages: ChatMessage[]): void {
-    const sessions = this.getHistory();
-    const sessionIndex = sessions.findIndex(s => s.id === sessionId);
-    
-    if (sessionIndex !== -1) {
-      sessions[sessionIndex] = {
-        ...sessions[sessionIndex],
-        messages: [...messages],
-        updatedAt: new Date()
-      };
-      this.saveToStorage(sessions);
+  // อัพเดท session
+  async updateSession(sessionId: string, messages: ChatMessage[]): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('chat_sessions')
+        .update({
+          messages: messages,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', sessionId);
+
+      if (error) throw error;
+      console.log('✅ Session updated:', sessionId);
+    } catch (error) {
+      console.error('❌ Error updating session:', error);
     }
   }
 
   // ลบ session
-  deleteSession(sessionId: string): void {
-    const sessions = this.getHistory();
-    const filteredSessions = sessions.filter(s => s.id !== sessionId);
-    this.saveToStorage(filteredSessions);
-  }
-
-  // ดึง session เดียว
-  getSession(sessionId: string): ChatSession | null {
-    const sessions = this.getHistory();
-    return sessions.find(s => s.id === sessionId) || null;
-  }
-
-  // ล้างประวัติทั้งหมด
-  clearHistory(): void {
-    localStorage.removeItem(this.storageKey);
-  }
-
-  private saveToStorage(sessions: ChatSession[]): void {
+  async deleteSession(sessionId: string): Promise<void> {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(sessions));
+      const { error } = await supabase
+        .from('chat_sessions')
+        .delete()
+        .eq('id', sessionId);
+
+      if (error) throw error;
+      console.log('✅ Session deleted:', sessionId);
     } catch (error) {
-      console.error('Error saving chat history:', error);
+      console.error('❌ Error deleting session:', error);
     }
   }
 
-  private generateId(): string {
-    return `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  // ดึง session เดียว
+  async getSession(sessionId: string): Promise<ChatSession | null> {
+    try {
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .select('*')
+        .eq('id', sessionId)
+        .single();
+
+      if (error) throw error;
+
+      return {
+        id: data.id,
+        title: data.title,
+        messages: data.messages as ChatMessage[],
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at)
+      };
+    } catch (error) {
+      console.error('❌ Error getting session:', error);
+      return null;
+    }
   }
 
   private generateTitle(firstMessage: string): string {
-    // ตัดข้อความให้เหลือ 30 ตัวอักษร
     const title = firstMessage.slice(0, 30);
     return title.length < firstMessage.length ? `${title}...` : title;
   }

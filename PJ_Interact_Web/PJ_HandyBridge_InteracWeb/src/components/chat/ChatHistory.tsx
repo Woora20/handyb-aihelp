@@ -11,7 +11,6 @@ interface ChatHistoryProps {
   onDeleteChat: (sessionId: string) => void;
 }
 
-// Component สำหรับ dropdown menu ภายใน
 const HistoryItemMenu: React.FC<{ onDelete: () => void }> = ({ onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -74,12 +73,16 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
   onLoadChat,
   onDeleteChat,
 }) => {
-  // จัดกลุ่ม sessions ตามวันที่
+  console.log("📜 ChatHistory render:", {
+    sessionCount: sessions.length,
+    currentSessionId,
+    sessions: sessions.map((s) => ({ id: s.id, title: s.title })),
+  });
+
   const groupSessionsByDate = (sessions: ChatSession[]) => {
     const groups: { [key: string]: ChatSession[] } = {};
     const now = new Date();
 
-    // สร้างวันที่ปัจจุบันแบบ reset เวลาเป็น 00:00:00
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const todayTime = today.getTime();
 
@@ -92,7 +95,6 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
       );
       const sessionTime = sessionDateOnly.getTime();
 
-      // คำนวณความต่างเป็นวัน
       const diffInMs = todayTime - sessionTime;
       const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
@@ -116,7 +118,6 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
       groups[groupKey].push(session);
     });
 
-    // เรียงข้อมูลในแต่ละกลุ่มตามเวลา (ใหม่สุดก่อน)
     Object.keys(groups).forEach((key) => {
       groups[key].sort(
         (a, b) =>
@@ -135,18 +136,6 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
     "เดือนนี้",
     "เก่ากว่านี้",
   ];
-
-  // Debug - ดูข้อมูลการจัดกลุ่ม
-  console.log("Grouped sessions:", groupedSessions);
-  console.log(
-    "Current sessions:",
-    sessions.map((s) => ({
-      id: s.id,
-      title: s.title,
-      updatedAt: s.updatedAt,
-      date: new Date(s.updatedAt).toLocaleDateString("th-TH"),
-    }))
-  );
 
   if (sessions.length === 0) {
     return (
