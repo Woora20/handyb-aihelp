@@ -1,17 +1,24 @@
 // src/pages/AIChatbot.tsx
-import React, { useState, useRef } from "react";
-import { FiPaperclip, FiImage, FiArrowUp, FiPlus } from "react-icons/fi";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  FiPaperclip,
+  FiImage,
+  FiArrowUp,
+  FiPlus,
+  FiArrowDown,
+} from "react-icons/fi";
 import { GoTable } from "react-icons/go";
 import Navbar from "../components/common/Navbar";
 import { ChatHistory } from "../components/chat/ChatHistory";
 import { useAuth } from "../contexts/AuthContext";
 import { useChat } from "../hooks/useChat";
 import "./AIChatbot.css";
-// เพิ่มที่ด้านบนของ AIChatbot.tsx
+
 import signLanguage1 from "../assets/images/hand-img/sign-language-1.png";
 import signLanguage2 from "../assets/images/hand-img/sign-language-2.png";
 import signLanguage3 from "../assets/images/hand-img/sign-language-3.png";
 import signLanguage4 from "../assets/images/hand-img/sign-language-4.png";
+
 interface SuggestionCard {
   icon: string;
   title: string;
@@ -31,9 +38,14 @@ export default function AIChatbot() {
     loadChat,
     deleteChat,
   } = useChat();
+
   const [message, setMessage] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatMessagesRef = useRef<HTMLDivElement>(null);
 
   const suggestions: SuggestionCard[] = [
     {
@@ -66,6 +78,35 @@ export default function AIChatbot() {
     },
   ];
 
+  // 🔥 Scroll to bottom เมื่อมีข้อความใหม่
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
+
+  // 🔥 Scroll to bottom เมื่อโหลดประวัติ
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [currentSessionId]);
+
+  // 🔥 ตรวจสอบการ scroll เพื่อแสดง/ซ่อนปุ่ม
+  useEffect(() => {
+    const chatContainer = chatMessagesRef.current;
+    if (!chatContainer) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainer;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isNearBottom && messages.length > 0);
+    };
+
+    chatContainer.addEventListener("scroll", handleScroll);
+    return () => chatContainer.removeEventListener("scroll", handleScroll);
+  }, [messages.length]);
+
   const handleNewChat = () => {
     clearChat();
     setMessage("");
@@ -97,6 +138,11 @@ export default function AIChatbot() {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  // 🔥 ฟังก์ชัน scroll to bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const userName = profile?.full_name?.split(" ")[0] || "username";
@@ -186,7 +232,6 @@ export default function AIChatbot() {
                             src={suggestion.image}
                             alt={suggestion.title}
                             onError={(e) => {
-                              // ถ้าโหลดรูปไม่ได้ ให้ซ่อน element นี้
                               (e.target as HTMLImageElement).style.display =
                                 "none";
                             }}
@@ -262,7 +307,7 @@ export default function AIChatbot() {
               </div>
             ) : (
               <div className="chat-interface">
-                <div className="chat-messages">
+                <div className="chat-messages" ref={chatMessagesRef}>
                   {messages.map((msg, index) => {
                     const prevMsg = messages[index - 1];
                     const isNewConversation =
@@ -302,7 +347,20 @@ export default function AIChatbot() {
                       </div>
                     </div>
                   )}
+
+                  <div ref={messagesEndRef} />
                 </div>
+
+                {/* 🔥 ปุ่ม Scroll to Bottom */}
+                <button
+                  className={`scroll-to-bottom ${
+                    showScrollButton ? "visible" : ""
+                  }`}
+                  onClick={scrollToBottom}
+                  aria-label="เลื่อนลงด้านล่าง"
+                >
+                  <FiArrowDown size={20} />
+                </button>
 
                 <div className="chat-input-fixed">
                   <form className="chat-input-form" onSubmit={handleSubmit}>

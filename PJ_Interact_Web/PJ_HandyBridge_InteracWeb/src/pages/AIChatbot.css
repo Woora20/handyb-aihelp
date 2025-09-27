@@ -350,7 +350,7 @@
 
 /* ==================== CHAT INTERFACE ==================== */
 .chat-interface {
-  height: calc(100vh - var(--header-height) - 12px);
+  position: relative; /* 🔥 เพิ่มเพื่อให้ absolute positioning ทำงาน */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -787,4 +787,42 @@
   z-index: 1;
   height: 180px; /* เพิ่มความสูงจาก 170px */
   box-sizing: border-box;
+}
+/* ==================== SCROLL TO BOTTOM BUTTON ==================== */
+.scroll-to-bottom {
+  position: absolute;
+  bottom: 140px; /* 🔥 ลดจาก 180px เป็น 140px (เขยิบลงมา) */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.scroll-to-bottom.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-bottom:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+  transform: translateX(-50%) scale(1.05);
+}
+
+.scroll-to-bottom:active {
+  transform: translateX(-50%) scale(0.95);
 }
