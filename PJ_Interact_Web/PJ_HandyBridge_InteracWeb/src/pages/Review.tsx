@@ -20,7 +20,7 @@ export default function Review() {
     rating: 0,
     favoriteFeature: "",
     understandingLevel: "",
-    feedback: "",
+    review_comment: "",
   });
 
   const [errors, setErrors] = useState<any>({});
@@ -66,18 +66,26 @@ export default function Review() {
   const validateForm = () => {
     const newErrors: any = {};
 
+    // ชื่อ-สกุล
     if (!formData.fullName.trim()) {
       newErrors.fullName = "กรุณากรอกชื่อ-สกุล";
     }
 
+    // อีเมล
     if (!formData.email.trim()) {
       newErrors.email = "กรุณากรอกอีเมล";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
     }
 
+    // Rating
     if (formData.rating === 0) {
       newErrors.rating = "กรุณาให้คะแนน";
+    }
+
+    // คอมเม้นต์ (เพิ่มใหม่)
+    if (!formData.review_comment.trim()) {
+      newErrors.review_comment = "กรุณากรอกคอมเม้นต์";
     }
 
     setErrors(newErrors);
@@ -100,7 +108,7 @@ export default function Review() {
           new_feature_request: formData.newFeature,
           favorite_feature: formData.favoriteFeature,
           understanding_level: formData.understandingLevel,
-          feedback: formData.feedback,
+          review_comment: formData.review_comment,
           user_id: user?.id || null,
           created_at: new Date().toISOString(),
         },
@@ -278,17 +286,23 @@ export default function Review() {
               </div>
             </div>
 
-            {/* Full Width: Feedback */}
             <div className="form-field full-width">
-              <label>ปัญหาที่พบ หรือข้อเสนอแนะ</label>
+              <label>คอมเม้นต์และข้อเสนอแนะ*</label>
               <textarea
-                value={formData.feedback}
-                onChange={(e) => handleInputChange("feedback", e.target.value)}
-                placeholder="เช่น ข้อความเล็กเกินไป, อยากให้มีคำศัพท์เกี่ยวกับการทำงาน, AI ตอบไม่ตรงคำถาม"
-                className="feedback-textarea"
-                rows={4}
+                value={formData.review_comment}
+                onChange={(e) =>
+                  handleInputChange("review_comment", e.target.value)
+                }
+                placeholder="บอกเล่าประสบการณ์การใช้งาน สิ่งที่ชอบ สิ่งที่อยากให้ปรับปรุง หรือคำแนะนำใดๆ ที่อยากบอกทีมพัฒนา..."
+                className={`feedback-textarea ${
+                  errors.review_comment ? "error" : ""
+                }`}
+                rows={2}
                 disabled={isLoading}
               />
+              {errors.review_comment && (
+                <span className="error-text">{errors.review_comment}</span>
+              )}
             </div>
 
             <button
