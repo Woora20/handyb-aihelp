@@ -1,0 +1,307 @@
+/* src/pages/Review.css */
+
+/* ==================== INHERIT FROM SUBMITWORD ==================== */
+.review-page {
+  min-height: 100vh;
+  background-color: var(--body-color, #f8f4f1);
+}
+
+.review-main {
+  padding: 40px 100px 80px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.review-container {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+/* Toggle, Header, Form Layout - Same as SubmitWord */
+.page-toggle,
+.toggle-btn,
+.toggle-btn.active,
+.review-header,
+.review-header h1,
+.review-header p,
+.review-form,
+.form-row,
+.form-field,
+.form-field.full-width,
+.form-field label,
+.form-field input,
+.submit-button,
+.error-text,
+.error-message.general,
+.loading-overlay,
+.loading-spinner {
+  /* Inherit styles from SubmitWord.css */
+}
+
+/* Copy exact styles from SubmitWord.css */
+.page-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 48px;
+  background-color: #4b648b1a;
+  border-radius: 60px;
+  padding: 3px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.toggle-btn {
+  padding: 12px 48px;
+  border: none;
+  background: none;
+  border-radius: 60px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background-color: var(--brand-color, #4b648b);
+  color: white;
+}
+
+.review-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.review-header h1 {
+  font-family: var(--font-thai);
+  font-size: 48px;
+  font-weight: 300;
+  color: var(--text-dark);
+  margin: 0 0 24px 0;
+}
+
+.review-header p {
+  font-family: var(--font-thai);
+  font-size: 24px;
+  font-weight: 300;
+  color: #4b4b4a;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-dark);
+}
+
+.form-field input,
+.form-field textarea,
+.form-select {
+  width: 100%;
+  padding: 20px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  background-color: #f5f1eb;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder,
+.form-select {
+  color: #9ca3af;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--brand-color);
+  box-shadow: 0 0 0 3px rgba(75, 100, 139, 0.1);
+}
+
+/* ==================== RATING SPECIFIC ==================== */
+.rating-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f5f1eb;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px 16px;
+  height: 70px;
+  box-sizing: border-box;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px;
+}
+
+.star-btn:hover {
+  transform: scale(1.1);
+}
+
+.star-btn.active {
+  color: #fbbf24;
+}
+
+.star-btn.active svg {
+  fill: #fbbf24;
+  stroke: #fbbf24;
+}
+
+.rating-label {
+  margin-left: auto;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  color: #9ca3af;
+}
+
+/* ==================== DROPDOWN SPECIFIC ==================== */
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 20px;
+  padding-right: 48px;
+}
+
+/* ==================== TEXTAREA ==================== */
+.feedback-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ==================== SUBMIT BUTTON ==================== */
+.submit-button {
+  width: fit-content;
+  margin: 48px auto 0;
+  padding: 16px 48px;
+  background-color: var(--brand-color);
+  color: white;
+  border: none;
+  border-radius: 60px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #3a5270;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 100, 139, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==================== ERROR STATES ==================== */
+.form-field input.error,
+.form-field textarea.error,
+.form-select.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.error-text {
+  font-family: var(--font-thai);
+  font-size: 14px;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+/* ==================== LOADING ==================== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--brand-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .review-main {
+    padding: 30px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .review-header h1 {
+    font-size: 36px;
+  }
+
+  .review-header p {
+    font-size: 18px;
+  }
+}
