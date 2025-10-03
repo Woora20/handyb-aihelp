@@ -1,0 +1,88 @@
+/* src/pages/admin/WordSubmissions.css */
+.admin-submissions {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.admin-submissions h1 {
+  font-family: var(--font-thai);
+  font-size: 36px;
+  font-weight: 400;
+  margin-bottom: 30px;
+}
+
+.submissions-list {
+  display: grid;
+  gap: 20px;
+}
+
+.submission-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.submission-card h3 {
+  font-family: var(--font-thai);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--brand-color);
+  margin: 0 0 12px 0;
+}
+
+.submission-card p {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  color: #6b7280;
+  margin: 8px 0;
+}
+
+.submission-card a {
+  color: var(--brand-color);
+  text-decoration: none;
+  font-family: var(--font-thai);
+  font-size: 16px;
+}
+
+.submission-card a:hover {
+  text-decoration: underline;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.approve-btn,
+.reject-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.approve-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #059669;
+}
+
+.reject-btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #dc2626;
+}

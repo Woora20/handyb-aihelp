@@ -1,0 +1,362 @@
+/* src/pages/SubmitWord.css */
+
+/* ==================== PAGE LAYOUT ==================== */
+.submit-word-page {
+  min-height: 100vh;
+  background-color: var(--body-color, #f8f4f1);
+}
+
+.submit-word-main {
+  padding: 40px 100px 80px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.submit-word-container {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+/* ==================== TOGGLE BUTTONS ==================== */
+.page-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 48px;
+  background-color: #4b648b1a;
+  border-radius: 60px;
+  padding: 3px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.toggle-btn {
+  padding: 12px 48px;
+  border: none;
+  background: none;
+  border-radius: 60px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background-color: var(--brand-color, #4b648b);
+  color: white;
+}
+
+.toggle-btn:not(.active):hover {
+  background-color: rgba(75, 100, 139, 0.1);
+}
+
+/* ==================== HEADER ==================== */
+.submit-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.submit-header h1 {
+  font-family: var(--font-thai);
+  font-size: 48px;
+  font-weight: 300;
+  color: var(--text-dark);
+  margin: 0 0 24px 0;
+}
+
+.submit-header p {
+  font-family: var(--font-thai);
+  font-size: 24px;
+  font-weight: 300;
+  color: #4b4b4a;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==================== FORM ==================== */
+.submit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-dark);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 20px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 300;
+  background-color: #f5f1eb;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #9ca3af;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.video-url-input::placeholder {
+  font-size: 14px !important;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--brand-color);
+  box-shadow: 0 0 0 3px rgba(75, 100, 139, 0.1);
+}
+
+/* ==================== VIDEO INPUT ==================== */
+.video-input-group {
+  display: flex;
+  gap: 12px;
+}
+
+.video-url-input {
+  flex: 1;
+}
+
+.upload-btn {
+  padding: 20px 24px;
+  background-color: var(--brand-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 300;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.upload-btn:hover {
+  background-color: #3a5270;
+}
+
+.upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upload-btn svg {
+  font-size: 18px;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  font-family: var(--font-thai);
+  font-size: 14px;
+  color: #374151;
+}
+
+.remove-file {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 4px;
+}
+
+.remove-file:hover {
+  color: #dc2626;
+}
+
+/* ==================== TEXTAREA ==================== */
+.description-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ==================== SUBMIT BUTTON ==================== */
+.submit-button {
+  width: fit-content;
+  margin: 48px auto 0;
+  padding: 16px 48px;
+  background-color: var(--brand-color);
+  color: white;
+  border: none;
+  border-radius: 60px;
+  font-family: var(--font-thai);
+  font-size: 20px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #3a5270;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 100, 139, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==================== ERROR STATES ==================== */
+.form-field input.error,
+.form-field textarea.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.error-text {
+  font-family: var(--font-thai);
+  font-size: 14px;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.error-message.general {
+  padding: 12px 16px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  text-align: center;
+}
+
+/* ==================== LOADING ==================== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--brand-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .submit-word-main {
+    padding: 40px 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .submit-word-main {
+    padding: 30px 20px;
+  }
+
+  .submit-header h1 {
+    font-size: 36px;
+  }
+
+  .submit-header p {
+    font-size: 18px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .page-toggle {
+    width: 100%;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  .video-input-group {
+    flex-direction: column;
+  }
+
+  .upload-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .submit-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .submit-header h1 {
+    font-size: 28px;
+  }
+
+  .submit-header p {
+    font-size: 16px;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    font-size: 16px;
+    padding: 16px 12px;
+  }
+}
