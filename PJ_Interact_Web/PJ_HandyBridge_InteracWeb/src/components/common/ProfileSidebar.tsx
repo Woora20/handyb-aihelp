@@ -1,8 +1,9 @@
-// src/components/common/ProfileSidebar.tsx
+// src/components/common/ProfileSidebar.tsx - แก้ไข
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { IoLogOutOutline } from "react-icons/io5";
+import EditProfileModal from "../profile/EditProfileModal"; // 🔥 เพิ่ม
 import "./ProfileSidebar.css";
 
 interface ProfileSidebarProps {
@@ -23,11 +24,16 @@ export default function ProfileSidebar({
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [showEditButton, setShowEditButton] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // 🔥 เพิ่ม
 
   const handleSignOut = async () => {
     await signOut();
     onClose();
     navigate("/");
+  };
+
+  const handleEditClick = () => {
+    setShowEditModal(true); // 🔥 เปิด Modal
   };
 
   const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -44,7 +50,6 @@ export default function ProfileSidebar({
 
       {/* Sidebar Panel */}
       <div className={`sidebar-panel ${isOpen ? "open" : ""}`}>
-        {/* Close Button */}
         <button className="sidebar-close" onClick={onClose}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -56,7 +61,6 @@ export default function ProfileSidebar({
           </svg>
         </button>
 
-        {/* Profile Avatar */}
         <div
           className="sidebar-avatar"
           onMouseEnter={() => setShowEditButton(true)}
@@ -67,7 +71,9 @@ export default function ProfileSidebar({
             alt={profile.full_name}
           />
           {showEditButton && (
-            <button className="avatar-edit">
+            <button className="avatar-edit" onClick={handleEditClick}>
+              {" "}
+              {/* 🔥 เปลี่ยน */}
               <svg
                 width="16"
                 height="16"
@@ -81,7 +87,6 @@ export default function ProfileSidebar({
           )}
         </div>
 
-        {/* Profile Content */}
         <div className="sidebar-content">
           <h2 className="sidebar-title">โปรไฟล์</h2>
           <p className="info-text">ชื่อ-สกุล: {profile.full_name}</p>
@@ -91,6 +96,12 @@ export default function ProfileSidebar({
           </button>
         </div>
       </div>
+
+      {/* 🔥 Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+      />
     </>
   );
 }

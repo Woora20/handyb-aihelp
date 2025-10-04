@@ -1,4 +1,4 @@
-// src/pages/SubmitWord.tsx
+// src/pages/SubmitWord.tsx - แก้ไขให้บังคับ login
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
@@ -14,6 +14,7 @@ export default function SubmitWord() {
   const [isLoading, setIsLoading] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string>("");
+  const [showLoginMessage, setShowLoginMessage] = useState(false); // 🔥 เพิ่ม
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -39,6 +40,7 @@ export default function SubmitWord() {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev: any) => ({ ...prev, [field]: "" }));
+    setShowLoginMessage(false); // 🔥 ซ่อนข้อความเมื่อมีการแก้ไข
   };
 
   const handleVideoSelect = () => {
@@ -87,6 +89,13 @@ export default function SubmitWord() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 🔥 ตรวจสอบ login ก่อน
+    if (!user) {
+      setShowLoginMessage(true);
+      setErrors({});
+      return;
+    }
 
     if (!validateForm()) return;
 
@@ -152,6 +161,23 @@ export default function SubmitWord() {
 
           {/* Form */}
           <form className="submit-form" onSubmit={handleSubmit}>
+            {/* 🔥 แสดงข้อความ login */}
+            {showLoginMessage && (
+              <div className="login-required-message">
+                <p>
+                  กรุณา{" "}
+                  <button
+                    type="button"
+                    className="login-link"
+                    onClick={() => navigate("/auth?mode=login")}
+                  >
+                    เข้าสู่ระบบ
+                  </button>{" "}
+                  ก่อนส่งคำศัพท์
+                </p>
+              </div>
+            )}
+
             {errors.general && (
               <div className="error-message general">{errors.general}</div>
             )}

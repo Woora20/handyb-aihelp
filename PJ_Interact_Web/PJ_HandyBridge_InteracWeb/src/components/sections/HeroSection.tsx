@@ -1,7 +1,10 @@
 // src/components/sections/HeroSection.tsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="hero-section">
       <h1>
@@ -11,20 +14,20 @@ export const HeroSection: React.FC = () => {
       </h1>
 
       <div className="hero-buttons">
-        <button className="hero-btn">
+        <button className="hero-btn" onClick={() => navigate("/search")}>
           <img
             src="/src/assets/icons/search-icon.png"
             className="btn-icon"
-            alt="ข้อความ"
+            alt="ค้นหา"
           />
           <span className="btn-text">ค้นหาภาษามือ</span>
         </button>
 
-        <button className="hero-btn">
+        <button className="hero-btn" onClick={() => navigate("/ai-assistant")}>
           <img
             src="/src/assets/icons/chatai-icon.png"
             className="btn-icon"
-            alt="ข้อความ"
+            alt="AI"
           />
           <span className="btn-text">AI ผู้ช่วยภาษามือ</span>
         </button>
