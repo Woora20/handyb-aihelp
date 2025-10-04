@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import { FiStar } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
 import "./Review.css";
@@ -42,6 +43,17 @@ export default function Review() {
     "เข้าใจดี",
     "เข้าใจดีมาก",
   ];
+
+  const getRatingText = (rating: number) => {
+    const texts = {
+      1: "ต้องปรับปรุง",
+      2: "พอใช้",
+      3: "ดี",
+      4: "ดีมาก",
+      5: "เยี่ยมมาก",
+    };
+    return texts[rating as keyof typeof texts] || "";
+  };
 
   // Auto-fill user data
   useEffect(() => {
@@ -216,28 +228,39 @@ export default function Review() {
               <div className="form-field">
                 <label>คะแนนความพึงพอใจโดยรวม (1-5 ดาว)*</label>
                 <div className="rating-input-container">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      className={`star-btn ${
-                        star <= (hoveredRating || formData.rating)
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() => handleRatingClick(star)}
-                      onMouseEnter={() => setHoveredRating(star)}
-                      onMouseLeave={() => setHoveredRating(0)}
-                      disabled={isLoading}
-                    >
-                      <FiStar />
-                    </button>
-                  ))}
-                  <span className="rating-label">
-                    {formData.rating > 0
-                      ? `${formData.rating}/5`
-                      : "/เยี่ยมมาก"}
-                  </span>
+                  <div className="stars-wrapper">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        className={`star-btn ${
+                          star <= (hoveredRating || formData.rating)
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() => handleRatingClick(star)}
+                        onMouseEnter={() => setHoveredRating(star)}
+                        onMouseLeave={() => setHoveredRating(0)}
+                        disabled={isLoading}
+                      >
+                        {star <= (hoveredRating || formData.rating) ? (
+                          <FaStar />
+                        ) : (
+                          <FiStar />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="rating-label">
+                    {(hoveredRating || formData.rating) > 0 ? (
+                      <span className="rating-value">
+                        {hoveredRating || formData.rating}/
+                        {getRatingText(hoveredRating || formData.rating)}
+                      </span>
+                    ) : (
+                      <span className="rating-placeholder">/เยี่ยมมาก</span>
+                    )}
+                  </div>
                 </div>
                 {errors.rating && (
                   <span className="error-text">{errors.rating}</span>

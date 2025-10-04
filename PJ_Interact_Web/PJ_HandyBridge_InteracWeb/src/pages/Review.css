@@ -151,48 +151,144 @@
   box-shadow: 0 0 0 3px rgba(75, 100, 139, 0.1);
 }
 
-/* ==================== RATING SPECIFIC ==================== */
+/* ==================== RATING SPECIFIC - แบบไม่มีกรอบ ==================== */
 .rating-input-container {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background-color: #f5f1eb;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  padding: 12px 16px;
-  height: 70px;
+  justify-content: space-between;
+  gap: 20px;
+  /* ลบ background และ border ออก */
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 8px 0;
+  height: auto;
   box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
+/* ลบ focus effect ของกรอบ */
+.rating-input-container:focus-within {
+  border: none;
+  box-shadow: none;
+}
+
+/* Stars Wrapper */
+.stars-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* เพิ่ม gap ระหว่างดาว */
+}
+
+/* Star Buttons */
 .star-btn {
   background: none;
   border: none;
-  font-size: 24px;
-  color: #d1d5db;
+  font-size: 40px;
+  color: #e5e7eb;
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .star-btn:hover {
   transform: scale(1.1);
 }
 
+.star-btn:active {
+  transform: scale(0.95);
+}
+
+/* Active stars - สีเหลืองทอง */
 .star-btn.active {
   color: #fbbf24;
 }
 
 .star-btn.active svg {
   fill: #fbbf24;
-  stroke: #fbbf24;
+  stroke: none;
+  filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.25));
 }
 
+/* Hover effect */
+.star-btn:not(.active):hover {
+  color: #fde68a;
+  transform: scale(1.1);
+}
+
+/* Rating Label */
 .rating-label {
-  margin-left: auto;
   font-family: var(--font-thai);
   font-size: 20px;
   font-weight: 300;
-  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  min-width: 140px;
+  justify-content: flex-end; /* จัดชิดขวา */
+}
+
+.rating-value {
+  color: #9ca3af; /* สีเทา */
+}
+
+.rating-placeholder {
+  color: #d1d5db; /* สีเทาอ่อน */
+  font-weight: 300;
+}
+
+/* ถ้าอยากให้มีเส้นใต้เหมือน input อื่นๆ (optional) */
+.form-field.rating-field {
+  position: relative;
+}
+
+.form-field.rating-field::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e5e7eb;
+  transition: background 0.3s ease;
+}
+
+.form-field.rating-field:focus-within::after {
+  background: var(--brand-color);
+  height: 2px;
+}
+
+/* Error state */
+.rating-input-container.error {
+  /* ไม่มี background แล้ว แต่อาจเพิ่มสีแดงที่ดาว */
+}
+
+.rating-input-container.error .star-btn {
+  color: #fee2e2;
+}
+
+.rating-input-container.error .star-btn.active {
+  color: #ef4444;
+}
+
+/* Animation */
+@keyframes starSelect {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(15deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.star-btn:active {
+  animation: starSelect 0.3s ease;
 }
 
 /* ==================== DROPDOWN SPECIFIC ==================== */
