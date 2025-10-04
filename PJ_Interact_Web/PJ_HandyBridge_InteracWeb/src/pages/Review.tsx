@@ -1,4 +1,4 @@
-// src/pages/Review.tsx
+// src/pages/Review.tsx - เพิ่มการตรวจสอบ login
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
@@ -13,7 +13,10 @@ export default function Review() {
   const { profile, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [hoveredRating, setHoveredRating] = useState(0);
+  const [existingReviewId, setExistingReviewId] = useState<string | null>(null);
+  const [showLoginMessage, setShowLoginMessage] = useState(false); // 🔥 เพิ่ม state
 
+  // ... (formData, errors, และอื่นๆ เหมือนเดิม)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -26,7 +29,6 @@ export default function Review() {
 
   const [errors, setErrors] = useState<any>({});
 
-  // Dropdown options
   const favoriteFeatures = [
     "ค้นหาภาษามือ",
     "AI Chatbot",
@@ -55,20 +57,51 @@ export default function Review() {
     return texts[rating as keyof typeof texts] || "";
   };
 
-  // Auto-fill user data
+  const checkExistingReview = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("website_reviews")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      if (data && !error) {
+        console.log("พบรีวิวเดิม:", data);
+        setExistingReviewId(data.id);
+
+        setFormData({
+          fullName: data.reviewer_name || profile?.full_name || "",
+          email: data.reviewer_email || user.email || "",
+          newFeature: data.new_feature_request || "",
+          rating: data.rating || 0,
+          favoriteFeature: data.favorite_feature || "",
+          understandingLevel: data.understanding_level || "",
+          review_comment: data.review_comment || "",
+        });
+      }
+    } catch (error) {
+      console.log("ยังไม่มีรีวิว");
+    }
+  };
+
   useEffect(() => {
     if (profile && user) {
       setFormData((prev) => ({
         ...prev,
-        fullName: profile.full_name || "",
-        email: user.email || profile.email || "",
+        fullName: prev.fullName || profile.full_name || "",
+        email: prev.email || user.email || profile.email || "",
       }));
+
+      checkExistingReview();
     }
   }, [profile, user]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev: any) => ({ ...prev, [field]: "" }));
+    setShowLoginMessage(false); // 🔥 ซ่อนข้อความเมื่อมีการแก้ไข
   };
 
   const handleRatingClick = (rating: number) => {
@@ -78,24 +111,20 @@ export default function Review() {
   const validateForm = () => {
     const newErrors: any = {};
 
-    // ชื่อ-สกุล
     if (!formData.fullName.trim()) {
       newErrors.fullName = "กรุณากรอกชื่อ-สกุล";
     }
 
-    // อีเมล
     if (!formData.email.trim()) {
       newErrors.email = "กรุณากรอกอีเมล";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
     }
 
-    // Rating
     if (formData.rating === 0) {
       newErrors.rating = "กรุณาให้คะแนน";
     }
 
-    // คอมเม้นต์ (เพิ่มใหม่)
     if (!formData.review_comment.trim()) {
       newErrors.review_comment = "กรุณากรอกคอมเม้นต์";
     }
@@ -107,33 +136,66 @@ export default function Review() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 🔥 ตรวจสอบ login ก่อน
+    if (!user) {
+      setShowLoginMessage(true);
+      setErrors({});
+      return;
+    }
+
     if (!validateForm()) return;
 
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.from("website_reviews").insert([
-        {
-          reviewer_name: formData.fullName,
-          reviewer_email: formData.email,
-          rating: formData.rating,
-          new_feature_request: formData.newFeature,
-          favorite_feature: formData.favoriteFeature,
-          understanding_level: formData.understandingLevel,
-          review_comment: formData.review_comment,
-          user_id: user?.id || null,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      const reviewData = {
+        reviewer_name: formData.fullName,
+        reviewer_email: formData.email,
+        rating: formData.rating,
+        new_feature_request: formData.newFeature || null,
+        favorite_feature: formData.favoriteFeature || null,
+        understanding_level: formData.understandingLevel || null,
+        review_comment: formData.review_comment,
+        user_id: user?.id || null,
+      };
 
-      if (error) throw error;
+      if (existingReviewId) {
+        const { data: updatedData, error } = await supabase
+          .from("website_reviews")
+          .update({
+            ...reviewData,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingReviewId)
+          .eq("user_id", user?.id)
+          .select()
+          .single();
 
-      alert("ขอบคุณสำหรับความคิดเห็น! 🙏");
+        if (error) throw error;
+
+        alert("อัพเดทความคิดเห็นเรียบร้อยแล้ว! 🙏");
+      } else {
+        const { data: insertedData, error } = await supabase
+          .from("website_reviews")
+          .insert([
+            {
+              ...reviewData,
+              created_at: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        alert("ขอบคุณสำหรับความคิดเห็น! 🙏");
+      }
+
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submit error:", error);
       setErrors({
-        general: "เกิดข้อผิดพลาด กรุณาลองใหม่",
+        general: `เกิดข้อผิดพลาด: ${error.message || "กรุณาลองใหม่"}`,
       });
     } finally {
       setIsLoading(false);
@@ -146,7 +208,6 @@ export default function Review() {
 
       <main className="review-main">
         <div className="review-container">
-          {/* Toggle Buttons */}
           <div className="page-toggle">
             <button
               className="toggle-btn"
@@ -157,25 +218,45 @@ export default function Review() {
             <button className="toggle-btn active">รีวิวเว็บไซต์</button>
           </div>
 
-          {/* Header */}
           <div className="review-header">
-            <h1>แบ่งปันความคิดเห็น ช่วยพัฒนาเว็บไซต์ให้ดีขึ้น</h1>
+            <h1>
+              {existingReviewId
+                ? "อัพเดทความคิดเห็นของคุณ"
+                : "แบ่งปันความคิดเห็น ช่วยพัฒนาเว็บไซต์ให้ดีขึ้น"}
+            </h1>
             <p>
-              ความคิดเห็นของคุณมีค่ามากสำหรับเรา ไม่ว่าจะเป็นข้อเสนอแนะ
-              ปัญหาที่พบ
+              {existingReviewId
+                ? "คุณเคยรีวิวไปแล้ว สามารถแก้ไขหรืออัพเดทความคิดเห็นใหม่ได้"
+                : "ความคิดเห็นของคุณมีค่ามากสำหรับเรา ไม่ว่าจะเป็นข้อเสนอแนะ ปัญหาที่พบ"}
               <br />
-              หรือฟีเจอร์ที่อยากให้เพิ่ม
-              เพื่อให้ได้เว็บไซต์ที่ใช้งานง่ายและเป็นมิตรมากขึ้น
+              {!existingReviewId &&
+                "หรือฟีเจอร์ที่อยากให้เพิ่ม เพื่อให้ได้เว็บไซต์ที่ใช้งานง่ายและเป็นมิตรมากขึ้น"}
             </p>
           </div>
 
-          {/* Form */}
           <form className="review-form" onSubmit={handleSubmit}>
+            {/* 🔥 แสดงข้อความ login */}
+            {showLoginMessage && (
+              <div className="login-required-message">
+                <p>
+                  กรุณา{" "}
+                  <button
+                    type="button"
+                    className="login-link"
+                    onClick={() => navigate("/auth?mode=login")}
+                  >
+                    เข้าสู่ระบบ
+                  </button>{" "}
+                  ก่อนส่งรีวิว
+                </p>
+              </div>
+            )}
+
             {errors.general && (
               <div className="error-message general">{errors.general}</div>
             )}
 
-            {/* Row 1: ชื่อ-สกุล และ อีเมล */}
+            {/* Form fields เหมือนเดิม */}
             <div className="form-row">
               <div className="form-field">
                 <label>ชื่อ-สกุล*</label>
@@ -210,7 +291,6 @@ export default function Review() {
               </div>
             </div>
 
-            {/* Row 2: ฟีเจอร์ที่อยากให้เพิ่ม และ คะแนนความพึงพอใจ */}
             <div className="form-row">
               <div className="form-field">
                 <label>ฟีเจอร์ที่อยากให้เพิ่ม</label>
@@ -268,7 +348,6 @@ export default function Review() {
               </div>
             </div>
 
-            {/* Row 3: Dropdowns */}
             <div className="form-row">
               <div className="form-field">
                 <label>ส่วนไหนที่ชอบที่สุด</label>
@@ -333,7 +412,11 @@ export default function Review() {
               className="submit-button"
               disabled={isLoading}
             >
-              {isLoading ? "กำลังส่ง..." : "ส่งความคิดเห็น"}
+              {isLoading
+                ? "กำลังบันทึก..."
+                : existingReviewId
+                ? "อัพเดทความคิดเห็น"
+                : "ส่งความคิดเห็น"}
             </button>
           </form>
         </div>

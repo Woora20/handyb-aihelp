@@ -478,11 +478,14 @@
 .rating {
   display: flex;
   gap: 2px;
+  align-items: center;
 }
 
-.star {
-  color: #ffc927;
-  font-size: 14px;
+.star-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .navigation-arrows {

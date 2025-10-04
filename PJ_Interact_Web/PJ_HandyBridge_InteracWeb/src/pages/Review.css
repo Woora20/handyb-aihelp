@@ -383,21 +383,44 @@
   }
 }
 
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
-  .review-main {
-    padding: 30px 20px;
-  }
+/* Login Required Message */
+.login-required-message {
+  padding: 16px;
+  background-color: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+}
 
-  .form-row {
-    grid-template-columns: 1fr;
-  }
+.login-required-message p {
+  font-family: var(--font-thai);
+  font-size: 16px;
+  color: #92400e;
+  font-weight: 300;
+  margin: 0;
+}
 
-  .review-header h1 {
-    font-size: 36px;
-  }
+.login-link {
+  background: none;
+  border: none;
+  color: #92400e;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
 
-  .review-header p {
-    font-size: 18px;
-  }
+.login-link:hover {
+  color: #3a5270;
+  text-decoration: underline;
+}
+
+.login-link:focus {
+  outline: 2px solid var(--brand-color);
+  outline-offset: 2px;
+  border-radius: 2px;
 }

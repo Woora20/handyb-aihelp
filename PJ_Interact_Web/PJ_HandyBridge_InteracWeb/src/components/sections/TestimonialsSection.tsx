@@ -1,6 +1,8 @@
 // src/components/sections/TestimonialsSection.tsx
 import React, { useState, useEffect } from "react";
 import { GoArrowRight, GoArrowLeft } from "react-icons/go";
+import { FiStar } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 import { reviewService } from "../../services/reviewService";
 
 interface Testimonial {
@@ -23,11 +25,9 @@ export const TestimonialsSection: React.FC = () => {
   const loadReviews = async () => {
     setIsLoading(true);
     try {
-      // ดึงรีวิวจาก database
       const reviews = await reviewService.getGoodReviews();
 
       if (reviews.length > 0) {
-        // แปลงข้อมูลให้ตรงกับ format ที่ใช้
         const formattedReviews = reviews.map((review) => ({
           id: review.id,
           text: review.review_comment,
@@ -38,7 +38,6 @@ export const TestimonialsSection: React.FC = () => {
 
         setTestimonials(formattedReviews);
       } else {
-        // ถ้าไม่มีรีวิว ใช้ข้อมูล default
         setTestimonials([
           {
             id: "1",
@@ -60,20 +59,25 @@ export const TestimonialsSection: React.FC = () => {
   const visibleCount = 5;
 
   const handlePrev = () => {
-    setCurrentIndex((prev) =>
-      prev === 0
-        ? Math.max(0, testimonials.length - visibleCount)
-        : Math.max(0, prev - 1)
-    );
+    setCurrentIndex((prev) => Math.max(0, prev - visibleCount));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) =>
-      prev >= testimonials.length - visibleCount ? 0 : prev + 1
-    );
+    setCurrentIndex((prev) => {
+      const nextIndex = prev + visibleCount;
+      if (nextIndex >= testimonials.length) {
+        return prev;
+      }
+      return nextIndex;
+    });
   };
 
-  // ถ้ากำลังโหลด
+  const endIndex = Math.min(currentIndex + visibleCount, testimonials.length);
+  const itemsToShow = testimonials.slice(currentIndex, endIndex);
+
+  const canGoPrev = currentIndex > 0;
+  const canGoNext = currentIndex + visibleCount < testimonials.length;
+
   if (isLoading) {
     return (
       <section className="testimonials-section">
@@ -87,7 +91,6 @@ export const TestimonialsSection: React.FC = () => {
     );
   }
 
-  // ถ้าไม่มีรีวิว
   if (testimonials.length === 0) {
     return (
       <section className="testimonials-section">
@@ -109,31 +112,33 @@ export const TestimonialsSection: React.FC = () => {
         <div className="testimonials-content">
           <div className="testimonials-wrapper">
             <div className="testimonials-grid">
-              {testimonials
-                .slice(currentIndex, currentIndex + visibleCount)
-                .map((testimonial) => (
-                  <div key={testimonial.id} className="testimonial-card">
-                    <p className="testimonial-text">{testimonial.text}</p>
+              {itemsToShow.map((testimonial) => (
+                <div key={testimonial.id} className="testimonial-card">
+                  <p className="testimonial-text">{testimonial.text}</p>
 
-                    <div className="testimonial-author">
-                      <img
-                        src={testimonial.avatar}
-                        alt={testimonial.author}
-                        className="author-avatar"
-                      />
-                      <div className="author-info">
-                        <p className="author-name">{testimonial.author}</p>
-                        <div className="rating">
-                          {[...Array(testimonial.rating)].map((_, i) => (
-                            <span key={i} className="star">
-                              ★
-                            </span>
-                          ))}
-                        </div>
+                  <div className="testimonial-author">
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.author}
+                      className="author-avatar"
+                    />
+                    <div className="author-info">
+                      <p className="author-name">{testimonial.author}</p>
+                      <div className="rating">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="star-icon">
+                            {i < testimonial.rating ? (
+                              <FaStar size={14} color="#fbbf24" />
+                            ) : (
+                              <FiStar size={14} color="#e5e7eb" />
+                            )}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -142,7 +147,7 @@ export const TestimonialsSection: React.FC = () => {
               <button
                 className="nav-arrow nav-prev"
                 onClick={handlePrev}
-                disabled={currentIndex === 0}
+                disabled={!canGoPrev}
                 aria-label="Previous testimonials"
               >
                 <GoArrowLeft size={16} />
@@ -151,7 +156,7 @@ export const TestimonialsSection: React.FC = () => {
               <button
                 className="nav-arrow nav-next"
                 onClick={handleNext}
-                disabled={currentIndex >= testimonials.length - visibleCount}
+                disabled={!canGoNext}
                 aria-label="Next testimonials"
               >
                 <GoArrowRight size={16} />
