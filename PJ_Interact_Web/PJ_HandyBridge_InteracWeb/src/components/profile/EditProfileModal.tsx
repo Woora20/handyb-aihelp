@@ -1,4 +1,4 @@
-// src/components/profile/EditProfileModal.tsx - โค้ดเต็มที่แก้ไขแล้ว
+// src/components/profile/EditProfileModal.tsx
 import React, { useState, useRef } from "react";
 import { FiX, FiPlus } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
@@ -42,27 +42,21 @@ export default function EditProfileModal({
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log("📁 Selected file:", file);
 
     if (file) {
-      console.log("📏 File size:", file.size, "bytes");
-      console.log("📄 File type:", file.type);
-
-      // ตรวจสอบขนาดไฟล์ (5MB)
+      // ตรวจสอบขนาด (5MB)
       if (file.size > 5 * 1024 * 1024) {
-        console.error("❌ File too large");
         setErrors({ avatar: "ไฟล์รูปต้องไม่เกิน 5MB" });
         return;
       }
 
       // ตรวจสอบประเภทไฟล์
-      if (!file.type.startsWith("image/")) {
-        console.error("❌ Invalid file type");
-        setErrors({ avatar: "กรุณาเลือกไฟล์รูปภาพ" });
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        setErrors({ avatar: "รองรับเฉพาะไฟล์รูปภาพ (JPEG, PNG, GIF, WebP)" });
         return;
       }
 
-      console.log("✅ File valid, setting preview...");
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
       setErrors((prev: any) => ({ ...prev, avatar: "" }));
@@ -91,6 +85,52 @@ export default function EditProfileModal({
     return Object.keys(newErrors).length === 0;
   };
 
+  const uploadAvatar = async (userId: string): Promise<string | null> => {
+    if (!avatarFile) return null;
+
+    try {
+      // สร้างชื่อไฟล์ unique
+      const fileExt = avatarFile.name.split(".").pop();
+      const fileName = `${userId}/${Date.now()}.${fileExt}`;
+
+      // ลบรูปเก่า (ถ้ามี)
+      if (profile?.avatar_url) {
+        try {
+          // ดึง path จาก URL เก่า
+          const oldPath = profile.avatar_url.split("/").slice(-2).join("/");
+          await supabase.storage.from("avatars").remove([oldPath]);
+          console.log("✅ Deleted old avatar");
+        } catch (err) {
+          console.warn("⚠️ Could not delete old avatar:", err);
+        }
+      }
+
+      // อัปโหลดรูปใหม่
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(fileName, avatarFile, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (error) {
+        console.error("❌ Upload error:", error);
+        throw new Error("อัปโหลดรูปภาพไม่สำเร็จ");
+      }
+
+      // ดึง public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(fileName);
+
+      console.log("✅ New avatar URL:", publicUrl);
+      return publicUrl;
+    } catch (error) {
+      console.error("❌ Avatar upload failed:", error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validateForm() || !user) return;
 
@@ -99,107 +139,47 @@ export default function EditProfileModal({
     try {
       let avatarUrl = profile?.avatar_url;
 
-      // 1. อัพโหลดรูปโปรไฟล์ (ถ้ามี)
+      // อัปโหลดรูปภาพถ้ามี
       if (avatarFile) {
-        console.log("🔄 Uploading avatar...");
-
-        const fileExt = avatarFile.name.split(".").pop();
-        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`; // ไม่ต้องมี avatars/ เพราะมันอยู่ใน bucket แล้ว
-
-        // ✅ ตรวจสอบว่า bucket มีอยู่จริง
-        const { data: buckets, error: bucketError } =
-          await supabase.storage.listBuckets();
-        console.log(
-          "📦 Available buckets:",
-          buckets?.map((b) => b.name)
-        );
-
-        if (bucketError) {
-          console.error("❌ Bucket error:", bucketError);
-          throw new Error("ไม่สามารถเข้าถึง Storage ได้");
+        const uploadedUrl = await uploadAvatar(user.id);
+        if (uploadedUrl) {
+          avatarUrl = uploadedUrl;
         }
-
-        const avatarBucket = buckets?.find((b) => b.name === "avatars");
-        if (!avatarBucket) {
-          throw new Error(
-            "ยังไม่มี avatars bucket กรุณาสร้างใน Supabase Dashboard → Storage"
-          );
-        }
-
-        // ✅ ลบรูปเก่าก่อน (ถ้ามี)
-        if (profile?.avatar_url) {
-          try {
-            const oldFileName = profile.avatar_url.split("/").pop();
-            if (oldFileName) {
-              console.log("🗑️ Deleting old avatar:", oldFileName);
-              await supabase.storage.from("avatars").remove([oldFileName]);
-            }
-          } catch (deleteError) {
-            console.warn("⚠️ Could not delete old avatar:", deleteError);
-          }
-        }
-
-        // ✅ อัพโหลดไฟล์ใหม่
-        const { error: uploadError, data: uploadData } = await supabase.storage
-          .from("avatars")
-          .upload(filePath, avatarFile, {
-            cacheControl: "3600",
-            upsert: true,
-          });
-
-        if (uploadError) {
-          console.error("❌ Upload error:", uploadError);
-          throw new Error(`อัพโหลดไม่สำเร็จ: ${uploadError.message}`);
-        }
-
-        console.log("✅ Upload success:", uploadData);
-
-        // ✅ ดึง public URL
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("avatars").getPublicUrl(filePath);
-
-        console.log("📷 New avatar URL:", publicUrl);
-        avatarUrl = publicUrl;
       }
 
-      // 2. อัพเดทข้อมูลโปรไฟล์
-      console.log("🔄 Updating profile...");
+      // อัปเดทข้อมูลในฐานข้อมูล
       const { error: updateError } = await supabase
         .from("profiles")
         .update({
           full_name: formData.fullName.trim(),
           email: formData.email.trim(),
-          avatar_url: avatarUrl, // ✅ ชื่อ column ที่ถูกต้อง
+          avatar_url: avatarUrl,
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
 
       if (updateError) {
-        console.error("❌ Update error:", updateError);
+        console.error("❌ Profile update error:", updateError);
         throw updateError;
       }
 
-      console.log("✅ Profile updated successfully!");
-
-      // 3. อัพเดทอีเมลใน Auth (ถ้าเปลี่ยน)
+      // อัปเดทอีเมลใน Auth (ถ้าเปลี่ยน)
       if (formData.email !== user.email) {
-        console.log("🔄 Updating email in Auth...");
         const { error: emailError } = await supabase.auth.updateUser({
           email: formData.email,
         });
 
         if (emailError) {
           console.error("❌ Email update error:", emailError);
-          throw emailError;
+          // ไม่ throw error ถ้าอัปเดทอีเมลไม่สำเร็จ แต่ให้แจ้งเตือน
+          alert("อัปเดทข้อมูลสำเร็จ แต่ไม่สามารถเปลี่ยนอีเมลได้");
         }
       }
 
       alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
-      window.location.reload();
+      window.location.reload(); // รีโหลดเพื่อแสดงข้อมูลใหม่
     } catch (error: any) {
-      console.error("❌ Update error:", error);
+      console.error("❌ Update failed:", error);
       setErrors({
         general: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่",
       });
@@ -252,14 +232,16 @@ export default function EditProfileModal({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/gif,image/webp"
                 onChange={handleAvatarChange}
                 style={{ display: "none" }}
               />
             </div>
             <div className="avatar-info">
               <p className="avatar-label">อัปโหลดรูปภาพ</p>
-              <p className="avatar-hint">Max file size: 5MB</p>
+              <p className="avatar-hint">
+                รองรับ JPG, PNG, GIF, WebP ขนาดไม่เกิน 5MB
+              </p>
               <button
                 type="button"
                 className="change-avatar-btn"
@@ -281,7 +263,7 @@ export default function EditProfileModal({
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
-                placeholder="นาย สมบัติ"
+                placeholder="ตัวอย่าง: สมชาย ใจดี"
                 className={errors.fullName ? "error" : ""}
                 disabled={isLoading}
               />
