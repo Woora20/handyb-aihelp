@@ -1,4 +1,4 @@
-// src/pages/Review.tsx - เพิ่มการตรวจสอบ login
+// src/pages/Review.tsx - ส่วนที่แก้ไข
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
@@ -14,9 +14,8 @@ export default function Review() {
   const [isLoading, setIsLoading] = useState(false);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [existingReviewId, setExistingReviewId] = useState<string | null>(null);
-  const [showLoginMessage, setShowLoginMessage] = useState(false); // 🔥 เพิ่ม state
+  const [showLoginMessage, setShowLoginMessage] = useState(false);
 
-  // ... (formData, errors, และอื่นๆ เหมือนเดิม)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -29,6 +28,7 @@ export default function Review() {
 
   const [errors, setErrors] = useState<any>({});
 
+  // ... (favoriteFeatures และ understandingLevels arrays เหมือนเดิม)
   const favoriteFeatures = [
     "ค้นหาภาษามือ",
     "AI Chatbot",
@@ -71,9 +71,10 @@ export default function Review() {
         console.log("พบรีวิวเดิม:", data);
         setExistingReviewId(data.id);
 
+        // ใช้ข้อมูลจาก profile ล่าสุดแทน
         setFormData({
-          fullName: data.reviewer_name || profile?.full_name || "",
-          email: data.reviewer_email || user.email || "",
+          fullName: profile?.full_name || data.reviewer_name || "",
+          email: user.email || profile?.email || data.reviewer_email || "",
           newFeature: data.new_feature_request || "",
           rating: data.rating || 0,
           favoriteFeature: data.favorite_feature || "",
@@ -86,22 +87,23 @@ export default function Review() {
     }
   };
 
+  // อัพเดทชื่อและอีเมลเมื่อ profile เปลี่ยน
   useEffect(() => {
     if (profile && user) {
       setFormData((prev) => ({
         ...prev,
-        fullName: prev.fullName || profile.full_name || "",
-        email: prev.email || user.email || profile.email || "",
+        fullName: profile.full_name || prev.fullName || "",
+        email: user.email || profile.email || prev.email || "",
       }));
 
       checkExistingReview();
     }
-  }, [profile, user]);
+  }, [profile, user]); // รีรันเมื่อ profile หรือ user เปลี่ยน
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev: any) => ({ ...prev, [field]: "" }));
-    setShowLoginMessage(false); // 🔥 ซ่อนข้อความเมื่อมีการแก้ไข
+    setShowLoginMessage(false);
   };
 
   const handleRatingClick = (rating: number) => {
@@ -136,7 +138,6 @@ export default function Review() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔥 ตรวจสอบ login ก่อน
     if (!user) {
       setShowLoginMessage(true);
       setErrors({});
@@ -160,6 +161,7 @@ export default function Review() {
       };
 
       if (existingReviewId) {
+        // อัพเดทรีวิวเดิม - อัพเดทชื่อและอีเมลด้วย
         const { data: updatedData, error } = await supabase
           .from("website_reviews")
           .update({
@@ -175,6 +177,7 @@ export default function Review() {
 
         alert("อัพเดทความคิดเห็นเรียบร้อยแล้ว! 🙏");
       } else {
+        // สร้างรีวิวใหม่
         const { data: insertedData, error } = await supabase
           .from("website_reviews")
           .insert([
@@ -202,6 +205,7 @@ export default function Review() {
     }
   };
 
+  // ... (ส่วน return JSX เหมือนเดิม)
   return (
     <div className="review-page">
       <Navbar />
@@ -235,7 +239,6 @@ export default function Review() {
           </div>
 
           <form className="review-form" onSubmit={handleSubmit}>
-            {/* 🔥 แสดงข้อความ login */}
             {showLoginMessage && (
               <div className="login-required-message">
                 <p>
@@ -256,7 +259,6 @@ export default function Review() {
               <div className="error-message general">{errors.general}</div>
             )}
 
-            {/* Form fields เหมือนเดิม */}
             <div className="form-row">
               <div className="form-field">
                 <label>ชื่อ-สกุล*</label>
@@ -291,6 +293,7 @@ export default function Review() {
               </div>
             </div>
 
+            {/* ส่วนที่เหลือของ form เหมือนเดิม */}
             <div className="form-row">
               <div className="form-field">
                 <label>ฟีเจอร์ที่อยากให้เพิ่ม</label>

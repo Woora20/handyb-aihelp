@@ -4,6 +4,7 @@ import { GoArrowRight, GoArrowLeft } from "react-icons/go";
 import { FiStar } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import { reviewService } from "../../services/reviewService";
+import { supabase } from "../../lib/supabase";
 
 interface Testimonial {
   id: string;
@@ -25,19 +26,46 @@ export const TestimonialsSection: React.FC = () => {
   const loadReviews = async () => {
     setIsLoading(true);
     try {
-      const reviews = await reviewService.getGoodReviews();
+      const reviews = await reviewService.getSmartReviews(); // ใช้ Smart Reviews
 
       if (reviews.length > 0) {
-        const formattedReviews = reviews.map((review) => ({
-          id: review.id,
-          text: review.review_comment,
-          author: review.reviewer_name,
-          rating: review.rating,
-          avatar: reviewService.getAvatarUrl(review.reviewer_name),
-        }));
+        // ดึงข้อมูล profile ล่าสุดสำหรับแต่ละ review
+        const formattedReviews = await Promise.all(
+          reviews.map(async (review) => {
+            let displayName = review.reviewer_name;
+            let avatarUrl = reviewService.getAvatarUrl(review.reviewer_name);
+
+            // ถ้ามี user_id ให้ดึงข้อมูลจาก profiles
+            if (review.user_id) {
+              try {
+                const { data: profile } = await supabase
+                  .from("profiles")
+                  .select("full_name, avatar_url")
+                  .eq("id", review.user_id)
+                  .single();
+
+                if (profile) {
+                  displayName = profile.full_name || review.reviewer_name;
+                  avatarUrl = profile.avatar_url || avatarUrl;
+                }
+              } catch (err) {
+                console.log("Could not fetch profile for review");
+              }
+            }
+
+            return {
+              id: review.id,
+              text: review.review_comment,
+              author: displayName,
+              rating: review.rating,
+              avatar: avatarUrl,
+            };
+          })
+        );
 
         setTestimonials(formattedReviews);
       } else {
+        // Default testimonial ถ้าไม่มีรีวิว
         setTestimonials([
           {
             id: "1",
@@ -50,7 +78,7 @@ export const TestimonialsSection: React.FC = () => {
         ]);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error loading reviews:", error);
     } finally {
       setIsLoading(false);
     }
