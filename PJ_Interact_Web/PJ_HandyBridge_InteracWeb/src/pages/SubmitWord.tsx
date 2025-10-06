@@ -194,6 +194,10 @@ export default function SubmitWord() {
                   placeholder="เช่น จอร์น สมิธ"
                   className={errors.fullName ? "error" : ""}
                   disabled={isLoading}
+                  readOnly={!!user}
+                  style={{
+                    cursor: user ? "not-allowed" : "text",
+                  }}
                 />
                 {errors.fullName && (
                   <span className="error-text">{errors.fullName}</span>
@@ -209,6 +213,10 @@ export default function SubmitWord() {
                   placeholder="เช่น john@email.com"
                   className={errors.email ? "error" : ""}
                   disabled={isLoading}
+                  readOnly={!!user}
+                  style={{
+                    cursor: user ? "not-allowed" : "text",
+                  }}
                 />
                 {errors.email && (
                   <span className="error-text">{errors.email}</span>
