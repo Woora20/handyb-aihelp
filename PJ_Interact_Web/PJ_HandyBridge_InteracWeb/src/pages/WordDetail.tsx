@@ -1,4 +1,4 @@
-// src/pages/WordDetail.tsx
+// src/pages/WordDetail.tsx - แก้ไข breadcrumb และ related section
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
@@ -143,7 +143,7 @@ export default function WordDetail() {
       <Navbar />
 
       <main className="word-detail-main">
-        {/* Breadcrumb */}
+        {/* 🔥 Breadcrumb - เพิ่ม category */}
         <div className="breadcrumb">
           <Link to="/" className="breadcrumb-link">
             หน้าหลัก
@@ -151,6 +151,13 @@ export default function WordDetail() {
           <FiChevronRight className="breadcrumb-separator" />
           <Link to="/search" className="breadcrumb-link">
             ค้นหา
+          </Link>
+          <FiChevronRight className="breadcrumb-separator" />
+          <Link
+            to={`/search?category=${encodeURIComponent(wordData.category)}`}
+            className="breadcrumb-link"
+          >
+            {wordData.category}
           </Link>
           <FiChevronRight className="breadcrumb-separator" />
           <span className="breadcrumb-current">{wordData.word}</span>
@@ -242,10 +249,10 @@ export default function WordDetail() {
             </div>
           </div>
 
-          {/* Right Column - Related Words */}
+          {/* 🔥 Right Column - แก้เป็น "หมวดหมู่: การทักทาย" */}
           <aside className="word-sidebar">
             <div className="related-section">
-              <h2 className="related-title">คำที่เกี่ยวข้อง</h2>
+              <h2 className="related-title">หมวดหมู่: {wordData.category}</h2>
               <div className="related-words-list">
                 {wordData.relatedWords.map((relatedWord) => (
                   <Link

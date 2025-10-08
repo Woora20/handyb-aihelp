@@ -17,16 +17,22 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
   font-family: var(--font-thai);
   font-size: 16px;
   color: #6b7280;
+  flex-wrap: wrap;
+  max-width: 1240px; /* 🔥 เท่ากับ content container */
+  width: 100%;
+  margin-left: auto; /* 🔥 center เหมือน container */
+  margin-right: auto;
 }
 
 .breadcrumb-link {
   color: #6b7280;
   text-decoration: none;
   transition: color 0.2s ease;
+  white-space: nowrap; /* 🔥 ป้องกันตัวหนังสือขาด */
 }
 
 .breadcrumb-link:hover {
@@ -35,11 +41,13 @@
 
 .breadcrumb-separator {
   color: #9ca3af;
+  flex-shrink: 0; /* 🔥 ป้องกัน icon หด */
 }
 
 .breadcrumb-current {
   color: var(--text-dark);
   font-weight: 400;
+  word-break: break-word; /* 🔥 ให้ขึ้นบรรทัดใหม่ถ้ายาว */
 }
 
 /* ==================== CONTENT CONTAINER ==================== */
