@@ -11,6 +11,7 @@ import AIChatbot from "./pages/AIChatbot";
 import SubmitWord from "./pages/SubmitWord";
 import Review from "./pages/Review";
 import Search from "./pages/Search";
+import WordDetail from "./pages/WordDetail";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/submit-word" element={<SubmitWord />} />
           <Route path="/review" element={<Review />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/word/:id" element={<WordDetail />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
