@@ -10,6 +10,7 @@ import Auth from "./pages/AuthPages";
 import AIChatbot from "./pages/AIChatbot";
 import SubmitWord from "./pages/SubmitWord";
 import Review from "./pages/Review";
+import Search from "./pages/Search";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/ai-assistant" element={<AIChatbot />} />
           <Route path="/submit-word" element={<SubmitWord />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
