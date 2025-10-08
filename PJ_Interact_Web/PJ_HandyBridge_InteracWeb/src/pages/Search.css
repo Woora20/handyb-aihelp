@@ -159,6 +159,8 @@
   margin: 0;
 }
 
+/* src/pages/Search.css */
+
 /* ==================== RESULTS GRID ==================== */
 .search-results-grid {
   display: grid;
@@ -185,74 +187,30 @@
   transform: translateY(-4px);
 }
 
+/* 🔥 แก้ไขให้เหมือน SignIntroSection */
 .search-card-video {
   height: 295px;
   overflow: hidden;
-  background: white;
-  border-radius: 20px;
-  position: relative;
 }
 
 .video-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 12px;
-  box-sizing: border-box;
+  background: white;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
 }
 
-.video-controls {
+/* 🔥 รองรับ video และ img สำหรับ API */
+.video-placeholder video,
+.video-placeholder img {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.video-timeline {
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-}
-
-.video-timeline::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 30%;
   height: 100%;
-  background: var(--brand-color);
-  border-radius: 2px;
+  object-fit: cover;
 }
 
-.video-buttons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 12px;
-}
-
-.video-buttons button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: inherit;
-  font-size: 14px;
-  padding: 0;
-}
-
-.video-time {
-  font-family: var(--font-thai);
-  font-size: 11px;
-  margin: 0 auto 0 4px;
-}
+/* 🔥 ลบ CSS ที่เกี่ยวกับ controls ออกหมด */
 
 .search-card-content {
   flex: 1;

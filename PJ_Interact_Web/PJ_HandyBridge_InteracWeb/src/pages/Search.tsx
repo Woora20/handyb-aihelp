@@ -128,18 +128,10 @@ export default function Search() {
         <div className="search-results-grid">
           {displayedSigns.map((sign) => (
             <div key={sign.id} className="search-sign-card">
+              {/* 🔥 เปลี่ยนเป็น div ธรรมดาเหมือน SignIntroSection */}
               <div className="search-card-video">
                 <div className="video-placeholder">
-                  {/* Placeholder for video */}
-                  <div className="video-controls">
-                    <div className="video-timeline"></div>
-                    <div className="video-buttons">
-                      <button className="play-btn">▶</button>
-                      <span className="video-time">0:01</span>
-                      <button className="volume-btn">🔊</button>
-                      <button className="fullscreen-btn">⛶</button>
-                    </div>
-                  </div>
+                  {/* Placeholder สำหรับ GIF/Video จาก API */}
                 </div>
               </div>
               <div className="search-card-content">
