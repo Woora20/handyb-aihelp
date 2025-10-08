@@ -71,8 +71,7 @@
   width: 30px;
   height: 30px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(45%) sepia(12%) saturate(1000%)
-    hue-rotate(180deg);
+  color: white;
 }
 
 .toggle-option.active .toggle-icon {
