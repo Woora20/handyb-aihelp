@@ -1,4 +1,4 @@
-/* src/pages/WordDetail.css */
+/* src/pages/WordDetail.css - เขียนใหม่ทั้งหมด */
 
 /* ==================== PAGE LAYOUT ==================== */
 .word-detail-page {
@@ -230,7 +230,8 @@
   word-break: break-word;
 }
 
-/* ==================== RIGHT COLUMN - RELATED (เพิ่ม Scroll) ==================== */
+/* ==================== RIGHT COLUMN - RELATED ==================== */
+/* 🔥🔥🔥 ส่วนที่แก้ไขหลัก 🔥🔥🔥 */
 .word-sidebar {
   display: flex;
   flex-direction: column;
@@ -244,6 +245,7 @@
   border: none;
   padding-top: 28px;
   border-top: 1px solid #e5e7eb;
+  position: relative;
 }
 
 .related-title {
@@ -255,96 +257,121 @@
   opacity: 0.9;
 }
 
-/* 🔥 เพิ่ม scroll container */
+/* 🔥 แก้ไข: เปลี่ยนความสูงเป็น 350px สำหรับแสดง 5 คำ */
 .related-words-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 
-  /* 🔥 กำหนดความสูงและ scroll */
-  max-height: 500px; /* ความสูงสูงสุด */
-  overflow-y: auto; /* scroll แนวตั้ง */
-  overflow-x: hidden; /* ซ่อน scroll แนวนอน */
-  padding-right: 8px; /* เว้นที่ให้ scrollbar */
-  margin-right: -8px; /* ดึงกลับมาให้ตรง */
+  /* 🔥 ความสูงใหม่สำหรับ 5 items */
+  max-height: 350px; /* เปลี่ยนจาก 280px เป็น 350px */
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  margin-right: -8px;
+
+  /* 🔥 แก้ไข: เพิ่มคุณสมบัติป้องกัน scroll ทะลุ */
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+
+  padding-bottom: 30px;
+  position: relative;
+  z-index: 0;
 }
 
-/* 🔥 Custom Scrollbar - ทำให้สวยและเล็ก */
+/* 🔥 แก้ไข: Scrollbar บางและจางลง */
 .related-words-list::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .related-words-list::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 3px;
+  background: rgba(209, 213, 219, 0.2);
+  border-radius: 2px;
 }
 
 .related-words-list::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+  background: rgba(209, 213, 219, 0.5);
+  border-radius: 2px;
   transition: background 0.2s ease;
 }
 
 .related-words-list::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: rgba(156, 163, 175, 0.7);
 }
 
 /* Firefox scrollbar */
 .related-words-list {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
+  scrollbar-color: rgba(209, 213, 219, 0.5) transparent;
 }
 
-/* 🔥 เพิ่ม fade effect ด้านล่าง (optional) */
-.related-section {
-  position: relative;
-}
-
+/* 🔥 แก้ไข: ปรับ fade effect ให้อ่อนลง */
 .related-section::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  height: 40px;
-  background: linear-gradient(to top, var(--body-color) 0%, transparent 100%);
+  right: 8px;
+  height: 30px;
+  background: linear-gradient(
+    to top,
+    var(--body-color) 0%,
+    rgba(248, 244, 241, 0.8) 40%,
+    transparent 100%
+  );
   pointer-events: none;
   z-index: 1;
 }
 
-/* แก้ไขให้ list อยู่ด้านหลัง fade */
-.related-words-list {
-  position: relative;
-  z-index: 0;
-  padding-bottom: 20px; /* เพิ่มพื้นที่ด้านล่าง */
+/* 🔥 แก้ไข: Auto-hide scrollbar เมื่อไม่ hover */
+.related-words-list:not(:hover) {
+  scrollbar-width: none;
 }
 
-/* 🔥 Related word item - ใหญ่ขึ้น */
+.related-words-list:not(:hover)::-webkit-scrollbar {
+  width: 0;
+}
+
+.related-words-list:hover {
+  scrollbar-width: thin;
+}
+
+.related-words-list:hover::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Related word item */
 .related-word-item {
   display: flex;
   align-items: center;
-  gap: 14px; /* 🔺 เพิ่ม gap */
-  padding: 12px 10px; /* 🔺 เพิ่ม padding */
-  border-radius: 10px; /* 🔺 เพิ่ม border-radius */
+  gap: 14px;
+  padding: 12px 10px;
+  border-radius: 10px;
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
   border: 1px solid transparent;
+  flex-shrink: 0;
 }
 
-/* 🔥 Hover - เพิ่มความชัดเจนขึ้นนิดหน่อย */
 .related-word-item:hover {
-  background: rgba(75, 100, 139, 0.04); /* 🔺 สีเข้มขึ้นนิดหน่อย */
-  border: 1px solid rgba(75, 100, 139, 0.12); /* 🔺 เส้นขอบชัดขึ้น */
-  transform: translateX(3px); /* 🔺 เคลื่อนที่มากขึ้น */
+  background: rgba(75, 100, 139, 0.06);
+  border: 1px solid rgba(75, 100, 139, 0.15);
+  transform: translateX(3px);
 }
 
-/* 🔥 Thumbnail - ใหญ่ขึ้น */
+.related-word-item:active {
+  background: rgba(75, 100, 139, 0.1);
+  transform: translateX(1px);
+}
+
+/* Thumbnail */
 .related-thumbnail {
-  width: 56px; /* 🔺 เพิ่มจาก 50px เป็น 56px */
-  height: 56px; /* 🔺 เพิ่มจาก 50px เป็น 56px */
-  border-radius: 8px; /* 🔺 เพิ่ม border-radius */
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
   background: #f3f4f6;
   flex-shrink: 0;
   overflow: hidden;
@@ -361,26 +388,26 @@
   min-width: 0;
 }
 
-/* 🔥 Text - ขนาดใหญ่ขึ้นและชัดเจนขึ้น */
+/* Text styling */
 .related-word-text {
   font-family: var(--font-thai);
-  font-size: 16px; /* 🔺 กลับมาเป็น 16px */
-  font-weight: 300; /* ยังคงเบา */
-  color: #374151; /* 🔺 สีเข้มขึ้นนิดหน่อย */
-  margin: 0 0 3px 0; /* 🔺 เพิ่ม margin */
+  font-size: 16px;
+  font-weight: 300;
+  color: #374151;
+  margin: 0 0 3px 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: 1.4; /* 🔺 เพิ่ม line-height */
+  line-height: 1.4;
 }
 
 .related-category {
   font-family: var(--font-thai);
-  font-size: 14px; /* 🔺 กลับมาเป็น 14px */
+  font-size: 14px;
   font-weight: 300;
   color: #9ca3af;
   margin: 0;
-  opacity: 0.9; /* เพิ่ม opacity */
+  opacity: 0.9;
 }
 
 /* ==================== LOADING & ERROR ==================== */
@@ -461,6 +488,11 @@
     padding-top: 32px;
     border-top: 2px solid #e5e7eb;
   }
+
+  /* 🔥 แก้ไข: ปรับความสูงสำหรับ tablet */
+  .related-words-list {
+    max-height: 400px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -500,6 +532,11 @@
   .related-section {
     padding: 0;
   }
+
+  /* 🔥 แก้ไข: ความสูงสำหรับมือถือ */
+  .related-words-list {
+    max-height: 350px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -515,6 +552,12 @@
   .related-title {
     font-size: 18px;
     margin-bottom: 16px;
+  }
+
+  /* 🔥 แก้ไข: ปรับขนาดสำหรับมือถือเล็ก */
+  .related-words-list {
+    max-height: 300px;
+    gap: 8px;
   }
 
   .related-word-item {
