@@ -1,4 +1,4 @@
-// src/pages/WordDetail.tsx - ปรับปรุงใหม่
+// src/pages/WordDetail.tsx - ส่วนที่แก้ไข
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
@@ -38,7 +38,7 @@ interface RelatedWord {
   thumbnailUrl?: string;
 }
 
-// Mock Data
+// 🔥 Mock Data - เพิ่มคำมากขึ้นเพื่อทดสอบ scroll
 const MOCK_WORD_DATA: { [key: string]: WordData } = {
   "1": {
     id: "1",
@@ -63,6 +63,16 @@ const MOCK_WORD_DATA: { [key: string]: WordData } = {
       },
       { id: "4", word: "ขอบคุณ", category: "การทักทาย" },
       { id: "5", word: "ขอโทษ", category: "การทักทาย" },
+      { id: "6", word: "ยินดีที่ได้รู้จัก", category: "การทักทาย" },
+      { id: "7", word: "ลาก่อน", category: "การทักทาย" },
+      { id: "8", word: "ราตรีสวัสดิ์", category: "การทักทาย" },
+      { id: "9", word: "อรุณสวัสดิ์", category: "การทักทาย" },
+      { id: "10", word: "สวัสดีตอนเช้า", category: "การทักทาย" },
+      { id: "11", word: "สวัสดีตอนเย็น", category: "การทักทาย" },
+      { id: "12", word: "ไว้เจอกัน", category: "การทักทาย" },
+      { id: "13", word: "โชคดี", category: "การทักทาย" },
+      { id: "14", word: "ขอให้เป็นวันที่ดี", category: "การทักทาย" },
+      { id: "15", word: "ยินดีต้อนรับ", category: "การทักทาย" },
     ],
   },
 };
@@ -195,13 +205,11 @@ export default function WordDetail() {
             <div className="word-info">
               <div className="word-header">
                 <div className="word-title-section">
-                  {/* แสดงแค่ views โดยไม่มี icon */}
                   <div className="word-views">
                     <span>{wordData.views.toLocaleString()} views</span>
                   </div>
                 </div>
 
-                {/* เหลือแค่ปุ่ม Save และ Share */}
                 <div className="word-actions">
                   <button
                     className={`action-btn ${isSaved ? "active" : ""}`}
@@ -223,7 +231,7 @@ export default function WordDetail() {
                 </div>
               </div>
 
-              {/* Description - ข้อมูลแบบบรรทัด */}
+              {/* Description */}
               <div className="word-description">
                 <div className="description-item">
                   <span className="description-label">ชื่อคำศัพท์:</span>

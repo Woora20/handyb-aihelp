@@ -145,7 +145,7 @@
 .word-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 24px;
 }
 
@@ -153,24 +153,12 @@
   flex: 1;
 }
 
-/* Views Style - แก้ไขใหม่ */
 .word-views {
   display: flex;
   align-items: center;
   font-family: var(--font-thai);
   font-size: 16px;
   color: #6b7280;
-}
-
-/* ปรับ word-header */
-.word-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center; /* เปลี่ยนจาก flex-start เป็น center */
-}
-
-.word-title-section {
-  flex: 1;
 }
 
 /* Action Buttons */
@@ -242,7 +230,7 @@
   word-break: break-word;
 }
 
-/* ==================== RIGHT COLUMN - RELATED ==================== */
+/* ==================== RIGHT COLUMN - RELATED (เพิ่ม Scroll) ==================== */
 .word-sidebar {
   display: flex;
   flex-direction: column;
@@ -250,48 +238,114 @@
 }
 
 .related-section {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  border: 1px solid #e5e7eb;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  padding-top: 28px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .related-title {
   font-family: var(--font-thai);
   font-size: 20px;
-  font-weight: 400;
-  color: var(--text-dark);
+  font-weight: 300;
+  color: #6b7280;
   margin: 0 0 20px 0;
+  opacity: 0.9;
 }
 
+/* 🔥 เพิ่ม scroll container */
 .related-words-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+
+  /* 🔥 กำหนดความสูงและ scroll */
+  max-height: 500px; /* ความสูงสูงสุด */
+  overflow-y: auto; /* scroll แนวตั้ง */
+  overflow-x: hidden; /* ซ่อน scroll แนวนอน */
+  padding-right: 8px; /* เว้นที่ให้ scrollbar */
+  margin-right: -8px; /* ดึงกลับมาให้ตรง */
 }
 
+/* 🔥 Custom Scrollbar - ทำให้สวยและเล็ก */
+.related-words-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.related-words-list::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.related-words-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.related-words-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Firefox scrollbar */
+.related-words-list {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+/* 🔥 เพิ่ม fade effect ด้านล่าง (optional) */
+.related-section {
+  position: relative;
+}
+
+.related-section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, var(--body-color) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* แก้ไขให้ list อยู่ด้านหลัง fade */
+.related-words-list {
+  position: relative;
+  z-index: 0;
+  padding-bottom: 20px; /* เพิ่มพื้นที่ด้านล่าง */
+}
+
+/* 🔥 Related word item - ใหญ่ขึ้น */
 .related-word-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px;
-  border-radius: 12px;
-  background: #f9fafb;
+  gap: 14px; /* 🔺 เพิ่ม gap */
+  padding: 12px 10px; /* 🔺 เพิ่ม padding */
+  border-radius: 10px; /* 🔺 เพิ่ม border-radius */
+  background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
+  border: 1px solid transparent;
 }
 
+/* 🔥 Hover - เพิ่มความชัดเจนขึ้นนิดหน่อย */
 .related-word-item:hover {
-  background: rgba(75, 100, 139, 0.05);
-  transform: translateX(4px);
+  background: rgba(75, 100, 139, 0.04); /* 🔺 สีเข้มขึ้นนิดหน่อย */
+  border: 1px solid rgba(75, 100, 139, 0.12); /* 🔺 เส้นขอบชัดขึ้น */
+  transform: translateX(3px); /* 🔺 เคลื่อนที่มากขึ้น */
 }
 
+/* 🔥 Thumbnail - ใหญ่ขึ้น */
 .related-thumbnail {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-  background: #e5e7eb;
+  width: 56px; /* 🔺 เพิ่มจาก 50px เป็น 56px */
+  height: 56px; /* 🔺 เพิ่มจาก 50px เป็น 56px */
+  border-radius: 8px; /* 🔺 เพิ่ม border-radius */
+  background: #f3f4f6;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -307,23 +361,26 @@
   min-width: 0;
 }
 
+/* 🔥 Text - ขนาดใหญ่ขึ้นและชัดเจนขึ้น */
 .related-word-text {
   font-family: var(--font-thai);
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--text-dark);
-  margin: 0 0 4px 0;
+  font-size: 16px; /* 🔺 กลับมาเป็น 16px */
+  font-weight: 300; /* ยังคงเบา */
+  color: #374151; /* 🔺 สีเข้มขึ้นนิดหน่อย */
+  margin: 0 0 3px 0; /* 🔺 เพิ่ม margin */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.4; /* 🔺 เพิ่ม line-height */
 }
 
 .related-category {
   font-family: var(--font-thai);
-  font-size: 14px;
+  font-size: 14px; /* 🔺 กลับมาเป็น 14px */
   font-weight: 300;
-  color: #6b7280;
+  color: #9ca3af;
   margin: 0;
+  opacity: 0.9; /* เพิ่ม opacity */
 }
 
 /* ==================== LOADING & ERROR ==================== */
@@ -398,6 +455,12 @@
     max-width: 600px;
     margin: 0 auto;
   }
+
+  .related-section {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 2px solid #e5e7eb;
+  }
 }
 
 @media (max-width: 768px) {
@@ -405,12 +468,8 @@
     padding: 30px 20px;
   }
 
-  .word-title {
-    font-size: 36px;
-  }
-
   .word-views {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .word-header {
@@ -437,13 +496,13 @@
   .description-value {
     font-size: 16px;
   }
+
+  .related-section {
+    padding: 0;
+  }
 }
 
 @media (max-width: 480px) {
-  .word-title {
-    font-size: 28px;
-  }
-
   .action-btn {
     width: 40px;
     height: 40px;
@@ -453,30 +512,26 @@
     font-size: 14px;
   }
 
-  .related-section {
-    padding: 16px;
-  }
-
   .related-title {
     font-size: 18px;
     margin-bottom: 16px;
   }
 
   .related-word-item {
-    padding: 10px;
+    padding: 10px 8px;
     gap: 12px;
   }
 
   .related-thumbnail {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
   }
 
   .related-word-text {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .related-category {
-    font-size: 12px;
+    font-size: 13px;
   }
 }
