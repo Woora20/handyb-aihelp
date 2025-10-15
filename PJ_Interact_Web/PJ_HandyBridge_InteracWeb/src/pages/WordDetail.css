@@ -22,9 +22,9 @@
   font-size: 16px;
   color: #6b7280;
   flex-wrap: wrap;
-  max-width: 1240px; /* 🔥 เท่ากับ content container */
+  max-width: 1240px;
   width: 100%;
-  margin-left: auto; /* 🔥 center เหมือน container */
+  margin-left: auto;
   margin-right: auto;
 }
 
@@ -32,7 +32,7 @@
   color: #6b7280;
   text-decoration: none;
   transition: color 0.2s ease;
-  white-space: nowrap; /* 🔥 ป้องกันตัวหนังสือขาด */
+  white-space: nowrap;
 }
 
 .breadcrumb-link:hover {
@@ -41,13 +41,13 @@
 
 .breadcrumb-separator {
   color: #9ca3af;
-  flex-shrink: 0; /* 🔥 ป้องกัน icon หด */
+  flex-shrink: 0;
 }
 
 .breadcrumb-current {
   color: var(--text-dark);
   font-weight: 400;
-  word-break: break-word; /* 🔥 ให้ขึ้นบรรทัดใหม่ถ้ายาว */
+  word-break: break-word;
 }
 
 /* ==================== CONTENT CONTAINER ==================== */
@@ -140,7 +140,6 @@
 .word-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .word-header {
@@ -154,51 +153,31 @@
   flex: 1;
 }
 
-.word-category {
-  display: inline-block;
-  padding: 6px 16px;
-  background: rgba(75, 100, 139, 0.1);
-  color: var(--brand-color);
-  border-radius: 20px;
-  font-family: var(--font-thai);
-  font-size: 14px;
-  font-weight: 400;
-  margin-bottom: 12px;
-}
-
-.word-title {
-  font-family: var(--font-thai);
-  font-size: 48px;
-  font-weight: 400;
-  color: var(--text-dark);
-  margin: 0 0 16px 0;
-  line-height: 1.2;
-}
-
-.word-meta {
+/* Views Style - แก้ไขใหม่ */
+.word-views {
   display: flex;
   align-items: center;
-  gap: 24px;
   font-family: var(--font-thai);
   font-size: 16px;
   color: #6b7280;
 }
 
-.meta-item {
+/* ปรับ word-header */
+.word-header {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center; /* เปลี่ยนจาก flex-start เป็น center */
 }
 
-.meta-icon {
-  font-size: 18px;
-  color: #9ca3af;
+.word-title-section {
+  flex: 1;
 }
 
 /* Action Buttons */
 .word-actions {
   display: flex;
   gap: 12px;
+  align-items: flex-start;
 }
 
 .action-btn {
@@ -230,27 +209,37 @@
 
 /* Description */
 .word-description {
-  padding: 24px;
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  margin-top: 20px;
 }
 
-.description-title {
-  font-family: var(--font-thai);
-  font-size: 20px;
-  font-weight: 400;
-  color: var(--text-dark);
-  margin: 0 0 12px 0;
-}
-
-.description-text {
+.description-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   font-family: var(--font-thai);
   font-size: 16px;
-  font-weight: 300;
   line-height: 1.6;
+}
+
+.description-label {
+  font-weight: 400;
+  color: var(--text-dark);
+  flex-shrink: 0;
+  min-width: 160px;
+}
+
+.description-value {
+  font-weight: 300;
   color: #4b5563;
-  margin: 0;
+  flex: 1;
+  word-break: break-word;
 }
 
 /* ==================== RIGHT COLUMN - RELATED ==================== */
@@ -420,8 +409,13 @@
     font-size: 36px;
   }
 
+  .word-views {
+    font-size: 12px;
+  }
+
   .word-header {
     flex-direction: column;
+    gap: 20px;
   }
 
   .word-actions {
@@ -429,8 +423,60 @@
     justify-content: flex-start;
   }
 
-  .word-meta {
-    flex-wrap: wrap;
-    gap: 16px;
+  .description-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .description-label {
+    min-width: unset;
+    color: #6b7280;
+    font-size: 14px;
+  }
+
+  .description-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .word-title {
+    font-size: 28px;
+  }
+
+  .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .breadcrumb {
+    font-size: 14px;
+  }
+
+  .related-section {
+    padding: 16px;
+  }
+
+  .related-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .related-word-item {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .related-thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+
+  .related-word-text {
+    font-size: 14px;
+  }
+
+  .related-category {
+    font-size: 12px;
   }
 }

@@ -1,14 +1,11 @@
-// src/pages/WordDetail.tsx - แก้ไข breadcrumb และ related section
+// src/pages/WordDetail.tsx - ปรับปรุงใหม่
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiPlay,
   FiPause,
-  FiHeart,
   FiShare2,
   FiBookmark,
-  FiClock,
-  FiUser,
   FiEye,
   FiChevronRight,
   FiAlertCircle,
@@ -24,6 +21,10 @@ interface WordData {
   category: string;
   videoUrl: string;
   description: string;
+  wordType: string;
+  organization: string;
+  reference: string;
+  productionDate: string;
   createdAt: string;
   submitter: string;
   views: number;
@@ -41,11 +42,15 @@ interface RelatedWord {
 const MOCK_WORD_DATA: { [key: string]: WordData } = {
   "1": {
     id: "1",
-    word: "สวัสดี",
+    word: "สวัสดี: ท่ามือนี้ใช้กับผู้ใหญ่ ผู้มีอาวุโส ผู้มีตำแหน่งสูง",
     category: "การทักทาย",
     videoUrl: "/videos/sawasdee.mp4",
     description:
       "คำทักทายพื้นฐานที่ใช้ทุกวัน สามารถใช้ได้ทั้งตอนเช้า กลางวัน และเย็น เหมาะสำหรับการทักทายทั่วไป",
+    wordType: "คำกริยา",
+    organization: "สมาคมคนหูหนวกแห่งประเทศไทย",
+    reference: "พจนานุกรมภาษามือไทย ฉบับปรับปรุง พ.ศ. 2565",
+    productionDate: "15 สิงหาคม 2565",
     createdAt: "10 ตุลาคม 2567",
     submitter: "ทีมงาน Handy Bridge",
     views: 266,
@@ -70,7 +75,6 @@ export default function WordDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     // Simulate API call
@@ -143,7 +147,7 @@ export default function WordDetail() {
       <Navbar />
 
       <main className="word-detail-main">
-        {/* 🔥 Breadcrumb - เพิ่ม category */}
+        {/* Breadcrumb */}
         <div className="breadcrumb">
           <Link to="/" className="breadcrumb-link">
             หน้าหลัก
@@ -191,36 +195,14 @@ export default function WordDetail() {
             <div className="word-info">
               <div className="word-header">
                 <div className="word-title-section">
-                  <span className="word-category">{wordData.category}</span>
-                  <h1 className="word-title">{wordData.word}</h1>
-
-                  <div className="word-meta">
-                    <div className="meta-item">
-                      <FiClock className="meta-icon" />
-                      <span>{wordData.createdAt}</span>
-                    </div>
-                    <div className="meta-item">
-                      <FiUser className="meta-icon" />
-                      <span>{wordData.submitter}</span>
-                    </div>
-                    <div className="meta-item">
-                      <FiEye className="meta-icon" />
-                      <span>{wordData.views.toLocaleString()} views</span>
-                    </div>
+                  {/* แสดงแค่ views โดยไม่มี icon */}
+                  <div className="word-views">
+                    <span>{wordData.views.toLocaleString()} views</span>
                   </div>
                 </div>
 
+                {/* เหลือแค่ปุ่ม Save และ Share */}
                 <div className="word-actions">
-                  <button
-                    className={`action-btn ${isLiked ? "active" : ""}`}
-                    onClick={() => setIsLiked(!isLiked)}
-                    aria-label="ถูกใจ"
-                  >
-                    <FiHeart
-                      size={20}
-                      fill={isLiked ? "currentColor" : "none"}
-                    />
-                  </button>
                   <button
                     className={`action-btn ${isSaved ? "active" : ""}`}
                     onClick={() => setIsSaved(!isSaved)}
@@ -241,15 +223,71 @@ export default function WordDetail() {
                 </div>
               </div>
 
-              {/* Description */}
+              {/* Description - ข้อมูลแบบบรรทัด */}
               <div className="word-description">
-                <h2 className="description-title">คำอธิบาย</h2>
-                <p className="description-text">{wordData.description}</p>
+                <div className="description-item">
+                  <span className="description-label">ชื่อคำศัพท์:</span>
+                  <span className="description-value">{wordData.word}</span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">ความหมาย:</span>
+                  <span className="description-value">
+                    {wordData.description}
+                  </span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">หมวดหมู่:</span>
+                  <span className="description-value">{wordData.category}</span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">ชนิดของคำ:</span>
+                  <span className="description-value">{wordData.wordType}</span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">ชื่อหน่วยงานที่ทำ:</span>
+                  <span className="description-value">
+                    {wordData.organization}
+                  </span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">
+                    แหล่งอ้างอิงภาษามือ:
+                  </span>
+                  <span className="description-value">
+                    {wordData.reference}
+                  </span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">วันที่ผลิต:</span>
+                  <span className="description-value">
+                    {wordData.productionDate}
+                  </span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">อัพโหลดโดย:</span>
+                  <span className="description-value">
+                    {wordData.submitter}
+                  </span>
+                </div>
+
+                <div className="description-item">
+                  <span className="description-label">วันที่อัพโหลด:</span>
+                  <span className="description-value">
+                    {wordData.createdAt}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* 🔥 Right Column - แก้เป็น "หมวดหมู่: การทักทาย" */}
+          {/* Right Column - Related Words */}
           <aside className="word-sidebar">
             <div className="related-section">
               <h2 className="related-title">หมวดหมู่: {wordData.category}</h2>
