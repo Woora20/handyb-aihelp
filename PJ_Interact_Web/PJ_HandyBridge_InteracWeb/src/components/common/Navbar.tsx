@@ -130,7 +130,7 @@ export default function Navbar_Handy({
                         }`}
                         onClick={() => setActiveDropdown(null)}
                       >
-                        <span className="dropdown-text">{item.title}</span>
+                        <span>{item.title}</span>
                         <PiArrowCircleRightFill className="dropdown-arrow-icon" />
                       </Link>
                     ))}
@@ -229,21 +229,30 @@ export default function Navbar_Handy({
                 </div>
               </div>
             ))}
+
+            {/* Auth Links Inside Menu List */}
+            {!profile && (
+              <div className="mobile-menu-item">
+                <div className="mobile-auth">
+                  <span
+                    className="mobile-auth-link"
+                    onClick={handleRegisterClick}
+                  >
+                    สมัครสมาชิก
+                  </span>
+                  <span className="mobile-auth-divider">|</span>
+                  <span className="mobile-auth-link" onClick={handleLoginClick}>
+                    เข้าสู่ระบบ
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
-          {profile ? (
+          {profile && (
             <button className="mobile-logout" onClick={handleSignOut}>
               ออกจากระบบ <MdLogout />
             </button>
-          ) : (
-            <div className="mobile-auth">
-              <button className="mobile-login" onClick={handleLoginClick}>
-                เข้าสู่ระบบ
-              </button>
-              <button className="mobile-register" onClick={handleRegisterClick}>
-                สมัครสมาชิก
-              </button>
-            </div>
           )}
         </div>
       </nav>

@@ -1,6 +1,6 @@
 /* src/components/common/Navbar.css */
 
-/* ==================== BASE STRUCTURE ==================== */
+/* ==================== BASE ==================== */
 .navbar {
   display: flex;
   flex-direction: column;
@@ -27,23 +27,20 @@
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  color: inherit;
 }
 
 .logo-icon {
   width: 32px;
   height: 32px;
-  object-fit: contain;
 }
 
 .logo-text {
   font-family: var(--font-english);
-  font-weight: 400;
   font-size: 20px;
   color: var(--brand-color);
 }
 
-/* ==================== NAVIGATION MENU ==================== */
+/* ==================== DESKTOP NAV ==================== */
 .navbar-menu {
   display: flex;
   align-items: center;
@@ -67,7 +64,7 @@
   font-weight: 200;
   color: var(--text-dark);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
 }
 
 .nav-link:hover {
@@ -75,18 +72,18 @@
   color: white;
 }
 
-.dropdown-icon {
-  font-size: 14px;
-  color: var(--text-gray);
-  transition: transform 0.3s ease;
-}
-
 .nav-link:hover .dropdown-icon {
   color: white;
   transform: rotate(180deg);
 }
 
-/* ==================== DROPDOWN MENU ==================== */
+.dropdown-icon {
+  font-size: 14px;
+  color: var(--text-gray);
+  transition: transform 0.3s;
+}
+
+/* ==================== DROPDOWN ==================== */
 .dropdown-menu {
   position: absolute;
   top: calc(100% + 10px);
@@ -99,7 +96,7 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition: all 0.3s;
   z-index: 1000;
 }
 
@@ -126,7 +123,7 @@
   font-size: 16px;
   font-weight: 300;
   text-decoration: none;
-  transition: background-color 0.2s, color 0.2s, padding 0.2s;
+  transition: all 0.2s;
 }
 
 .dropdown-item:hover {
@@ -141,10 +138,6 @@
   padding-right: 48px;
 }
 
-.dropdown-text {
-  display: block;
-}
-
 .dropdown-arrow-icon {
   position: absolute;
   right: 20px;
@@ -153,25 +146,19 @@
   color: var(--brand-color);
   transform: rotate(-45deg);
   opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+  transition: opacity 0.3s;
 }
 
-.dropdown-item:hover .dropdown-arrow-icon {
+.dropdown-item:hover .dropdown-arrow-icon,
+.dropdown-item.active .dropdown-arrow-icon {
   opacity: 1;
 }
 
 .dropdown-item.active .dropdown-arrow-icon {
   color: white;
-  opacity: 1;
 }
 
-/* ==================== USER PROFILE ==================== */
-.navbar-profile {
-  display: flex;
-  align-items: center;
-}
-
+/* ==================== PROFILE ==================== */
 .user-menu {
   display: flex;
   align-items: center;
@@ -181,7 +168,6 @@
 .profile-name {
   font-family: var(--font-thai);
   font-size: 16px;
-  font-weight: 400;
   color: var(--text-dark);
 }
 
@@ -194,7 +180,8 @@
   cursor: pointer;
   border-radius: 50%;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  display: block;
+  line-height: 0;
 }
 
 .profile-avatar-btn:hover {
@@ -205,6 +192,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 /* ==================== AUTH BUTTONS ==================== */
@@ -221,7 +209,7 @@
   font-size: 16px;
   font-weight: 300;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
 }
 
 .login-btn {
@@ -245,20 +233,14 @@
   background-color: #3a5270;
 }
 
-/* ==================== MOBILE ==================== */
-.mobile-menu-toggle {
-  display: none;
-}
-
-.mobile-backdrop {
-  display: none;
-}
-
+/* ==================== MOBILE HIDDEN ==================== */
+.mobile-menu-toggle,
+.mobile-backdrop,
 .mobile-menu-dropdown {
   display: none;
 }
 
-/* ==================== MOBILE RESPONSIVE ==================== */
+/* ==================== MOBILE ==================== */
 @media (max-width: 768px) {
   .navbar-container {
     padding: 16px 20px;
@@ -269,7 +251,6 @@
     display: none;
   }
 
-  /* Mobile Toggle Button */
   .mobile-menu-toggle {
     display: flex;
     align-items: center;
@@ -279,30 +260,21 @@
     background-color: var(--brand-color);
     border: none;
     border-radius: 50%;
-    cursor: pointer;
     color: white;
     font-size: 24px;
+    cursor: pointer;
     z-index: 102;
-    transition: background-color 0.3s ease;
   }
 
-  .mobile-menu-toggle:hover {
-    background-color: #3a5270;
-  }
-
-  /* Mobile Backdrop */
   .mobile-backdrop {
     display: block;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 100;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: all 0.3s;
   }
 
   .mobile-backdrop.active {
@@ -310,7 +282,6 @@
     visibility: visible;
   }
 
-  /* Mobile Dropdown Menu */
   .mobile-menu-dropdown {
     display: block;
     position: fixed;
@@ -321,9 +292,8 @@
     background-color: var(--brand-color);
     z-index: 101;
     transform: translateY(-100%);
-    transition: transform 0.3s ease;
-    padding-top: 80px;
-    padding-bottom: 24px;
+    transition: transform 0.3s;
+    padding: 80px 0 24px;
     border-radius: 0 0 30px 30px;
     overflow-y: auto;
   }
@@ -332,7 +302,6 @@
     transform: translateY(0);
   }
 
-  /* Custom Scrollbar */
   .mobile-menu-dropdown::-webkit-scrollbar {
     width: 6px;
   }
@@ -346,7 +315,6 @@
     border-radius: 3px;
   }
 
-  /* Mobile Profile */
   .mobile-profile {
     display: flex;
     align-items: center;
@@ -367,24 +335,19 @@
   .mobile-profile-info {
     flex: 1;
     color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
-  .mobile-profile-name {
-    font-family: var(--font-thai);
-    font-size: 16px;
-    font-weight: 400;
-    margin: 0 0 6px 0;
-  }
-
+  .mobile-profile-name,
   .mobile-profile-email {
+    font-size: 16px;
     font-family: var(--font-thai);
-    font-size: 14px;
-    font-weight: 300;
+    font-weight: 200;
     margin: 0;
-    opacity: 0.9;
   }
 
-  /* Mobile Menu List */
   .mobile-menu-list {
     padding: 8px 20px;
   }
@@ -410,38 +373,27 @@
     font-size: 18px;
     font-weight: 300;
     cursor: pointer;
-    text-align: left;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-  }
-
-  .mobile-menu-button.active {
-    background-color: #375077;
-    padding-left: 16px;
-    padding-right: 16px;
   }
 
   .mobile-arrow {
     font-size: 18px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s;
   }
 
   .mobile-arrow.rotate {
     transform: rotate(180deg);
   }
 
-  /* Mobile Submenu */
   .mobile-submenu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s;
     padding-left: 12px;
   }
 
   .mobile-submenu.open {
     max-height: 500px;
-    padding-top: 8px;
-    padding-bottom: 12px;
+    padding: 8px 0 12px;
   }
 
   .mobile-submenu-link {
@@ -454,23 +406,45 @@
     font-weight: 200;
     text-decoration: none;
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
   }
 
-  .mobile-submenu-link:hover,
   .mobile-submenu-link.active {
     background-color: rgba(255, 255, 255, 0.12);
     color: white;
-    padding-left: 20px;
   }
 
-  /* Mobile Logout Button */
+  .mobile-auth {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 8px;
+  }
+
+  .mobile-auth-link {
+    font-family: var(--font-thai);
+    font-size: 18px;
+    font-weight: 300;
+    color: white;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .mobile-auth-link:hover {
+    border-bottom-color: white;
+  }
+
+  .mobile-auth-divider {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
   .mobile-logout {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin: 24px 24px 16px 24px;
+    margin: 24px 24px 16px;
     padding: 16px 32px;
     background-color: #000;
     border: none;
@@ -480,57 +454,14 @@
     font-size: 17px;
     font-weight: 300;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
   }
 
   .mobile-logout:hover {
-    background-color: #1a1a1a;
-    transform: translateY(-2px);
+    background-color: #dc2626;
   }
 
   .mobile-logout svg {
     font-size: 22px;
-  }
-
-  /* Mobile Auth Buttons */
-  .mobile-auth {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 20px 24px;
-  }
-
-  .mobile-login,
-  .mobile-register {
-    width: 100%;
-    padding: 16px 32px;
-    border-radius: 30px;
-    font-family: var(--font-thai);
-    font-size: 17px;
-    font-weight: 300;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .mobile-login {
-    background: white;
-    color: var(--brand-color);
-    border: 1px solid white;
-  }
-
-  .mobile-login:hover {
-    background: rgba(255, 255, 255, 0.95);
-    transform: translateY(-2px);
-  }
-
-  .mobile-register {
-    background-color: #000;
-    color: white;
-    border: none;
-  }
-
-  .mobile-register:hover {
-    background-color: #1a1a1a;
-    transform: translateY(-2px);
   }
 }
