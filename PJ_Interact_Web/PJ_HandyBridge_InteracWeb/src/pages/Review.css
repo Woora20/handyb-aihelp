@@ -577,13 +577,14 @@
   /* Stars wrapper */
   .stars-wrapper {
     display: flex;
-    gap: 4px; /* 🔥 ลด gap ให้พอดีกับพื้นที่ */
+
     flex-shrink: 0;
   }
 
   /* Star buttons */
   .star-btn {
     font-size: 24px; /* 🔥 ลดขนาดลงเล็กน้อย */
+    transform: scale(1.3);
     padding: 2px;
     background: none;
     border: none;
@@ -595,7 +596,7 @@
 
   /* Rating label */
   .rating-label {
-    font-size: 16px; /* 🔥 ลดขนาดเล็กน้อย */
+    font-size: 18px; /* 🔥 ลดขนาดเล็กน้อย */
     font-weight: 300;
     white-space: nowrap;
     color: #9ca3af;
