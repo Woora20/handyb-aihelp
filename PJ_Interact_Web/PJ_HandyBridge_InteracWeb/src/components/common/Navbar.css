@@ -4,14 +4,19 @@
 /* Base Navbar Container */
 .navbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   width: 100vw;
-  padding: 20px 100px;
   box-sizing: border-box;
   background-color: var(--body-color);
   position: relative;
   z-index: 100;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 100px;
 }
 
 /* ==================== LOGO ==================== */
@@ -251,4 +256,196 @@
 
 .register-btn:hover {
   background-color: #3a5270;
+}
+
+/* ==================== MOBILE MENU TOGGLE ==================== */
+.mobile-menu-toggle {
+  display: none;
+}
+
+/* ==================== MOBILE DROPDOWN ==================== */
+.mobile-menu-dropdown {
+  display: none;
+}
+
+/* ==================== MOBILE RESPONSIVE (@media 768px) ==================== */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 16px 20px;
+  }
+
+  /* Hide desktop menu and profile */
+  .navbar-menu,
+  .navbar-profile {
+    display: none;
+  }
+
+  /* Show mobile toggle button */
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: var(--brand-color);
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  /* Mobile Dropdown Menu */
+  .mobile-menu-dropdown {
+    display: block;
+    max-height: 0;
+    overflow: hidden;
+    background-color: var(--brand-color);
+    transition: max-height 0.4s ease;
+  }
+
+  .navbar.mobile-open .mobile-menu-dropdown {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Mobile Profile Section */
+  .mobile-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .mobile-profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mobile-profile-info {
+    flex: 1;
+    color: white;
+  }
+
+  .mobile-profile-name,
+  .mobile-profile-email {
+    font-family: var(--font-thai);
+    font-size: 14px;
+    font-weight: 300;
+    margin: 4px 0;
+  }
+
+  /* Mobile Menu List */
+  .mobile-menu-list {
+    padding: 0 20px;
+  }
+
+  .mobile-menu-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .mobile-menu-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    background: none;
+    border: none;
+    color: white;
+    font-family: var(--font-thai);
+    font-size: 18px;
+    font-weight: 300;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .mobile-arrow {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-arrow.rotate {
+    transform: rotate(180deg);
+  }
+
+  .mobile-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .mobile-submenu.open {
+    max-height: 500px;
+  }
+
+  .mobile-submenu-link {
+    display: block;
+    padding: 12px 0 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: var(--font-thai);
+    font-size: 16px;
+    font-weight: 200;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .mobile-submenu-link:hover,
+  .mobile-submenu-link.active {
+    color: white;
+  }
+
+  /* Mobile Logout Button */
+  .mobile-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 20px;
+    padding: 14px 32px;
+    background-color: #000;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-family: var(--font-thai);
+    font-size: 16px;
+    font-weight: 300;
+    cursor: pointer;
+  }
+
+  .mobile-logout svg {
+    font-size: 20px;
+  }
+
+  /* Mobile Auth Buttons */
+  .mobile-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 20px;
+  }
+
+  .mobile-login,
+  .mobile-register {
+    width: 100%;
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-family: var(--font-thai);
+    font-size: 16px;
+    font-weight: 300;
+    cursor: pointer;
+  }
+
+  .mobile-login {
+    background: white;
+    color: var(--brand-color);
+    border: 1px solid white;
+  }
+
+  .mobile-register {
+    background-color: #000;
+    color: white;
+    border: none;
+  }
 }
