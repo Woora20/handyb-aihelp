@@ -594,6 +594,11 @@
     justify-content: center;
   }
 
+  /* Active state */
+  .star-btn:active {
+    transform: scale(1.2); /* 🔥 ย่อลงเล็กน้อยเมื่อคลิก */
+  }
+
   /* Rating label */
   .rating-label {
     font-size: 18px; /* 🔥 ลดขนาดเล็กน้อย */
