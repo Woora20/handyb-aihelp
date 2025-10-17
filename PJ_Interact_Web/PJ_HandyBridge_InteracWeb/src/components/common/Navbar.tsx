@@ -1,11 +1,11 @@
 // src/components/common/Navbar.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAngleDown } from "react-icons/fa";
 import { PiArrowCircleRightFill } from "react-icons/pi";
-import { HiMenuAlt3 } from "react-icons/hi";
-import { IoClose } from "react-icons/io5";
-import { MdEdit, MdLogout } from "react-icons/md";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { TfiClose } from "react-icons/tfi";
+import { MdLogout } from "react-icons/md";
 import { useAuth } from "../../contexts/AuthContext";
 import ProfileSidebar from "./ProfileSidebar";
 import "./Navbar.css";
@@ -15,7 +15,6 @@ interface NavbarProps {
   onRegisterClick?: () => void;
 }
 
-// Menu Structure
 const menuItems = {
   เรียนรู้: [
     { title: "ค้นหาภาษามือ", path: "/search" },
@@ -45,18 +44,28 @@ export default function Navbar_Handy({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileActiveMenu, setMobileActiveMenu] = useState<string | null>(null);
 
-  // Handle Auth Actions
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   const handleLoginClick = () => {
-    location.pathname === "/auth" && onLoginClick
-      ? onLoginClick()
-      : navigate("/auth?mode=login");
+    if (location.pathname === "/auth" && onLoginClick) {
+      onLoginClick();
+    } else {
+      navigate("/auth?mode=login");
+    }
     setMobileMenuOpen(false);
   };
 
   const handleRegisterClick = () => {
-    location.pathname === "/auth" && onRegisterClick
-      ? onRegisterClick()
-      : navigate("/auth?mode=register");
+    if (location.pathname === "/auth" && onRegisterClick) {
+      onRegisterClick();
+    } else {
+      navigate("/auth?mode=register");
+    }
     setMobileMenuOpen(false);
   };
 
@@ -66,34 +75,24 @@ export default function Navbar_Handy({
     navigate("/");
   };
 
-  // Handle Dropdown
-  const handleMouseEnter = (menu: string) => setActiveDropdown(menu);
-  const handleMouseLeave = () => setActiveDropdown(null);
-
-  // Handle Mobile Menu Toggle
-  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
-
-  // Handle Mobile Submenu Toggle
-  const toggleMobileSubmenu = (menu: string) => {
-    setMobileActiveMenu(mobileActiveMenu === menu ? null : menu);
-  };
-
-  // Handle Mobile Link Click
-  const handleMobileLinkClick = () => {
+  const closeMobileMenu = () => {
     setMobileMenuOpen(false);
     setMobileActiveMenu(null);
   };
 
-  // Default Avatar
   const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
     profile?.full_name || "User"
   )}&background=4b648b&color=fff&size=100`;
 
   return (
     <>
+      <div
+        className={`mobile-backdrop ${mobileMenuOpen ? "active" : ""}`}
+        onClick={closeMobileMenu}
+      />
+
       <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="navbar-container">
-          {/* Logo */}
           <Link to="/" className="logo">
             <img
               src="/src/assets/logo/logo_handy1.png"
@@ -103,21 +102,19 @@ export default function Navbar_Handy({
             <span className="logo-text">Handy Bridge</span>
           </Link>
 
-          {/* Navigation Menu */}
           <div className="navbar-menu">
             {Object.entries(menuItems).map(([key, items]) => (
               <div
                 key={key}
                 className="nav-item-wrapper"
-                onMouseEnter={() => handleMouseEnter(key)}
-                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => setActiveDropdown(key)}
+                onMouseLeave={() => setActiveDropdown(null)}
               >
                 <button className="nav-link">
                   {key}
                   <FaAngleDown className="dropdown-icon" />
                 </button>
 
-                {/* Dropdown Menu */}
                 <div
                   className={`dropdown-menu ${
                     activeDropdown === key ? "active" : ""
@@ -143,7 +140,6 @@ export default function Navbar_Handy({
             ))}
           </div>
 
-          {/* Profile/Auth Section */}
           <div className="navbar-profile">
             {profile ? (
               <div className="user-menu">
@@ -171,19 +167,16 @@ export default function Navbar_Handy({
             )}
           </div>
 
-          {/* Mobile Hamburger Button */}
           <button
             className="mobile-menu-toggle"
-            onClick={toggleMobileMenu}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Menu"
           >
-            {mobileMenuOpen ? <IoClose /> : <HiMenuAlt3 />}
+            {mobileMenuOpen ? <TfiClose /> : <RxHamburgerMenu />}
           </button>
         </div>
 
-        {/* Mobile Dropdown Content */}
         <div className="mobile-menu-dropdown">
-          {/* Mobile Profile */}
           {profile && (
             <div className="mobile-profile">
               <img
@@ -200,15 +193,14 @@ export default function Navbar_Handy({
             </div>
           )}
 
-          {/* Mobile Menu Items */}
           <div className="mobile-menu-list">
             {Object.entries(menuItems).map(([key, items]) => (
               <div key={key} className="mobile-menu-item">
                 <button
-                  className={`mobile-menu-button ${
-                    mobileActiveMenu === key ? "active" : ""
-                  }`}
-                  onClick={() => toggleMobileSubmenu(key)}
+                  className="mobile-menu-button"
+                  onClick={() =>
+                    setMobileActiveMenu(mobileActiveMenu === key ? null : key)
+                  }
                 >
                   {key}
                   <FaAngleDown
@@ -229,7 +221,7 @@ export default function Navbar_Handy({
                       className={`mobile-submenu-link ${
                         location.pathname === item.path ? "active" : ""
                       }`}
-                      onClick={handleMobileLinkClick}
+                      onClick={closeMobileMenu}
                     >
                       {item.title}
                     </Link>
@@ -239,7 +231,6 @@ export default function Navbar_Handy({
             ))}
           </div>
 
-          {/* Mobile Auth/Logout */}
           {profile ? (
             <button className="mobile-logout" onClick={handleSignOut}>
               ออกจากระบบ <MdLogout />
@@ -257,7 +248,6 @@ export default function Navbar_Handy({
         </div>
       </nav>
 
-      {/* Profile Sidebar */}
       {profile && (
         <ProfileSidebar
           isOpen={showProfileSidebar}
