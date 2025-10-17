@@ -65,6 +65,7 @@
   color: var(--text-dark);
   cursor: pointer;
   transition: all 0.3s;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -182,6 +183,7 @@
   overflow: hidden;
   display: block;
   line-height: 0;
+  flex-shrink: 0;
 }
 
 .profile-avatar-btn:hover {
@@ -210,6 +212,7 @@
   font-weight: 300;
   cursor: pointer;
   transition: all 0.3s;
+  white-space: nowrap;
 }
 
 .login-btn {
@@ -240,6 +243,32 @@
   display: none;
 }
 
+/* ==================== TABLET ==================== */
+@media (max-width: 1024px) {
+  .navbar-container {
+    padding: 18px 60px;
+  }
+
+  .profile-name {
+    display: none;
+  }
+
+  .navbar-menu {
+    gap: 8px;
+  }
+
+  .nav-link {
+    padding: 8px 20px;
+    font-size: 18px;
+  }
+
+  .login-btn,
+  .register-btn {
+    padding: 7px 18px;
+    font-size: 15px;
+  }
+}
+
 /* ==================== MOBILE ==================== */
 @media (max-width: 768px) {
   .navbar-container {
@@ -247,6 +276,7 @@
   }
 
   .navbar-menu,
+  .auth-buttons,
   .navbar-profile {
     display: none;
   }
@@ -264,12 +294,16 @@
     font-size: 24px;
     cursor: pointer;
     z-index: 102;
+    flex-shrink: 0;
   }
 
   .mobile-backdrop {
     display: block;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 100;
     opacity: 0;
@@ -330,6 +364,7 @@
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid white;
+    flex-shrink: 0;
   }
 
   .mobile-profile-info {
@@ -337,15 +372,19 @@
     color: white;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
+    min-width: 0;
   }
 
   .mobile-profile-name,
   .mobile-profile-email {
-    font-size: 16px;
     font-family: var(--font-thai);
+    font-size: 16px;
     font-weight: 200;
     margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .mobile-menu-list {
@@ -378,6 +417,7 @@
   .mobile-arrow {
     font-size: 18px;
     transition: transform 0.3s;
+    flex-shrink: 0;
   }
 
   .mobile-arrow.rotate {
@@ -429,10 +469,6 @@
     cursor: pointer;
     border-bottom: 1px solid transparent;
     transition: border-color 0.3s;
-  }
-
-  .mobile-auth-link:hover {
-    border-bottom-color: white;
   }
 
   .mobile-auth-divider {
