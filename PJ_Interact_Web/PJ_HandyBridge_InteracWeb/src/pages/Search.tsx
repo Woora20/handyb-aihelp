@@ -36,7 +36,6 @@ export default function Search() {
   const [selectedCategory, setSelectedCategory] = useState("การทักทาย");
   const [visibleCount, setVisibleCount] = useState(10);
 
-  // Filter signs
   const filteredSigns = MOCK_SIGNS.filter((sign) => {
     const matchesSearch = sign.word
       .toLowerCase()
@@ -55,14 +54,14 @@ export default function Search() {
       <Navbar />
 
       <main className="search-main">
-        {/* Header */}
+        {/* Header - Desktop only */}
         <div className="search-header">
           <h1>ค้นหาคำศัพท์ภาษามือที่ต้องการเรียนรู้</h1>
         </div>
 
         {/* Search Section */}
         <div className="search-section">
-          {/* Toggle Text/Hand */}
+          {/* Toggle Buttons */}
           <div className="search-toggle">
             <button
               className={`toggle-option ${
@@ -75,6 +74,7 @@ export default function Search() {
                 alt="ข้อความ"
                 className="toggle-icon"
               />
+              <span className="toggle-label">ข้อความ</span>
             </button>
             <button
               className={`toggle-option ${
@@ -87,10 +87,11 @@ export default function Search() {
                 alt="ภาพมือ"
                 className="toggle-icon"
               />
+              <span className="toggle-label">ภาษามือ</span>
             </button>
           </div>
 
-          {/* Search Bar with Category Dropdown */}
+          {/* Search Bar */}
           <div className="search-bar-container">
             <div className="search-input-wrapper">
               <FiSearch className="search-icon" />
@@ -120,7 +121,7 @@ export default function Search() {
           </div>
         </div>
 
-        {/* 🔥 Content Container - ครอบ results + grid + button */}
+        {/* Content Container */}
         <div className="search-content-container">
           {/* Results Count */}
           <div className="results-info">
@@ -132,9 +133,7 @@ export default function Search() {
             {displayedSigns.map((sign) => (
               <div key={sign.id} className="search-sign-card">
                 <div className="search-card-video">
-                  <div className="video-placeholder">
-                    {/* Placeholder สำหรับ GIF/Video จาก API */}
-                  </div>
+                  <div className="video-placeholder"></div>
                 </div>
                 <div className="search-card-content">
                   <p className="search-card-category">{sign.category}</p>

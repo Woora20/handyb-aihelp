@@ -61,32 +61,28 @@
   justify-content: center;
   transition: all 0.3s ease;
   padding: 0;
+  gap: 0;
 }
 
 .toggle-option.active {
   background-color: var(--brand-color);
 }
+
 .toggle-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  color: white;
-}
-
-.toggle-option .toggle-icon {
-  filter: brightness(0) invert(1);
-}
-
-.toggle-option .toggle-icon {
   width: 36px;
   height: 36px;
   object-fit: contain;
-  color: white;
+  filter: brightness(0) invert(1);
 }
 
 .toggle-option img[alt="ภาพมือ"],
 .toggle-icon[src*="hand-icon"] {
-  transform: scaleX(-1); /* ✅ flip แนวนอน */
+  transform: scaleX(-1);
+}
+
+/* ✅ ซ่อน toggle label ใน Desktop */
+.toggle-label {
+  display: none;
 }
 
 /* Search Bar Container */
@@ -99,7 +95,6 @@
   border-radius: 35px;
   padding: 0 20px;
   height: 70px;
-  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
 }
 
 .search-input-wrapper {
@@ -112,8 +107,8 @@
 .search-icon {
   width: 24px;
   height: 24px;
-  color: #000; /* สีเทา */
-  flex-shrink: 0; /* ป้องกันหด */
+  color: #000;
+  flex-shrink: 0;
 }
 
 .search-input {
@@ -164,7 +159,7 @@
   font-size: 20px;
 }
 
-/* ==================== 🔥 CONTENT CONTAINER ==================== */
+/* ==================== CONTENT CONTAINER ==================== */
 .search-content-container {
   max-width: 1240px;
   width: 100%;
@@ -290,4 +285,440 @@
 
 .load-more-btn:active {
   transform: translateY(0);
+}
+
+/* ==================== TABLET (768px - 1024px) ==================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .search-main {
+    padding: 40px 60px 80px;
+  }
+
+  /* Header */
+  .search-header h1 {
+    font-size: 40px;
+  }
+
+  /* Search Section */
+  .search-section {
+    width: 100%;
+    max-width: 708px;
+    height: auto;
+    min-height: 90px;
+    padding: 15px;
+    border-radius: 50px;
+    margin-bottom: 32px;
+  }
+
+  .search-toggle {
+    width: 180px;
+    height: 60px;
+    border-radius: 35px;
+  }
+
+  .toggle-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .search-bar-container {
+    height: 60px;
+    padding: 0 16px;
+    border-radius: 30px;
+  }
+
+  .search-input {
+    font-size: 18px;
+  }
+
+  .category-select-wrapper {
+    margin-left: 16px;
+    padding-left: 16px;
+  }
+
+  .category-select {
+    font-size: 16px;
+    min-width: 100px;
+  }
+
+  /* Results */
+  .search-content-container {
+    max-width: 100%;
+  }
+
+  .results-info p {
+    font-size: 18px;
+  }
+
+  .search-results-grid {
+    grid-template-columns: repeat(3, 232px);
+    gap: 20px;
+  }
+
+  .load-more-btn {
+    font-size: 18px;
+    padding: 12px 36px;
+  }
+}
+
+/* ==================== MOBILE (max-width: 767px) ==================== */
+@media (max-width: 767px) {
+  .search-main {
+    padding: 30px 20px 60px;
+  }
+
+  /* ✅ ซ่อน Header h1 */
+  .search-header {
+    display: none;
+  }
+
+  /* ✅ Search Section - 2 แถว (Toggle บน + Search bar ล่าง) */
+  .search-section {
+    width: 100%;
+    height: auto;
+    min-height: 140px;
+    padding: 10px;
+    background-color: #eeeae7;
+    border-radius: 35px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+  }
+
+  /* ✅ Toggle - ขยายเต็มแถว พร้อม text label */
+  .search-toggle {
+    width: 100%;
+    height: 60px;
+    min-height: 60px;
+    flex-shrink: 0;
+    background-color: rgba(75, 100, 139, 0.1);
+    border-radius: 30px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .toggle-option {
+    flex: 1;
+    border: none;
+    background: color-mix(in srgb, var(--brand-color) 30%, transparent);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    transition: all 0.3s ease;
+  }
+
+  .toggle-option.active {
+    background-color: var(--brand-color);
+  }
+
+  .toggle-option .toggle-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+  }
+
+  /* ✅ แสดง Text Label ใน Mobile */
+  .toggle-label {
+    display: block;
+    font-family: var(--font-thai);
+    font-size: 16px;
+    font-weight: 300;
+    color: white;
+    white-space: nowrap;
+  }
+
+  /* ✅ Search Bar - สูง 60px */
+  .search-bar-container {
+    width: 100%;
+    height: 60px;
+    min-height: 60px;
+    flex-shrink: 0;
+    padding: 0 18px;
+    background-color: white;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .search-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .search-icon {
+    width: 22px;
+    height: 22px;
+    color: #000;
+    flex-shrink: 0;
+  }
+
+  /* ✅ Input font-size 16px */
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-family: var(--font-thai);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-dark);
+    outline: none;
+  }
+
+  .search-input::placeholder {
+    font-size: 16px;
+    color: #9ca3af;
+  }
+
+  /* ✅ Category Dropdown - ป้องกันทะลุ */
+  .category-select-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid #e5e7eb;
+    max-width: 120px;
+  }
+
+  /* ✅ Select font-size 14px */
+  .category-select {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font-family: var(--font-thai);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-dark);
+    cursor: pointer;
+    padding-right: 22px;
+    outline: none;
+    min-width: 0;
+    max-width: 100%;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .select-arrow {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+    font-size: 16px;
+  }
+
+  /* Results Info */
+  .search-content-container {
+    max-width: 100%;
+  }
+
+  .results-info {
+    margin-bottom: 20px;
+  }
+
+  .results-info p {
+    font-size: 18px;
+  }
+
+  /* Results Grid - 2 คอลัมน์ */
+  .search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 170px);
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  /* Sign Card */
+  .search-sign-card {
+    width: 170px;
+    height: 290px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  .search-sign-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .search-card-video {
+    height: 205px;
+    overflow: hidden;
+  }
+
+  /* ✅ Video Placeholder สีขาว */
+  .video-placeholder {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+  }
+
+  .search-card-content {
+    flex: 1;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .search-card-category {
+    font-family: var(--font-thai);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--card-text);
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .search-card-word {
+    font-family: var(--font-thai);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--card-text);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+
+  /* Load More Button */
+  .load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+  }
+
+  .load-more-btn {
+    padding: 10px 32px;
+    background-color: var(--brand-color);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-family: var(--font-thai);
+    font-size: 16px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .load-more-btn:hover {
+    background-color: #3a5270;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(75, 100, 139, 0.3);
+  }
+
+  .load-more-btn:active {
+    transform: translateY(0);
+  }
+}
+
+/* ==================== EXTRA SMALL MOBILE (max-width: 360px) ==================== */
+@media (max-width: 360px) {
+  .search-section {
+    min-height: 130px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .search-toggle {
+    height: 55px;
+    min-height: 55px;
+  }
+
+  .toggle-option {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .toggle-option .toggle-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .toggle-label {
+    font-size: 18px;
+  }
+
+  .search-bar-container {
+    height: 55px;
+    min-height: 55px;
+    padding: 0 14px;
+  }
+
+  .search-input-wrapper {
+    gap: 8px;
+  }
+
+  .search-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .search-input {
+    font-size: 15px;
+  }
+
+  .search-input::placeholder {
+    font-size: 15px;
+  }
+
+  .category-select-wrapper {
+    margin-left: 10px;
+    padding-left: 10px;
+    max-width: 100px;
+  }
+
+  .category-select {
+    font-size: 13px;
+    padding-right: 20px;
+  }
+
+  .select-arrow {
+    font-size: 14px;
+  }
+
+  .results-info p {
+    font-size: 16px;
+  }
+
+  .search-results-grid {
+    grid-template-columns: repeat(2, 155px);
+    gap: 15px;
+  }
+
+  .search-sign-card {
+    width: 155px;
+    height: 265px;
+  }
+
+  .search-card-video {
+    height: 185px;
+  }
 }
