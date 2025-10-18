@@ -667,6 +667,19 @@
     padding-right: 60px;
   }
 
+  .category-btn {
+    font-family: var(--font-thai);
+    font-size: 20px;
+    font-weight: 200;
+    color: #525c78;
+    background: none;
+    border: none;
+    padding: 10px 0;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
   /* 🔥 Sign Cards - 2 คอลัมน์ ขนาดเท่า Desktop */
   .sign-cards-grid {
     grid-template-columns: repeat(2, 295px);
