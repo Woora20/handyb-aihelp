@@ -1,9 +1,11 @@
-/* src/pages/WordDetail.css - เขียนใหม่ทั้งหมด */
+/* src/pages/WordDetail.css */
 
-/* ==================== PAGE LAYOUT ==================== */
+/* ==================== BASE ==================== */
 .word-detail-page {
   min-height: 100vh;
   background-color: var(--body-color);
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 .word-detail-main {
@@ -22,10 +24,6 @@
   font-size: 16px;
   color: #6b7280;
   flex-wrap: wrap;
-  max-width: 1240px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .breadcrumb-link {
@@ -50,7 +48,7 @@
   word-break: break-word;
 }
 
-/* ==================== CONTENT CONTAINER ==================== */
+/* ==================== DETAIL CONTAINER ==================== */
 .word-detail-container {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -59,7 +57,7 @@
   margin: 0 auto;
 }
 
-/* ==================== LEFT COLUMN - VIDEO & INFO ==================== */
+/* ==================== MAIN SECTION ==================== */
 .word-main-section {
   display: flex;
   flex-direction: column;
@@ -69,7 +67,7 @@
 /* Video Container */
 .word-video-container {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
   background: white;
   border-radius: 24px;
   overflow: hidden;
@@ -82,6 +80,7 @@
   height: 100%;
   object-fit: contain;
   background: #f5f5f5;
+  display: block;
 }
 
 .video-controls {
@@ -114,6 +113,7 @@
   cursor: pointer;
   color: var(--brand-color);
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .play-btn:hover {
@@ -126,6 +126,7 @@
   background: rgba(255, 255, 255, 0.3);
   border-radius: 2px;
   cursor: pointer;
+  min-width: 100px;
 }
 
 .video-progress-bar {
@@ -136,10 +137,11 @@
   transition: width 0.1s linear;
 }
 
-/* Word Info */
+/* Word Info Section */
 .word-info {
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
 .word-header {
@@ -156,16 +158,16 @@
 .word-views {
   display: flex;
   align-items: center;
+  gap: 8px;
   font-family: var(--font-thai);
   font-size: 16px;
   color: #6b7280;
 }
 
-/* Action Buttons */
 .word-actions {
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .action-btn {
@@ -180,6 +182,7 @@
   cursor: pointer;
   color: #6b7280;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .action-btn:hover {
@@ -200,10 +203,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
-  border: none;
   margin-top: 20px;
 }
 
@@ -230,8 +229,7 @@
   word-break: break-word;
 }
 
-/* ==================== RIGHT COLUMN - RELATED ==================== */
-/* 🔥🔥🔥 ส่วนที่แก้ไขหลัก 🔥🔥🔥 */
+/* ==================== SIDEBAR ==================== */
 .word-sidebar {
   display: flex;
   flex-direction: column;
@@ -239,10 +237,6 @@
 }
 
 .related-section {
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  border: none;
   padding-top: 28px;
   border-top: 1px solid #e5e7eb;
   position: relative;
@@ -253,34 +247,26 @@
   font-size: 20px;
   font-weight: 300;
   color: #6b7280;
-  margin: 0 0 20px 0;
+  margin: 0 0 20px;
   opacity: 0.9;
 }
 
-/* 🔥 แก้ไข: เปลี่ยนความสูงเป็น 350px สำหรับแสดง 5 คำ */
 .related-words-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-
-  /* 🔥 ความสูงใหม่สำหรับ 5 items */
-  max-height: 350px; /* เปลี่ยนจาก 280px เป็น 350px */
-
+  max-height: 350px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 8px;
   margin-right: -8px;
-
-  /* 🔥 แก้ไข: เพิ่มคุณสมบัติป้องกัน scroll ทะลุ */
   overscroll-behavior: contain;
   scroll-behavior: smooth;
-
   padding-bottom: 30px;
   position: relative;
   z-index: 0;
 }
 
-/* 🔥 แก้ไข: Scrollbar บางและจางลง */
 .related-words-list::-webkit-scrollbar {
   width: 4px;
 }
@@ -300,13 +286,11 @@
   background: rgba(156, 163, 175, 0.7);
 }
 
-/* Firefox scrollbar */
 .related-words-list {
   scrollbar-width: thin;
   scrollbar-color: rgba(209, 213, 219, 0.5) transparent;
 }
 
-/* 🔥 แก้ไข: ปรับ fade effect ให้อ่อนลง */
 .related-section::after {
   content: "";
   position: absolute;
@@ -324,24 +308,6 @@
   z-index: 1;
 }
 
-/* 🔥 แก้ไข: Auto-hide scrollbar เมื่อไม่ hover */
-.related-words-list:not(:hover) {
-  scrollbar-width: none;
-}
-
-.related-words-list:not(:hover)::-webkit-scrollbar {
-  width: 0;
-}
-
-.related-words-list:hover {
-  scrollbar-width: thin;
-}
-
-.related-words-list:hover::-webkit-scrollbar {
-  width: 4px;
-}
-
-/* Related word item */
 .related-word-item {
   display: flex;
   align-items: center;
@@ -367,7 +333,6 @@
   transform: translateX(1px);
 }
 
-/* Thumbnail */
 .related-thumbnail {
   width: 56px;
   height: 56px;
@@ -388,13 +353,12 @@
   min-width: 0;
 }
 
-/* Text styling */
 .related-word-text {
   font-family: var(--font-thai);
   font-size: 16px;
   font-weight: 300;
   color: #374151;
-  margin: 0 0 3px 0;
+  margin: 0 0 3px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -468,45 +432,59 @@
   transform: translateY(-2px);
 }
 
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 1024px) {
+/* ==================== TABLET (768px - 1024px) ==================== */
+@media (min-width: 768px) and (max-width: 1024px) {
   .word-detail-main {
     padding: 40px 60px;
   }
 
   .word-detail-container {
     grid-template-columns: 1fr;
+    gap: 40px;
   }
 
   .word-sidebar {
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 100%;
   }
 
-  .related-section {
-    margin-top: 32px;
-    padding-top: 32px;
-    border-top: 2px solid #e5e7eb;
-  }
-
-  /* 🔥 แก้ไข: ปรับความสูงสำหรับ tablet */
   .related-words-list {
     max-height: 400px;
   }
+
+  .description-label {
+    min-width: 140px;
+  }
+
+  .description-item {
+    font-size: 15px;
+  }
 }
 
-@media (max-width: 768px) {
+/* ==================== MOBILE (max-width: 767px) ==================== */
+@media (max-width: 767px) {
   .word-detail-main {
     padding: 30px 20px;
   }
 
-  .word-views {
+  .breadcrumb {
     font-size: 14px;
+    gap: 6px;
+    margin-bottom: 30px;
+  }
+
+  .word-detail-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .word-video-container {
+    border-radius: 20px;
   }
 
   .word-header {
     flex-direction: column;
-    gap: 20px;
+    align-items: flex-start;
+    gap: 16px;
   }
 
   .word-actions {
@@ -514,39 +492,37 @@
     justify-content: flex-start;
   }
 
+  .word-views {
+    font-size: 14px;
+  }
+
+  .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+
   .description-item {
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    font-size: 15px;
   }
 
   .description-label {
     min-width: unset;
     color: #6b7280;
     font-size: 14px;
+    font-weight: 400;
   }
 
   .description-value {
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 300;
   }
 
   .related-section {
-    padding: 0;
-  }
-
-  /* 🔥 แก้ไข: ความสูงสำหรับมือถือ */
-  .related-words-list {
-    max-height: 350px;
-  }
-}
-
-@media (max-width: 480px) {
-  .action-btn {
-    width: 40px;
-    height: 40px;
-  }
-
-  .breadcrumb {
-    font-size: 14px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 24px;
   }
 
   .related-title {
@@ -554,9 +530,8 @@
     margin-bottom: 16px;
   }
 
-  /* 🔥 แก้ไข: ปรับขนาดสำหรับมือถือเล็ก */
   .related-words-list {
-    max-height: 300px;
+    max-height: 350px;
     gap: 8px;
   }
 
@@ -576,5 +551,113 @@
 
   .related-category {
     font-size: 13px;
+  }
+
+  .video-controls {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .play-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* ==================== SMALL MOBILE (max-width: 480px) ==================== */
+@media (max-width: 480px) {
+  .word-detail-main {
+    padding: 20px 16px;
+  }
+
+  .breadcrumb {
+    font-size: 12px;
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+
+  .word-info {
+    gap: 20px;
+  }
+
+  .word-views {
+    font-size: 13px;
+  }
+
+  .action-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .description-item {
+    gap: 4px;
+    font-size: 14px;
+  }
+
+  .description-label {
+    font-size: 13px;
+  }
+
+  .description-value {
+    font-size: 14px;
+  }
+
+  .related-section {
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+
+  .related-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .related-words-list {
+    max-height: 300px;
+    gap: 6px;
+    padding-bottom: 20px;
+  }
+
+  .related-word-item {
+    padding: 8px 6px;
+    gap: 10px;
+  }
+
+  .related-thumbnail {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+
+  .related-word-text {
+    font-size: 14px;
+  }
+
+  .related-category {
+    font-size: 12px;
+  }
+
+  .video-controls {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .play-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .error-icon {
+    font-size: 48px;
+  }
+
+  .loading-text,
+  .error-text {
+    font-size: 16px;
+  }
+
+  .back-button {
+    padding: 10px 24px;
+    font-size: 14px;
   }
 }
