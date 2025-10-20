@@ -1,5 +1,5 @@
 // src/components/profile/EditProfileModal.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FiX, FiPlus } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
@@ -18,16 +18,46 @@ export default function EditProfileModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
-    fullName: profile?.full_name || "",
-    email: user?.email || "",
+    fullName: "",
+    email: "",
   });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string>(
-    profile?.avatar_url || ""
-  );
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<any>({});
+
+  // ควบคุม body overflow เมื่อ modal เปิด
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    };
+  }, [isOpen]);
+
+  // Update form data when profile or modal opens
+  useEffect(() => {
+    if (isOpen && profile) {
+      setFormData({
+        fullName: profile.full_name || "",
+        email: user?.email || "",
+      });
+      setAvatarPreview(profile.avatar_url || "");
+      setAvatarFile(null);
+      setErrors({});
+    }
+  }, [isOpen, profile, user]);
 
   if (!isOpen) return null;
 
@@ -97,11 +127,12 @@ export default function EditProfileModal({
       if (profile?.avatar_url) {
         try {
           // ดึง path จาก URL เก่า
-          const oldPath = profile.avatar_url.split("/").slice(-2).join("/");
+          const urlParts = profile.avatar_url.split("/");
+          const oldPath = urlParts.slice(-2).join("/");
           await supabase.storage.from("avatars").remove([oldPath]);
-          console.log("✅ Deleted old avatar");
+          console.log("✅ ลบรูปเดิมเรียบร้อย");
         } catch (err) {
-          console.warn("⚠️ Could not delete old avatar:", err);
+          console.warn("⚠️ ไม่สามารถลบรูปเดิม:", err);
         }
       }
 
@@ -114,7 +145,7 @@ export default function EditProfileModal({
         });
 
       if (error) {
-        console.error("❌ Upload error:", error);
+        console.error("❌ ข้อผิดพลาดการอัปโหลด:", error);
         throw new Error("อัปโหลดรูปภาพไม่สำเร็จ");
       }
 
@@ -123,10 +154,10 @@ export default function EditProfileModal({
         data: { publicUrl },
       } = supabase.storage.from("avatars").getPublicUrl(fileName);
 
-      console.log("✅ New avatar URL:", publicUrl);
+      console.log("✅ URL รูปใหม่:", publicUrl);
       return publicUrl;
     } catch (error) {
-      console.error("❌ Avatar upload failed:", error);
+      console.error("❌ ข้อผิดพลาดการอัปโหลด:", error);
       throw error;
     }
   };
@@ -159,7 +190,7 @@ export default function EditProfileModal({
         .eq("id", user.id);
 
       if (updateError) {
-        console.error("❌ Profile update error:", updateError);
+        console.error("❌ ข้อผิดพลาดการอัปเดทโปรไฟล์:", updateError);
         throw updateError;
       }
 
@@ -170,16 +201,15 @@ export default function EditProfileModal({
         });
 
         if (emailError) {
-          console.error("❌ Email update error:", emailError);
-          // ไม่ throw error ถ้าอัปเดทอีเมลไม่สำเร็จ แต่ให้แจ้งเตือน
+          console.error("❌ ข้อผิดพลาดการเปลี่ยนอีเมล:", emailError);
           alert("อัปเดทข้อมูลสำเร็จ แต่ไม่สามารถเปลี่ยนอีเมลได้");
         }
       }
 
       alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
-      window.location.reload(); // รีโหลดเพื่อแสดงข้อมูลใหม่
+      onClose();
     } catch (error: any) {
-      console.error("❌ Update failed:", error);
+      console.error("❌ ข้อผิดพลาด:", error);
       setErrors({
         general: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่",
       });
@@ -195,39 +225,58 @@ export default function EditProfileModal({
   return (
     <>
       {/* Backdrop */}
-      <div className="edit-profile-backdrop" onClick={onClose} />
+      <div
+        className="edit-profile-backdrop"
+        onClick={onClose}
+        role="presentation"
+        aria-hidden="true"
+      />
 
       {/* Modal */}
-      <div className="edit-profile-modal">
+      <div
+        className="edit-profile-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         {/* Header */}
         <div className="modal-header">
-          <h2>แก้ไขโปรไฟล์</h2>
-          <button className="close-btn" onClick={onClose}>
-            <FiX size={24} />
+          <h2 id="modal-title">แก้ไขโปรไฟล์</h2>
+          <button
+            className="close-btn"
+            onClick={onClose}
+            aria-label="Close Modal"
+            type="button"
+          >
+            <FiX size={24} aria-hidden="true" />
           </button>
         </div>
 
         {/* Content */}
         <div className="modal-content">
           {errors.general && (
-            <div className="error-message general">{errors.general}</div>
+            <div className="error-message general" role="alert">
+              {errors.general}
+            </div>
           )}
 
-          {/* Avatar Upload */}
+          {/* Avatar Upload Section */}
           <div className="avatar-section">
             <div className="avatar-upload-wrapper">
               <img
                 src={avatarPreview || defaultAvatar}
-                alt="Profile"
+                alt="Profile Avatar"
                 className="avatar-preview"
+                loading="lazy"
               />
               <button
                 type="button"
                 className="avatar-add-btn"
                 onClick={handleAvatarClick}
                 disabled={isLoading}
+                aria-label="Change Avatar"
               >
-                <FiPlus size={20} />
+                <FiPlus size={20} aria-hidden="true" />
               </button>
               <input
                 ref={fileInputRef}
@@ -235,6 +284,7 @@ export default function EditProfileModal({
                 accept="image/jpeg,image/png,image/gif,image/webp"
                 onChange={handleAvatarChange}
                 style={{ display: "none" }}
+                aria-hidden="true"
               />
             </div>
             <div className="avatar-info">
@@ -253,37 +303,55 @@ export default function EditProfileModal({
             </div>
           </div>
 
-          {errors.avatar && <span className="error-text">{errors.avatar}</span>}
+          {errors.avatar && (
+            <span className="error-text" role="alert">
+              {errors.avatar}
+            </span>
+          )}
 
           {/* Form Fields */}
           <div className="form-fields">
             <div className="form-field">
-              <label>ชื่อ-สกุล*</label>
+              <label htmlFor="fullName">ชื่อ-สกุล*</label>
               <input
+                id="fullName"
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 placeholder="ตัวอย่าง: สมชาย ใจดี"
                 className={errors.fullName ? "error" : ""}
                 disabled={isLoading}
+                aria-invalid={!!errors.fullName}
+                aria-describedby={
+                  errors.fullName ? "fullName-error" : undefined
+                }
+                autoComplete="name"
               />
               {errors.fullName && (
-                <span className="error-text">{errors.fullName}</span>
+                <span className="error-text" id="fullName-error" role="alert">
+                  {errors.fullName}
+                </span>
               )}
             </div>
 
             <div className="form-field">
-              <label>อีเมล*</label>
+              <label htmlFor="email">อีเมล*</label>
               <input
+                id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="เช่น john@email.com"
                 className={errors.email ? "error" : ""}
                 disabled={isLoading}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                autoComplete="email"
               />
               {errors.email && (
-                <span className="error-text">{errors.email}</span>
+                <span className="error-text" id="email-error" role="alert">
+                  {errors.email}
+                </span>
               )}
             </div>
           </div>
@@ -291,13 +359,19 @@ export default function EditProfileModal({
 
         {/* Footer Buttons */}
         <div className="modal-footer">
-          <button className="cancel-btn" onClick={onClose} disabled={isLoading}>
+          <button
+            className="cancel-btn"
+            onClick={onClose}
+            disabled={isLoading}
+            type="button"
+          >
             ยกเลิก
           </button>
           <button
             className="save-btn"
             onClick={handleSubmit}
             disabled={isLoading}
+            type="button"
           >
             {isLoading ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"}
           </button>
@@ -306,8 +380,10 @@ export default function EditProfileModal({
 
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
+        <div className="loading-overlay" aria-hidden="true">
+          <div className="loading-spinner" role="status" aria-label="Loading">
+            <span style={{ display: "none" }}>กำลังโหลด</span>
+          </div>
         </div>
       )}
     </>

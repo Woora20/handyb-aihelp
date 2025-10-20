@@ -160,6 +160,10 @@
 }
 
 /* ==================== PROFILE ==================== */
+.navbar-profile {
+  display: flex;
+}
+
 .user-menu {
   display: flex;
   align-items: center;
@@ -184,6 +188,7 @@
   display: block;
   line-height: 0;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
 .profile-avatar-btn:hover {
@@ -243,8 +248,8 @@
   display: none;
 }
 
-/* ==================== TABLET ==================== */
-@media (max-width: 1024px) {
+/* ==================== TABLET (768px - 1024px) ==================== */
+@media (min-width: 768px) and (max-width: 1024px) {
   .navbar-container {
     padding: 18px 60px;
   }
@@ -267,10 +272,19 @@
     padding: 7px 18px;
     font-size: 15px;
   }
+
+  .dropdown-menu {
+    width: 200px;
+  }
+
+  .dropdown-item {
+    height: 44px;
+    font-size: 15px;
+  }
 }
 
-/* ==================== MOBILE ==================== */
-@media (max-width: 768px) {
+/* ==================== MOBILE (max-width: 767px) ==================== */
+@media (max-width: 767px) {
   .navbar-container {
     padding: 16px 20px;
   }
@@ -295,6 +309,12 @@
     cursor: pointer;
     z-index: 102;
     flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-menu-toggle:hover {
+    background-color: #3a5270;
+    transform: scale(1.05);
   }
 
   .mobile-backdrop {
@@ -349,6 +369,10 @@
     border-radius: 3px;
   }
 
+  .mobile-menu-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
   .mobile-profile {
     display: flex;
     align-items: center;
@@ -356,6 +380,7 @@
     padding: 20px 24px;
     margin-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
   }
 
   .mobile-profile-avatar {
@@ -365,6 +390,37 @@
     object-fit: cover;
     border: 3px solid white;
     flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-profile-avatar:hover {
+    transform: scale(1.05);
+  }
+
+  .mobile-profile-avatar::after {
+    content: "✎";
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    background: var(--brand-color);
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-profile-avatar:hover::after {
+    background: #3a5270;
+    transform: scale(1.1);
   }
 
   .mobile-profile-info {
@@ -412,6 +468,11 @@
     font-size: 18px;
     font-weight: 300;
     cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-menu-button:hover {
+    opacity: 0.8;
   }
 
   .mobile-arrow {
@@ -446,7 +507,12 @@
     font-weight: 200;
     text-decoration: none;
     border-radius: 8px;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-submenu-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: white;
   }
 
   .mobile-submenu-link.active {
@@ -468,7 +534,11 @@
     color: white;
     cursor: pointer;
     border-bottom: 1px solid transparent;
-    transition: border-color 0.3s;
+    transition: border-color 0.2s ease;
+  }
+
+  .mobile-auth-link:hover {
+    opacity: 0.8;
   }
 
   .mobile-auth-divider {
@@ -490,14 +560,107 @@
     font-size: 17px;
     font-weight: 300;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
   }
 
   .mobile-logout:hover {
     background-color: #dc2626;
+    transform: translateY(-2px);
   }
 
   .mobile-logout svg {
     font-size: 22px;
+  }
+}
+
+/* ==================== SMALL MOBILE (max-width: 480px) ==================== */
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 14px 16px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .mobile-menu-toggle {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .mobile-menu-dropdown {
+    padding: 70px 0 20px;
+    border-radius: 0 0 25px 25px;
+  }
+
+  .mobile-profile {
+    gap: 12px;
+    padding: 16px 20px;
+    margin-bottom: 6px;
+  }
+
+  .mobile-profile-avatar {
+    width: 60px;
+    height: 60px;
+    border: 2px solid white;
+  }
+
+  .mobile-profile-avatar::after {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    bottom: -6px;
+    right: -6px;
+    border-width: 1.5px;
+  }
+
+  .mobile-profile-info {
+    gap: 2px;
+  }
+
+  .mobile-profile-name,
+  .mobile-profile-email {
+    font-size: 14px;
+  }
+
+  .mobile-menu-list {
+    padding: 6px 16px;
+  }
+
+  .mobile-menu-button {
+    padding: 16px 6px;
+    font-size: 16px;
+  }
+
+  .mobile-submenu-link {
+    padding: 12px 14px;
+    margin: 2px 0;
+    font-size: 14px;
+  }
+
+  .mobile-auth {
+    gap: 10px;
+    padding: 16px 6px;
+  }
+
+  .mobile-auth-link {
+    font-size: 16px;
+  }
+
+  .mobile-logout {
+    margin: 20px 20px 12px;
+    padding: 14px 28px;
+    font-size: 15px;
+    gap: 8px;
+  }
+
+  .mobile-logout svg {
+    font-size: 18px;
   }
 }
