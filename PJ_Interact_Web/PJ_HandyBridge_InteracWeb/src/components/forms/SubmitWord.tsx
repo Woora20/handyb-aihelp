@@ -1,12 +1,12 @@
 // src/pages/SubmitWord.tsx - แก้ไขให้บังคับ login
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/common/Navbar";
-import Footer from "../components/common/Footer";
+import Navbar from "../common/Navbar";
+import Footer from "../common/Footer";
 import { FiUpload } from "react-icons/fi";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import "./SubmitWord.css";
-import { submitWordService } from "../services/submitWordService";
+import { submitWordService } from "../../services/submitWordService";
 
 export default function SubmitWord() {
   const navigate = useNavigate();

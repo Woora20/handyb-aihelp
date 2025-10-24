@@ -1,11 +1,11 @@
 // src/pages/Review.tsx - ส่วนที่แก้ไข
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/common/Navbar";
+import Navbar from "../common/Navbar";
 import { FiStar } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
-import { useAuth } from "../contexts/AuthContext";
-import { supabase } from "../lib/supabase";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabase";
 import "./Review.css";
 
 export default function Review() {

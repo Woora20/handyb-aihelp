@@ -8,8 +8,8 @@ import "./index.css";
 import Landing_page from "./pages/Landing_page";
 import Auth from "./pages/AuthPages";
 import AIChatbot from "./pages/AIChatbot";
-import SubmitWord from "./pages/SubmitWord";
-import Review from "./pages/Review";
+import SubmitWord from "./components/forms/SubmitWord";
+import Review from "./components/forms/Review";
 import Search from "./pages/Search";
 import WordDetail from "./pages/WordDetail";
 
