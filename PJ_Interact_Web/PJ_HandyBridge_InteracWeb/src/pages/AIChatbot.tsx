@@ -221,7 +221,7 @@ export default function AIChatbot() {
     }
   };
 
-  const userName = profile?.full_name?.split(" ")[0] || "username";
+  const userName = profile?.full_name || "username";
 
   return (
     <div className="ai-chatbot-page">
