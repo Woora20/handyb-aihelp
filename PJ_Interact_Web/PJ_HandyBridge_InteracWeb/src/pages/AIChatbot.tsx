@@ -6,6 +6,8 @@ import {
   FiArrowUp,
   FiPlus,
   FiArrowDown,
+  FiMenu,
+  FiX,
 } from "react-icons/fi";
 import { GoTable } from "react-icons/go";
 import Navbar from "../components/common/Navbar";
@@ -42,6 +44,7 @@ export default function AIChatbot() {
   const [message, setMessage] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -78,12 +81,27 @@ export default function AIChatbot() {
     },
   ];
 
-  // 🔥 Scroll to bottom เมื่อมีข้อความใหม่
+  // ตรวจสอบขนาดหน้าจอ
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 767);
+      // ปิด sidebar อัตโนมัติใน mobile
+      if (window.innerWidth <= 767) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Scroll to bottom เมื่อมีข้อความใหม่
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // 🔥 Scroll to bottom เมื่อโหลดประวัติ
+  // Scroll to bottom เมื่อโหลดประวัติ
   useEffect(() => {
     if (messages.length > 0) {
       setTimeout(() => {
@@ -92,7 +110,7 @@ export default function AIChatbot() {
     }
   }, [currentSessionId]);
 
-  // 🔥 ตรวจสอบการ scroll เพื่อแสดง/ซ่อนปุ่ม
+  // ตรวจสอบการ scroll เพื่อแสดง/ซ่อนปุ่ม
   useEffect(() => {
     const chatContainer = chatMessagesRef.current;
     if (!chatContainer) return;
@@ -107,9 +125,30 @@ export default function AIChatbot() {
     return () => chatContainer.removeEventListener("scroll", handleScroll);
   }, [messages.length]);
 
+  // ปิด sidebar อัตโนมัติเมื่อคลิกนอก sidebar ใน mobile
+  useEffect(() => {
+    if (!isMobile || isSidebarCollapsed) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const sidebar = document.querySelector(".chatbot-sidebar");
+      const target = e.target as Node;
+
+      if (sidebar && !sidebar.contains(target)) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMobile, isSidebarCollapsed]);
+
   const handleNewChat = () => {
     clearChat();
     setMessage("");
+    // ปิด sidebar หลังจากสร้างแชทใหม่ใน mobile
+    if (isMobile) {
+      setIsSidebarCollapsed(true);
+    }
   };
 
   const handleToggleSidebar = () => {
@@ -125,6 +164,11 @@ export default function AIChatbot() {
     if (textToSend && textToSend.length > 0 && !isLoading) {
       sendMessage(textToSend);
       setMessage("");
+
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
     }
   };
 
@@ -140,9 +184,41 @@ export default function AIChatbot() {
     }
   };
 
-  // 🔥 ฟังก์ชัน scroll to bottom
+  // Auto-resize textarea
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+
+    // Auto-resize
+    const textarea = e.target;
+    textarea.style.height = "auto";
+    const newHeight = Math.min(textarea.scrollHeight, isMobile ? 100 : 120);
+    textarea.style.height = `${newHeight}px`;
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleFileUpload = (acceptType: string) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = acceptType;
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // TODO: Handle file upload
+        console.log("File selected:", file.name);
+      }
+    };
+    input.click();
+  };
+
+  const handleLoadChat = (sessionId: string) => {
+    loadChat(sessionId);
+    // ปิด sidebar หลังโหลดแชทใน mobile
+    if (isMobile) {
+      setIsSidebarCollapsed(true);
+    }
   };
 
   const userName = profile?.full_name?.split(" ")[0] || "username";
@@ -174,7 +250,15 @@ export default function AIChatbot() {
                       isSidebarCollapsed ? "เปิด sidebar" : "ปิด sidebar"
                     }
                   >
-                    <GoTable size={20} />
+                    {isMobile ? (
+                      isSidebarCollapsed ? (
+                        <FiMenu size={20} />
+                      ) : (
+                        <FiX size={20} />
+                      )
+                    ) : (
+                      <GoTable size={20} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -191,7 +275,7 @@ export default function AIChatbot() {
                   <ChatHistory
                     sessions={chatHistory}
                     currentSessionId={currentSessionId}
-                    onLoadChat={loadChat}
+                    onLoadChat={handleLoadChat}
                     onDeleteChat={deleteChat}
                   />
                 </>
@@ -200,6 +284,17 @@ export default function AIChatbot() {
           </aside>
 
           <main className="chatbot-content">
+            {/* ปุ่มเปิด Sidebar - แสดงทั้ง Desktop และ Mobile */}
+            {isSidebarCollapsed && (
+              <button
+                className="mobile-menu-button"
+                onClick={handleToggleSidebar}
+                aria-label="เปิดเมนู"
+              >
+                <FiMenu size={22} />
+              </button>
+            )}
+
             {messages.length === 0 ? (
               <div className="welcome-screen">
                 <div className="welcome-message">
@@ -249,9 +344,13 @@ export default function AIChatbot() {
                         <textarea
                           ref={textareaRef}
                           value={message}
-                          onChange={(e) => setMessage(e.target.value)}
+                          onChange={handleTextareaChange}
                           onKeyDown={handleKeyDown}
-                          placeholder="ถามฉันได้ทุกอย่างกับภาษามือเลย......"
+                          placeholder={
+                            isMobile
+                              ? "ถามฉันเกี่ยวกับภาษามือ..."
+                              : "ถามฉันได้ทุกอย่างกับภาษามือเลย......"
+                          }
                           className="chat-textarea"
                           disabled={isLoading}
                           rows={1}
@@ -269,38 +368,32 @@ export default function AIChatbot() {
                         </button>
                       </div>
 
-                      <div className="input-row-attachments">
-                        <div className="attachment-buttons">
-                          <button
-                            type="button"
-                            className="attachment-btn"
-                            disabled={isLoading}
-                            aria-label="แนบไฟล์"
-                            onClick={() => {
-                              const input = document.createElement("input");
-                              input.type = "file";
-                              input.accept = ".pdf,.doc,.docx,.txt";
-                              input.click();
-                            }}
-                          >
-                            <FiPaperclip size={24} />
-                          </button>
-                          <button
-                            type="button"
-                            className="attachment-btn"
-                            disabled={isLoading}
-                            aria-label="แนบรูปภาพ"
-                            onClick={() => {
-                              const input = document.createElement("input");
-                              input.type = "file";
-                              input.accept = "image/*";
-                              input.click();
-                            }}
-                          >
-                            <FiImage size={24} />
-                          </button>
+                      {!isMobile && (
+                        <div className="input-row-attachments">
+                          <div className="attachment-buttons">
+                            <button
+                              type="button"
+                              className="attachment-btn"
+                              disabled={isLoading}
+                              aria-label="แนบไฟล์"
+                              onClick={() =>
+                                handleFileUpload(".pdf,.doc,.docx,.txt")
+                              }
+                            >
+                              <FiPaperclip size={24} />
+                            </button>
+                            <button
+                              type="button"
+                              className="attachment-btn"
+                              disabled={isLoading}
+                              aria-label="แนบรูปภาพ"
+                              onClick={() => handleFileUpload("image/*")}
+                            >
+                              <FiImage size={24} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </form>
                 </div>
@@ -322,15 +415,17 @@ export default function AIChatbot() {
                       >
                         <div className="message-bubble">
                           <div className="message-content">{msg.content}</div>
-                          <div className="message-time">
-                            {new Date(msg.timestamp).toLocaleTimeString(
-                              "th-TH",
-                              {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }
-                            )}
-                          </div>
+                          {!isMobile && (
+                            <div className="message-time">
+                              {new Date(msg.timestamp).toLocaleTimeString(
+                                "th-TH",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -351,7 +446,7 @@ export default function AIChatbot() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* 🔥 ปุ่ม Scroll to Bottom */}
+                {/* ปุ่ม Scroll to Bottom */}
                 <button
                   className={`scroll-to-bottom ${
                     showScrollButton ? "visible" : ""
@@ -368,9 +463,11 @@ export default function AIChatbot() {
                       <div className="input-row-main">
                         <textarea
                           value={message}
-                          onChange={(e) => setMessage(e.target.value)}
+                          onChange={handleTextareaChange}
                           onKeyDown={handleKeyDown}
-                          placeholder="พิมพ์ข้อความ..."
+                          placeholder={
+                            isMobile ? "พิมพ์ข้อความ..." : "พิมพ์ข้อความ..."
+                          }
                           className="chat-textarea"
                           disabled={isLoading}
                           rows={1}
@@ -388,38 +485,32 @@ export default function AIChatbot() {
                         </button>
                       </div>
 
-                      <div className="input-row-attachments">
-                        <div className="attachment-buttons">
-                          <button
-                            type="button"
-                            className="attachment-btn"
-                            disabled={isLoading}
-                            aria-label="แนบไฟล์"
-                            onClick={() => {
-                              const input = document.createElement("input");
-                              input.type = "file";
-                              input.accept = ".pdf,.doc,.docx,.txt";
-                              input.click();
-                            }}
-                          >
-                            <FiPaperclip size={24} />
-                          </button>
-                          <button
-                            type="button"
-                            className="attachment-btn"
-                            disabled={isLoading}
-                            aria-label="แนบรูปภาพ"
-                            onClick={() => {
-                              const input = document.createElement("input");
-                              input.type = "file";
-                              input.accept = "image/*";
-                              input.click();
-                            }}
-                          >
-                            <FiImage size={24} />
-                          </button>
+                      {!isMobile && (
+                        <div className="input-row-attachments">
+                          <div className="attachment-buttons">
+                            <button
+                              type="button"
+                              className="attachment-btn"
+                              disabled={isLoading}
+                              aria-label="แนบไฟล์"
+                              onClick={() =>
+                                handleFileUpload(".pdf,.doc,.docx,.txt")
+                              }
+                            >
+                              <FiPaperclip size={24} />
+                            </button>
+                            <button
+                              type="button"
+                              className="attachment-btn"
+                              disabled={isLoading}
+                              aria-label="แนบรูปภาพ"
+                              onClick={() => handleFileUpload("image/*")}
+                            >
+                              <FiImage size={24} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </form>
                 </div>

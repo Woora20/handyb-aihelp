@@ -64,7 +64,7 @@
 
 .chatbot-sidebar-content {
   padding: 36px;
-  height: calc(100vh - var(--header-height) - 12px); /* ใช้ความสูงเต็ม */
+  height: calc(100vh - var(--header-height) - 12px);
   display: flex;
   flex-direction: column;
   color: white;
@@ -78,39 +78,14 @@
   align-items: center;
   margin-bottom: 20px;
   min-height: 32px;
-  width: 100%; /* เพิ่ม */
-}
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1; /* ให้ขยายเต็มพื้นที่ที่เหลือ */
-}
-
-.sidebar-icon {
-  width: 32px;
-  height: 32px;
-  filter: brightness(0) invert(1);
-  flex-shrink: 0;
-  transition: filter 0.3s ease;
-}
-
-.chatbot-sidebar.collapsed .sidebar-icon {
-  filter: none;
-}
-
-.sidebar-header {
-  margin-bottom: 20px;
-  min-height: 32px;
-}
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* กระจายเท่าๆ กัน */
-  gap: 12px;
   width: 100%;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .sidebar-icon {
@@ -132,8 +107,8 @@
   color: white;
   white-space: nowrap;
   transition: color 0.3s ease;
-  flex: 1; /* ให้ title ขยายเต็มพื้นที่กลาง */
-  text-align: center; /* จัดกลาง */
+  flex: 1;
+  text-align: center;
 }
 
 .chatbot-sidebar.collapsed .sidebar-title {
@@ -149,7 +124,7 @@
   border-radius: 4px;
   transition: all 0.3s ease;
   flex-shrink: 0;
-  width: 32px; /* ให้เท่ากับ icon */
+  width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
@@ -205,15 +180,16 @@
 .chatbot-content {
   position: relative;
   flex: 1;
-  height: calc(100vh - var(--header-height) - 12px); /* กำหนดความสูงเต็ม */
+  height: calc(100vh - var(--header-height) - 12px);
   background-color: transparent;
   border-radius: 0;
-  overflow: hidden; /* เปลี่ยนจาก visible เป็น hidden */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-width: 0;
   padding: 0 200px;
 }
+
 .chatbot-sidebar.collapsed ~ .chatbot-content {
   padding: 0 300px 0 100px;
 }
@@ -233,6 +209,7 @@
   background-color: transparent;
   height: calc(100vh - var(--header-height) - 180px);
 }
+
 .welcome-message {
   text-align: left;
   margin-bottom: 0;
@@ -294,18 +271,18 @@
   background-color: var(--color-background-secondary);
   border: 1px solid #c4c4c4;
   border-radius: 30px;
-  padding: 18px;
+  padding: 20px;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: 24px;
   box-shadow: none;
   overflow: visible;
   position: relative;
   z-index: 1;
-  height: 170px;
+  height: 180px;
   box-sizing: border-box;
 }
 
@@ -348,9 +325,37 @@
   background-color: transparent;
 }
 
+.suggestion-image {
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.suggestion-image img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  filter: grayscale(10%);
+}
+
+.suggestion-card:hover .suggestion-image img {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.05);
+}
+
 /* ==================== CHAT INTERFACE ==================== */
 .chat-interface {
-  position: relative; /* 🔥 เพิ่มเพื่อให้ absolute positioning ทำงาน */
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -536,7 +541,7 @@
   box-shadow: var(--box-shadow);
   gap: 12px;
   min-height: 60px;
-  max-height: 200px; /* คงขนาดเดิม */
+  max-height: 200px;
   transition: all 0.2s ease;
 }
 
@@ -551,7 +556,7 @@
   padding: 20px;
   background: var(--color-background-secondary);
   z-index: 10;
-  flex-shrink: 0; /* ไม่ให้หดขนาด */
+  flex-shrink: 0;
 }
 
 .input-wrapper-fixed {
@@ -565,7 +570,7 @@
   box-shadow: var(--box-shadow);
   gap: 12px;
   min-height: 60px;
-  max-height: 200px; /* คงขนาดเดิม */
+  max-height: 200px;
   transition: all 0.2s ease;
 }
 
@@ -690,108 +695,10 @@
   cursor: not-allowed;
 }
 
-/* ==================== ANIMATIONS ==================== */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ==================== SCROLLBAR ==================== */
-.chat-messages::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
-}
-
-.suggestion-image {
-  flex-shrink: 0;
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-}
-
-.suggestion-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-  filter: grayscale(20%);
-}
-
-.suggestion-card:hover .suggestion-image img {
-  opacity: 1;
-  filter: grayscale(0%);
-}
-
-/* แก้ไข CSS สำหรับรูปภาพใน AIChatbot.css */
-.suggestion-image {
-  flex-shrink: 0;
-  width: 100px; /* เพิ่มขนาดจาก 80px เป็น 100px */
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-  background: rgba(255, 255, 255, 0.1); /* เพิ่ม background เพื่อดู container */
-  border-radius: 12px; /* เพิ่มมุมมน */
-  overflow: hidden; /* ป้องกันรูปล้น */
-}
-
-.suggestion-image img {
-  width: 80px; /* กำหนดขนาดคงที่ */
-  height: 80px; /* กำหนดขนาดคงที่ */
-  object-fit: contain; /* รักษาอัตราส่วน */
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  filter: grayscale(10%);
-}
-
-.suggestion-card:hover .suggestion-image img {
-  opacity: 1;
-  filter: grayscale(0%);
-  transform: scale(1.05); /* เพิ่ม effect เมื่อ hover */
-}
-
-/* ปรับ suggestion card ให้มีพื้นที่เพียงพอ */
-.suggestion-card {
-  background-color: var(--color-background-secondary);
-  border: 1px solid #c4c4c4;
-  border-radius: 30px;
-  padding: 20px; /* เพิ่ม padding จาก 18px */
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: flex-start;
-  gap: 24px; /* เพิ่ม gap จาก 20px */
-  box-shadow: none;
-  overflow: visible;
-  position: relative;
-  z-index: 1;
-  height: 180px; /* เพิ่มความสูงจาก 170px */
-  box-sizing: border-box;
-}
 /* ==================== SCROLL TO BOTTOM BUTTON ==================== */
 .scroll-to-bottom {
   position: absolute;
-  bottom: 140px; /* 🔥 ลดจาก 180px เป็น 140px (เขยิบลงมา) */
+  bottom: 140px;
   left: 50%;
   transform: translateX(-50%);
   width: 40px;
@@ -825,4 +732,605 @@
 
 .scroll-to-bottom:active {
   transform: translateX(-50%) scale(0.95);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== SCROLLBAR ==================== */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+/* ==================== RESPONSIVE - TABLET (768px - 1024px) ==================== */
+@media screen and (max-width: 1024px) {
+  :root {
+    --sidebar-width: 260px;
+    --border-radius-bd: 20px;
+  }
+
+  .chatbot-content {
+    padding: 0 60px;
+  }
+
+  .chatbot-sidebar.collapsed ~ .chatbot-content {
+    padding: 0 80px 0 20px;
+  }
+
+  .welcome-greeting h1 {
+    font-size: 40px;
+  }
+
+  .welcome-subtitle {
+    font-size: 20px;
+  }
+
+  .wave-emoji {
+    font-size: 36px;
+  }
+
+  .suggestions-grid {
+    gap: 16px;
+  }
+
+  .suggestion-card {
+    height: 160px;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .suggestion-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .suggestion-image img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .message-bubble {
+    max-width: 80%;
+  }
+
+  .message-content {
+    font-size: 18px;
+  }
+
+  .chat-message.assistant .message-content h1,
+  .chat-message.assistant .message-content h2,
+  .chat-message.assistant .message-content h3,
+  .chat-message.assistant .message-content strong {
+    font-size: 22px !important;
+  }
+
+  .message-content p {
+    font-size: 18px !important;
+  }
+}
+
+/* ==================== RESPONSIVE - MOBILE (max-width: 767px) ==================== */
+@media screen and (max-width: 768px) {
+  :root {
+    --header-height: 70px;
+    --sidebar-width: 280px;
+    --content-spacing: 0;
+    --border-radius-bd: 0;
+  }
+
+  .chatbot-main-content {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .chatbot-inner-container {
+    gap: 0;
+  }
+
+  /* Sidebar ใน Mobile - แบบ Overlay */
+  .chatbot-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    border-radius: 0;
+  }
+
+  .chatbot-sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+
+  .chatbot-sidebar.collapsed {
+    transform: translateX(-100%);
+    background-color: var(--color-sidebar);
+  }
+
+  .chatbot-sidebar-content {
+    padding: 24px;
+    height: 100%;
+  }
+
+  /* Overlay เมื่อเปิด Sidebar */
+  .chatbot-sidebar:not(.collapsed)::before {
+    content: "";
+    position: fixed;
+    top: var(--header-height);
+    left: var(--sidebar-width);
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+
+  /* Main Content - เต็มหน้าจอ */
+  .chatbot-content {
+    padding: 0 16px;
+    height: calc(100vh - var(--header-height));
+  }
+
+  .chatbot-sidebar.collapsed ~ .chatbot-content {
+    padding: 0 16px;
+  }
+
+  /* Welcome Screen */
+  .welcome-screen {
+    padding: 20px 0;
+    gap: 24px;
+    height: calc(100vh - var(--header-height) - 120px);
+  }
+
+  .welcome-greeting {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .wave-emoji {
+    font-size: 32px;
+  }
+
+  .welcome-greeting h1 {
+    font-size: 32px;
+  }
+
+  .welcome-subtitle {
+    font-size: 18px;
+  }
+
+  /* Suggestions - แสดงแบบ 1 คอลัมน์ */
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .suggestion-card {
+    height: auto;
+    min-height: 120px;
+    padding: 16px;
+    gap: 16px;
+    border-radius: 20px;
+  }
+
+  .suggestion-content {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .suggestion-title {
+    font-size: 16px;
+  }
+
+  .suggestion-description {
+    font-size: 14px;
+    -webkit-line-clamp: 3;
+  }
+
+  .suggestion-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+  }
+
+  .suggestion-image img {
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Chat Interface */
+  .chat-interface {
+    height: calc(100vh - var(--header-height) - 20px);
+  }
+
+  .chat-messages {
+    padding: 16px;
+    padding-bottom: 8px;
+  }
+
+  .chat-message {
+    margin-bottom: 16px;
+  }
+
+  .chat-message.new-conversation {
+    margin-top: 24px;
+  }
+
+  /* Message Bubbles - ขยายให้ใหญ่ขึ้นใน Mobile */
+  .message-bubble {
+    max-width: 85%;
+    border-radius: 24px;
+    padding: 14px 16px;
+  }
+
+  .message-content {
+    font-size: 16px;
+  }
+
+  .chat-message.assistant .message-content h1,
+  .chat-message.assistant .message-content h2,
+  .chat-message.assistant .message-content h3,
+  .chat-message.assistant .message-content strong {
+    font-size: 18px !important;
+  }
+
+  .message-content p {
+    font-size: 16px !important;
+    margin: 0 0 8px 0 !important;
+  }
+
+  /* ซ่อน Message Time ใน Mobile */
+  .message-time {
+    display: none;
+  }
+
+  /* Input Area */
+  .chat-input-inline,
+  .chat-input-fixed {
+    padding: 12px 16px;
+  }
+
+  .input-wrapper,
+  .input-wrapper-fixed {
+    border-radius: 24px;
+    padding: 14px 16px;
+    gap: 10px;
+    max-height: 180px;
+  }
+
+  .chat-textarea {
+    font-size: 16px;
+  }
+
+  .welcome-screen .chat-textarea {
+    font-size: 16px;
+    max-height: 48px;
+  }
+
+  .chat-input-fixed .chat-textarea {
+    max-height: 100px;
+  }
+
+  .send-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .attachment-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .attachment-buttons {
+    gap: 16px;
+  }
+
+  /* Scroll to Bottom Button */
+  .scroll-to-bottom {
+    bottom: 100px;
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Sidebar Toggle Button - เพิ่มปุ่มเปิด Sidebar บน Mobile */
+  .sidebar-close-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .new-chat-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+
+  /* Typing Indicator */
+  .typing-dots span {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Scrollbar - ทำให้เล็กลงใน Mobile */
+  .chat-messages::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+/* ==================== RESPONSIVE - VERY SMALL MOBILE (max-width: 375px) ==================== */
+@media screen and (max-width: 375px) {
+  .chatbot-content {
+    padding: 0 12px;
+  }
+
+  .chatbot-sidebar.collapsed ~ .chatbot-content {
+    padding: 0 12px;
+  }
+
+  .welcome-greeting h1 {
+    font-size: 28px;
+  }
+
+  .welcome-subtitle {
+    font-size: 16px;
+  }
+
+  .wave-emoji {
+    font-size: 28px;
+  }
+
+  .suggestion-card {
+    min-height: 100px;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .suggestion-title {
+    font-size: 15px;
+  }
+
+  .suggestion-description {
+    font-size: 13px;
+  }
+
+  .suggestion-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .suggestion-image img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .message-bubble {
+    max-width: 90%;
+    padding: 12px 14px;
+  }
+
+  .message-content {
+    font-size: 15px;
+  }
+
+  .chat-input-inline,
+  .chat-input-fixed {
+    padding: 10px 12px;
+  }
+
+  .input-wrapper,
+  .input-wrapper-fixed {
+    padding: 12px 14px;
+  }
+
+  .sidebar-width {
+    --sidebar-width: 260px;
+  }
+}
+
+/* ==================== LANDSCAPE MODE (MOBILE) ==================== */
+@media screen and (max-width: 767px) and (orientation: landscape) {
+  .welcome-screen {
+    height: auto;
+    min-height: calc(100vh - var(--header-height) - 100px);
+  }
+
+  .suggestions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .suggestion-card {
+    min-height: 100px;
+  }
+
+  .chat-interface {
+    height: calc(100vh - var(--header-height) - 10px);
+  }
+
+  .scroll-to-bottom {
+    bottom: 80px;
+  }
+}
+
+/* ==================== TABLET PORTRAIT (481px - 767px) ==================== */
+@media screen and (min-width: 481px) and (max-width: 767px) {
+  :root {
+    --sidebar-width: 300px;
+  }
+
+  .chatbot-content {
+    padding: 0 24px;
+  }
+
+  .chatbot-sidebar.collapsed ~ .chatbot-content {
+    padding: 0 24px;
+  }
+
+  .welcome-greeting h1 {
+    font-size: 36px;
+  }
+
+  .welcome-subtitle {
+    font-size: 20px;
+  }
+
+  .wave-emoji {
+    font-size: 36px;
+  }
+
+  .suggestions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .suggestion-card {
+    height: 140px;
+  }
+
+  .message-bubble {
+    max-width: 80%;
+  }
+
+  .message-content {
+    font-size: 17px;
+  }
+}
+
+/* ==================== UTILITIES FOR MOBILE ==================== */
+@media screen and (max-width: 767px) {
+  /* ป้องกันการ zoom เมื่อ focus ใน input */
+  .chat-textarea {
+    font-size: 16px !important;
+  }
+
+  /* ปรับ touch target ให้ใหญ่พอสำหรับนิ้ว */
+  .send-btn,
+  .attachment-btn,
+  .sidebar-close-btn,
+  .new-chat-btn,
+  .suggestion-card {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Smooth scrolling สำหรับ mobile */
+  .chat-messages {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ซ่อน scrollbar ใน iOS */
+  .chat-messages::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chat-messages {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  /* ป้องกัน text selection ที่ไม่ต้องการ */
+  .suggestion-card,
+  .send-btn,
+  .attachment-btn {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ปรับ focus state ให้เหมาะกับ mobile */
+  .chat-textarea:focus,
+  .input-wrapper:focus-within,
+  .input-wrapper-fixed:focus-within {
+    outline: none;
+  }
+
+  /* Active state สำหรับ buttons */
+  .send-btn:active,
+  .attachment-btn:active,
+  .suggestion-card:active {
+    opacity: 0.7;
+  }
+}
+
+/* ==================== SAFE AREA (สำหรับ iPhone X และรุ่นใหม่) ==================== */
+@supports (padding: max(0px)) {
+  @media screen and (max-width: 767px) {
+    .chatbot-main-content {
+      padding-left: max(0px, env(safe-area-inset-left));
+      padding-right: max(0px, env(safe-area-inset-right));
+    }
+
+    .chatbot-sidebar {
+      left: env(safe-area-inset-left);
+    }
+
+    .chat-input-fixed {
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ==================== HOVER EFFECTS (ปิดใน Mobile) ==================== */
+@media (hover: none) and (pointer: coarse) {
+  .suggestion-card:hover,
+  .send-btn:hover,
+  .attachment-btn:hover,
+  .sidebar-close-btn:hover,
+  .new-chat-btn:hover,
+  .scroll-to-bottom:hover {
+    transform: none;
+    background-color: inherit;
+  }
+
+  .suggestion-card:hover {
+    border-color: #c4c4c4;
+  }
+
+  .suggestion-card:hover .suggestion-image img {
+    opacity: 0.8;
+    filter: grayscale(10%);
+    transform: none;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  .chatbot-sidebar,
+  .chat-input-inline,
+  .chat-input-fixed,
+  .scroll-to-bottom,
+  .sidebar-close-btn,
+  .new-chat-btn,
+  .attachment-buttons,
+  .welcome-screen {
+    display: none;
+  }
+
+  .chatbot-content {
+    padding: 0;
+  }
+
+  .message-bubble {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
 }
