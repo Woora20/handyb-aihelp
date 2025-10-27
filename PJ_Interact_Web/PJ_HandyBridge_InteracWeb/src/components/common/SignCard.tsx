@@ -25,7 +25,11 @@ export const SignCard: React.FC<SignCardProps> = ({
     <div className="sign-card" onClick={handleClick}>
       <div className="sign-card-video">
         <div className="video-placeholder">
-          {thumbnailUrl && <img src={thumbnailUrl} alt={word} />}
+          {thumbnailUrl ? (
+            <img src={thumbnailUrl} alt={word} />
+          ) : (
+            <div className="no-thumbnail">ไม่มีรูปภาพ</div>
+          )}
         </div>
       </div>
       <div className="sign-card-content">

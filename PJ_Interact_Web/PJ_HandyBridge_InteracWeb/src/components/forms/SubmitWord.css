@@ -432,3 +432,74 @@
     font-size: 14px;
   }
 }
+
+/* 🔥 Progress Bar Styles */
+.upload-progress {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-color) 0%, #5b7fa8 100%);
+  transition: width 0.3s ease;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(75, 100, 139, 0.3);
+}
+
+.progress-text {
+  font-family: var(--font-thai);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--brand-color);
+  text-align: center;
+  margin: 0;
+}
+
+/* 🔥 Login Required Message */
+.login-required-message {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
+}
+
+.login-required-message p {
+  margin: 0;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  color: #92400e;
+  text-align: center;
+}
+
+.login-link {
+  background: none;
+  border: none;
+  color: var(--brand-color);
+  font-family: var(--font-thai);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.login-link:hover {
+  color: #3a5270;
+}

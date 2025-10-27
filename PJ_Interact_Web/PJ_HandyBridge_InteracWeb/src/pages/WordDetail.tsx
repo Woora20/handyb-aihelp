@@ -1,5 +1,5 @@
 // src/pages/WordDetail.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiPlay,
@@ -19,6 +19,7 @@ import "./WordDetail.css";
 export default function WordDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const [wordData, setWordData] = useState<Word | null>(null);
   const [relatedWords, setRelatedWords] = useState<RelatedWord[]>([]);
@@ -27,7 +28,18 @@ export default function WordDetail() {
   const [isSaved, setIsSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ โหลดข้อมูล
+  // 🔥 เช็คว่า URL เป็น GIF หรือไม่
+  const isGif = (url: string | undefined): boolean => {
+    if (!url) return false;
+    return (
+      url.toLowerCase().endsWith(".gif") ||
+      url.toLowerCase().includes(".gif?") ||
+      url.includes("giphy.com") ||
+      url.includes("tenor.com")
+    );
+  };
+
+  // โหลดข้อมูล
   useEffect(() => {
     const fetchData = async () => {
       if (!id) {
@@ -40,7 +52,8 @@ export default function WordDetail() {
         setIsLoading(true);
         setError(null);
 
-        // ดึงข้อมูลคำศัพท์
+        console.log("Fetching word with ID:", id); // 🔥 Debug
+
         const word = await wordService.getWordById(id);
 
         if (!word) {
@@ -49,9 +62,12 @@ export default function WordDetail() {
           return;
         }
 
+        console.log("Word data:", word); // 🔥 Debug
+        console.log("Video URL:", word.video_url); // 🔥 Debug
+        console.log("Is GIF:", isGif(word.video_url)); // 🔥 Debug
+
         setWordData(word);
 
-        // ดึงคำศัพท์ที่เกี่ยวข้อง
         const related = await wordService.getRelatedWords(id);
         setRelatedWords(related);
       } catch (err) {
@@ -65,20 +81,15 @@ export default function WordDetail() {
     fetchData();
   }, [id]);
 
-  // ✅ เริ่มติดตาม views เมื่อโหลดข้อมูลเสร็จ
+  // ติดตาม views
   useEffect(() => {
     if (!id || !wordData) return;
 
-    // เริ่มนับเวลา
     viewTracker.startTracking(id, async () => {
-      // Callback เมื่อครบ 10 วินาที
       console.log("View threshold reached! Recording view...");
-
-      // เพิ่ม view count ใน database
       const success = await wordService.incrementView(id);
 
       if (success && wordData) {
-        // อัพเดท views ใน UI
         setWordData({
           ...wordData,
           views: wordData.views + 1,
@@ -86,15 +97,21 @@ export default function WordDetail() {
       }
     });
 
-    // Cleanup เมื่อออกจากหน้า
     return () => {
       viewTracker.stopTracking(id);
     };
   }, [id, wordData]);
 
+  // 🔥 จัดการ Play/Pause สำหรับวิดีโอ (ไม่รวม GIF)
   const handlePlayPause = () => {
+    if (!videoRef.current || isGif(wordData?.video_url)) return;
+
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
     setIsPlaying(!isPlaying);
-    // TODO: Implement video play/pause logic
   };
 
   const handleShare = async () => {
@@ -153,6 +170,10 @@ export default function WordDetail() {
     );
   }
 
+  // 🔥 ตรวจสอบว่ามีวิดีโอ/GIF หรือไม่
+  const hasMedia = wordData.video_url && wordData.video_url.trim() !== "";
+  const mediaIsGif = isGif(wordData.video_url);
+
   return (
     <div className="word-detail-page">
       <Navbar />
@@ -181,27 +202,55 @@ export default function WordDetail() {
         <div className="word-detail-container">
           {/* Left Column - Main Content */}
           <div className="word-main-section">
-            {/* Video Player */}
+            {/* 🔥 Video/GIF Player */}
             <div className="word-video-container">
-              <video className="word-video" poster="/video-placeholder.jpg">
-                {wordData.video_url && (
-                  <source src={wordData.video_url} type="video/mp4" />
-                )}
-                เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
-              </video>
-
-              <div className="video-controls">
-                <button
-                  className="play-btn"
-                  onClick={handlePlayPause}
-                  aria-label={isPlaying ? "หยุดเล่น" : "เล่นวิดีโอ"}
-                >
-                  {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} />}
-                </button>
-                <div className="video-progress">
-                  <div className="video-progress-bar"></div>
+              {!hasMedia ? (
+                // ไม่มีวิดีโอ/GIF
+                <div className="no-video-placeholder">
+                  <p>ยังไม่มีวิดีโอสำหรับคำนี้</p>
                 </div>
-              </div>
+              ) : mediaIsGif ? (
+                // แสดง GIF
+                <img
+                  src={wordData.video_url}
+                  alt={wordData.word}
+                  className="word-video gif-image"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                // แสดงวิดีโอ
+                <>
+                  <video
+                    ref={videoRef}
+                    className="word-video"
+                    poster={wordData.thumbnail_url || undefined}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                    onEnded={() => setIsPlaying(false)}
+                  >
+                    <source src={wordData.video_url} type="video/mp4" />
+                    เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+                  </video>
+
+                  {/* Video Controls */}
+                  <div className="video-controls">
+                    <button
+                      className="play-btn"
+                      onClick={handlePlayPause}
+                      aria-label={isPlaying ? "หยุดเล่น" : "เล่นวิดีโอ"}
+                    >
+                      {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} />}
+                    </button>
+                    <div className="video-progress">
+                      <div className="video-progress-bar"></div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Word Info */}

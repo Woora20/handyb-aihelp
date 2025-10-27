@@ -98,6 +98,7 @@ export const SignIntroSection: React.FC = () => {
                   id={item.id}
                   category={item.category?.name || "ไม่ระบุ"}
                   word={item.word}
+                  thumbnailUrl={item.thumbnail_url}
                 />
               ))
             ) : (
