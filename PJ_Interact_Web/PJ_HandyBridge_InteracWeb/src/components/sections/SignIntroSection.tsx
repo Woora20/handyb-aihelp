@@ -1,30 +1,55 @@
 // src/components/sections/SignIntroSection.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { SignCard } from "../common/SignCard";
+import { wordService } from "../../services/wordService";
+import type { Word } from "../../types/word.types";
 
 const CATEGORIES = [
   "ทั้งหมด",
-  "คำทักทาย",
+  "การทักทาย",
   "ครอบครัว",
   "อาหาร",
   "อารมณ์",
   "ฉุกเฉิน",
 ];
 
-// Mock data - ในอนาคตจะมาจาก API
-const SIGN_WORDS = [
-  { id: 1, category: "การทักทาย", word: "สวัสดี" },
-  { id: 2, category: "การทักทาย", word: "สวัสดี: ท่ามือนี้ใช้กันเพื่อน" },
-  {
-    id: 3,
-    category: "การทักทาย",
-    word: "สวัสดี: ท่ามือนี้ใช้กับผู้ใหญ่ ผู้มีอาวุโส ผู้มีตำแหน่งสูง",
-  },
-  { id: 4, category: "การทักทาย", word: "สวัสดี: ท่ามือนี้ใช้กันเพื่อน" },
-];
-
 export const SignIntroSection: React.FC = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
+  const [words, setWords] = useState<Word[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWords = async () => {
+      setIsLoading(true);
+      try {
+        if (activeCategory === "ทั้งหมด") {
+          // ดึงคำศัพท์ยอดนิยม
+          const featured = await wordService.getFeaturedWords(4);
+          setWords(featured);
+        } else {
+          // ดึงคำศัพท์ตามหมวดหมู่
+          const categoryWords = await wordService.getWordsByCategory(
+            activeCategory,
+            4
+          );
+          setWords(categoryWords);
+        }
+      } catch (error) {
+        console.error("Error fetching words:", error);
+        setWords([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWords();
+  }, [activeCategory]);
+
+  const handleViewMore = () => {
+    navigate("/search");
+  };
 
   return (
     <section className="sign-intro-section">
@@ -52,13 +77,48 @@ export const SignIntroSection: React.FC = () => {
         </nav>
       </div>
 
-      <div className="sign-cards-grid">
-        {SIGN_WORDS.map((item) => (
-          <SignCard key={item.id} category={item.category} word={item.word} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            padding: "60px 0",
+            minHeight: "400px",
+          }}
+        >
+          <div className="loading-spinner"></div>
+        </div>
+      ) : (
+        <>
+          <div className="sign-cards-grid">
+            {words.length > 0 ? (
+              words.map((item) => (
+                <SignCard
+                  key={item.id}
+                  id={item.id}
+                  category={item.category?.name || "ไม่ระบุ"}
+                  word={item.word}
+                />
+              ))
+            ) : (
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  padding: "40px",
+                  color: "#6b7280",
+                }}
+              >
+                <p>ไม่มีคำศัพท์ในหมวดหมู่นี้</p>
+              </div>
+            )}
+          </div>
 
-      <button className="view-more-btn">ค้นหาคำศัพท์เพิ่มเติม</button>
+          <button className="view-more-btn" onClick={handleViewMore}>
+            ค้นหาคำศัพท์เพิ่มเติม
+          </button>
+        </>
+      )}
     </section>
   );
 };

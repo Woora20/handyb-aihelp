@@ -1,20 +1,18 @@
-// src/components/common/SignCard.tsx - แก้ไข
+// src/components/common/SignCard.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface SignCardProps {
-  id?: string; // 🔥 เพิ่ม id
+  id: string;
   category: string;
   word: string;
-  videoUrl?: string;
   thumbnailUrl?: string;
 }
 
 export const SignCard: React.FC<SignCardProps> = ({
-  id = "1", // default id
+  id,
   category,
   word,
-  videoUrl,
   thumbnailUrl,
 }) => {
   const navigate = useNavigate();
@@ -24,11 +22,7 @@ export const SignCard: React.FC<SignCardProps> = ({
   };
 
   return (
-    <div
-      className="sign-card"
-      onClick={handleClick}
-      style={{ cursor: "pointer" }}
-    >
+    <div className="sign-card" onClick={handleClick}>
       <div className="sign-card-video">
         <div className="video-placeholder">
           {thumbnailUrl && <img src={thumbnailUrl} alt={word} />}

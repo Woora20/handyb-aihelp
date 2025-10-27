@@ -1,4 +1,4 @@
-// src/pages/WordDetail.tsx - ส่วนที่แก้ไข
+// src/pages/WordDetail.tsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
@@ -6,99 +6,95 @@ import {
   FiPause,
   FiShare2,
   FiBookmark,
-  FiEye,
   FiChevronRight,
   FiAlertCircle,
 } from "react-icons/fi";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import { wordService } from "../services/wordService";
+import { viewTracker } from "../utils/viewTracker";
+import type { Word, RelatedWord } from "../types/word.types";
 import "./WordDetail.css";
-
-// Mock Data Type
-interface WordData {
-  id: string;
-  word: string;
-  category: string;
-  videoUrl: string;
-  description: string;
-  wordType: string;
-  organization: string;
-  reference: string;
-  productionDate: string;
-  createdAt: string;
-  submitter: string;
-  views: number;
-  relatedWords: RelatedWord[];
-}
-
-interface RelatedWord {
-  id: string;
-  word: string;
-  category: string;
-  thumbnailUrl?: string;
-}
-
-// 🔥 Mock Data - เพิ่มคำมากขึ้นเพื่อทดสอบ scroll
-const MOCK_WORD_DATA: { [key: string]: WordData } = {
-  "1": {
-    id: "1",
-    word: "สวัสดี: ท่ามือนี้ใช้กับผู้ใหญ่ ผู้มีอาวุโส ผู้มีตำแหน่งสูง",
-    category: "การทักทาย",
-    videoUrl: "/videos/sawasdee.mp4",
-    description:
-      "คำทักทายพื้นฐานที่ใช้ทุกวัน สามารถใช้ได้ทั้งตอนเช้า กลางวัน และเย็น เหมาะสำหรับการทักทายทั่วไป",
-    wordType: "คำกริยา",
-    organization: "สมาคมคนหูหนวกแห่งประเทศไทย",
-    reference: "พจนานุกรมภาษามือไทย ฉบับปรับปรุง พ.ศ. 2565",
-    productionDate: "15 สิงหาคม 2565",
-    createdAt: "10 ตุลาคม 2567",
-    submitter: "ทีมงาน Handy Bridge",
-    views: 266,
-    relatedWords: [
-      { id: "2", word: "สวัสดี: ท่ามือนี้ใช้กันเพื่อน", category: "การทักทาย" },
-      {
-        id: "3",
-        word: "สวัสดี: ท่ามือนี้ใช้กับผู้ใหญ่",
-        category: "การทักทาย",
-      },
-      { id: "4", word: "ขอบคุณ", category: "การทักทาย" },
-      { id: "5", word: "ขอโทษ", category: "การทักทาย" },
-      { id: "6", word: "ยินดีที่ได้รู้จัก", category: "การทักทาย" },
-      { id: "7", word: "ลาก่อน", category: "การทักทาย" },
-      { id: "8", word: "ราตรีสวัสดิ์", category: "การทักทาย" },
-      { id: "9", word: "อรุณสวัสดิ์", category: "การทักทาย" },
-      { id: "10", word: "สวัสดีตอนเช้า", category: "การทักทาย" },
-      { id: "11", word: "สวัสดีตอนเย็น", category: "การทักทาย" },
-      { id: "12", word: "ไว้เจอกัน", category: "การทักทาย" },
-      { id: "13", word: "โชคดี", category: "การทักทาย" },
-      { id: "14", word: "ขอให้เป็นวันที่ดี", category: "การทักทาย" },
-      { id: "15", word: "ยินดีต้อนรับ", category: "การทักทาย" },
-    ],
-  },
-};
 
 export default function WordDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [wordData, setWordData] = useState<WordData | null>(null);
+  const [wordData, setWordData] = useState<Word | null>(null);
+  const [relatedWords, setRelatedWords] = useState<RelatedWord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // ✅ โหลดข้อมูล
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      if (id && MOCK_WORD_DATA[id]) {
-        setWordData(MOCK_WORD_DATA[id]);
+    const fetchData = async () => {
+      if (!id) {
+        setError("ไม่พบ ID ของคำศัพท์");
+        setIsLoading(false);
+        return;
       }
-      setIsLoading(false);
-    }, 500);
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // ดึงข้อมูลคำศัพท์
+        const word = await wordService.getWordById(id);
+
+        if (!word) {
+          setError("ไม่พบคำศัพท์ที่คุณค้นหา");
+          setIsLoading(false);
+          return;
+        }
+
+        setWordData(word);
+
+        // ดึงคำศัพท์ที่เกี่ยวข้อง
+        const related = await wordService.getRelatedWords(id);
+        setRelatedWords(related);
+      } catch (err) {
+        console.error("Error fetching word detail:", err);
+        setError("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, [id]);
+
+  // ✅ เริ่มติดตาม views เมื่อโหลดข้อมูลเสร็จ
+  useEffect(() => {
+    if (!id || !wordData) return;
+
+    // เริ่มนับเวลา
+    viewTracker.startTracking(id, async () => {
+      // Callback เมื่อครบ 10 วินาที
+      console.log("View threshold reached! Recording view...");
+
+      // เพิ่ม view count ใน database
+      const success = await wordService.incrementView(id);
+
+      if (success && wordData) {
+        // อัพเดท views ใน UI
+        setWordData({
+          ...wordData,
+          views: wordData.views + 1,
+        });
+      }
+    });
+
+    // Cleanup เมื่อออกจากหน้า
+    return () => {
+      viewTracker.stopTracking(id);
+    };
+  }, [id, wordData]);
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
-    // TODO: Implement video play/pause
+    // TODO: Implement video play/pause logic
   };
 
   const handleShare = async () => {
@@ -110,15 +106,19 @@ export default function WordDetail() {
           url: window.location.href,
         });
       } catch (err) {
-        console.log("Share cancelled");
+        console.log("Share cancelled or failed");
       }
     } else {
-      // Fallback: Copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert("คัดลอกลิงก์แล้ว!");
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("คัดลอกลิงก์แล้ว!");
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
     }
   };
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="word-detail-page">
@@ -134,14 +134,15 @@ export default function WordDetail() {
     );
   }
 
-  if (!wordData) {
+  // Error state
+  if (error || !wordData) {
     return (
       <div className="word-detail-page">
         <Navbar />
         <main className="word-detail-main">
           <div className="error-container">
             <FiAlertCircle className="error-icon" />
-            <p className="error-text">ไม่พบคำศัพท์ที่คุณค้นหา</p>
+            <p className="error-text">{error || "ไม่พบคำศัพท์ที่คุณค้นหา"}</p>
             <button className="back-button" onClick={() => navigate("/search")}>
               กลับไปค้นหา
             </button>
@@ -168,10 +169,10 @@ export default function WordDetail() {
           </Link>
           <FiChevronRight className="breadcrumb-separator" />
           <Link
-            to={`/search?category=${encodeURIComponent(wordData.category)}`}
+            to={`/search?category=${wordData.category?.name || ""}`}
             className="breadcrumb-link"
           >
-            {wordData.category}
+            {wordData.category?.name || "ไม่ระบุหมวดหมู่"}
           </Link>
           <FiChevronRight className="breadcrumb-separator" />
           <span className="breadcrumb-current">{wordData.word}</span>
@@ -183,7 +184,9 @@ export default function WordDetail() {
             {/* Video Player */}
             <div className="word-video-container">
               <video className="word-video" poster="/video-placeholder.jpg">
-                <source src={wordData.videoUrl} type="video/mp4" />
+                {wordData.video_url && (
+                  <source src={wordData.video_url} type="video/mp4" />
+                )}
                 เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
               </video>
 
@@ -247,12 +250,16 @@ export default function WordDetail() {
 
                 <div className="description-item">
                   <span className="description-label">หมวดหมู่:</span>
-                  <span className="description-value">{wordData.category}</span>
+                  <span className="description-value">
+                    {wordData.category?.name || "ไม่ระบุ"}
+                  </span>
                 </div>
 
                 <div className="description-item">
                   <span className="description-label">ชนิดของคำ:</span>
-                  <span className="description-value">{wordData.wordType}</span>
+                  <span className="description-value">
+                    {wordData.word_type}
+                  </span>
                 </div>
 
                 <div className="description-item">
@@ -274,7 +281,7 @@ export default function WordDetail() {
                 <div className="description-item">
                   <span className="description-label">วันที่ผลิต:</span>
                   <span className="description-value">
-                    {wordData.productionDate}
+                    {wordData.production_date}
                   </span>
                 </div>
 
@@ -288,7 +295,11 @@ export default function WordDetail() {
                 <div className="description-item">
                   <span className="description-label">วันที่อัพโหลด:</span>
                   <span className="description-value">
-                    {wordData.createdAt}
+                    {new Date(wordData.created_at).toLocaleDateString("th-TH", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </span>
                 </div>
               </div>
@@ -298,28 +309,44 @@ export default function WordDetail() {
           {/* Right Column - Related Words */}
           <aside className="word-sidebar">
             <div className="related-section">
-              <h2 className="related-title">หมวดหมู่: {wordData.category}</h2>
+              <h2 className="related-title">
+                หมวดหมู่: {wordData.category?.name || "ไม่ระบุ"}
+              </h2>
               <div className="related-words-list">
-                {wordData.relatedWords.map((relatedWord) => (
-                  <Link
-                    key={relatedWord.id}
-                    to={`/word/${relatedWord.id}`}
-                    className="related-word-item"
+                {relatedWords.length > 0 ? (
+                  relatedWords.map((relatedWord) => (
+                    <Link
+                      key={relatedWord.id}
+                      to={`/word/${relatedWord.id}`}
+                      className="related-word-item"
+                    >
+                      <div className="related-thumbnail">
+                        {relatedWord.thumbnail_url && (
+                          <img
+                            src={relatedWord.thumbnail_url}
+                            alt={relatedWord.word}
+                          />
+                        )}
+                      </div>
+                      <div className="related-info">
+                        <p className="related-word-text">{relatedWord.word}</p>
+                        <p className="related-category">
+                          {relatedWord.category}
+                        </p>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "14px",
+                      padding: "20px 0",
+                    }}
                   >
-                    <div className="related-thumbnail">
-                      {relatedWord.thumbnailUrl && (
-                        <img
-                          src={relatedWord.thumbnailUrl}
-                          alt={relatedWord.word}
-                        />
-                      )}
-                    </div>
-                    <div className="related-info">
-                      <p className="related-word-text">{relatedWord.word}</p>
-                      <p className="related-category">{relatedWord.category}</p>
-                    </div>
-                  </Link>
-                ))}
+                    ไม่มีคำศัพท์ที่เกี่ยวข้อง
+                  </p>
+                )}
               </div>
             </div>
           </aside>
