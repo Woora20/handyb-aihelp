@@ -19,23 +19,40 @@ export const TestimonialsSection: React.FC = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ⬇️ เพิ่ม: ตรวจสอบขนาดหน้าจอ
+  const [visibleCount, setVisibleCount] = useState(5);
+
   useEffect(() => {
     loadReviews();
+    handleResize(); // ⬅️ เช็คขนาดหน้าจอตอนเริ่มต้น
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // ⬇️ ฟังก์ชันปรับจำนวน card ตามขนาดหน้าจอ
+  const handleResize = () => {
+    const width = window.innerWidth;
+    if (width < 768) {
+      setVisibleCount(1); // Mobile: 1 card
+    } else if (width < 1024) {
+      setVisibleCount(2); // Tablet: 2 cards
+    } else {
+      setVisibleCount(5); // Desktop: 5 cards
+    }
+    setCurrentIndex(0); // รีเซ็ต index เมื่อเปลี่ยนขนาด
+  };
 
   const loadReviews = async () => {
     setIsLoading(true);
     try {
-      const reviews = await reviewService.getSmartReviews(); // ใช้ Smart Reviews
+      const reviews = await reviewService.getSmartReviews();
 
       if (reviews.length > 0) {
-        // ดึงข้อมูล profile ล่าสุดสำหรับแต่ละ review
         const formattedReviews = await Promise.all(
           reviews.map(async (review) => {
             let displayName = review.reviewer_name;
             let avatarUrl = reviewService.getAvatarUrl(review.reviewer_name);
 
-            // ถ้ามี user_id ให้ดึงข้อมูลจาก profiles
             if (review.user_id) {
               try {
                 const { data: profile } = await supabase
@@ -65,7 +82,6 @@ export const TestimonialsSection: React.FC = () => {
 
         setTestimonials(formattedReviews);
       } else {
-        // Default testimonial ถ้าไม่มีรีวิว
         setTestimonials([
           {
             id: "1",
@@ -83,8 +99,6 @@ export const TestimonialsSection: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  const visibleCount = 5;
 
   const handlePrev = () => {
     setCurrentIndex((prev) => Math.max(0, prev - visibleCount));
@@ -105,6 +119,7 @@ export const TestimonialsSection: React.FC = () => {
 
   const canGoPrev = currentIndex > 0;
   const canGoNext = currentIndex + visibleCount < testimonials.length;
+  const showArrows = testimonials.length > visibleCount;
 
   if (isLoading) {
     return (
@@ -170,7 +185,7 @@ export const TestimonialsSection: React.FC = () => {
             </div>
           </div>
 
-          {testimonials.length > visibleCount && (
+          {showArrows && (
             <div className="navigation-arrows">
               <button
                 className="nav-arrow nav-prev"

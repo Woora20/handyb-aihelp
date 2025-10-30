@@ -3,33 +3,55 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SignCard } from "../common/SignCard";
 import { wordService } from "../../services/wordService";
-import type { Word } from "../../types/word.types";
-
-const CATEGORIES = [
-  "ทั้งหมด",
-  "การทักทาย",
-  "ครอบครัว",
-  "อาหาร",
-  "อารมณ์",
-  "ฉุกเฉิน",
-];
+import type { Word, Category } from "../../types/word.types";
 
 export const SignIntroSection: React.FC = () => {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [words, setWords] = useState<Word[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // หมวดหมู่ที่ต้องการแสดง
+  const DISPLAY_CATEGORIES = [
+    "การทักทาย",
+    "ครอบครัว",
+    "อาหาร",
+    "อารมณ์",
+    "สถานที่",
+  ];
+
+  // ดึงหมวดหมู่จาก Supabase และกรองเฉพาะที่ต้องการ
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const allCategories = await wordService.getAllCategories();
+        // กรองเฉพาะหมวดหมู่ที่ต้องการแสดง
+        const filteredCategories = allCategories.filter((cat) =>
+          DISPLAY_CATEGORIES.includes(cat.name)
+        );
+        setCategories(filteredCategories);
+        // ตั้งค่า activeCategory เริ่มต้นเป็น null (ทั้งหมด)
+        setActiveCategory(null);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // ดึงคำศัพท์ตาม category ที่เลือก
   useEffect(() => {
     const fetchWords = async () => {
       setIsLoading(true);
       try {
-        if (activeCategory === "ทั้งหมด") {
-          // ดึงคำศัพท์ยอดนิยม
+        if (activeCategory === null) {
+          // แสดงคำศัพท์ยอดนิยม
           const featured = await wordService.getFeaturedWords(4);
           setWords(featured);
         } else {
-          // ดึงคำศัพท์ตามหมวดหมู่
+          // แสดงคำศัพท์ตามหมวดหมู่ (ส่ง category_id)
           const categoryWords = await wordService.getWordsByCategory(
             activeCategory,
             4
@@ -44,8 +66,10 @@ export const SignIntroSection: React.FC = () => {
       }
     };
 
-    fetchWords();
-  }, [activeCategory]);
+    if (categories.length > 0 || activeCategory === null) {
+      fetchWords();
+    }
+  }, [activeCategory, categories]);
 
   const handleViewMore = () => {
     navigate("/search");
@@ -58,18 +82,33 @@ export const SignIntroSection: React.FC = () => {
       <div className="sign-list-intro">
         <nav className="category-nav">
           <ul className="category-list">
-            {CATEGORIES.map((category) => (
+            {/* ปุ่ม "ทั้งหมด" */}
+            <li
+              className={`category-item ${
+                activeCategory === null ? "active" : ""
+              }`}
+            >
+              <button
+                className="category-btn"
+                onClick={() => setActiveCategory(null)}
+              >
+                ทั้งหมด
+              </button>
+            </li>
+
+            {/* ปุ่มหมวดหมู่จาก Supabase */}
+            {categories.map((category) => (
               <li
-                key={category}
+                key={category.id}
                 className={`category-item ${
-                  activeCategory === category ? "active" : ""
+                  activeCategory === category.id ? "active" : ""
                 }`}
               >
                 <button
                   className="category-btn"
-                  onClick={() => setActiveCategory(category)}
+                  onClick={() => setActiveCategory(category.id)}
                 >
-                  {category}
+                  {category.name}
                 </button>
               </li>
             ))}

@@ -15,13 +15,13 @@ export default function SubmitWord() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string>("");
   const [showLoginMessage, setShowLoginMessage] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0); // 🔥 เพิ่ม
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     wordText: "",
-    videoUrl: "", // ใช้อันเดียวสำหรับทั้ง วิดีโอ และ GIF
+    videoUrl: "",
     description: "",
   });
 
@@ -44,15 +44,13 @@ export default function SubmitWord() {
     setShowLoginMessage(false);
   };
 
-  // 🔥 แก้ไขให้รองรับ GIF
   const handleVideoSelect = () => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "video/mp4,video/webm,video/quicktime,image/gif"; // 🔥 เพิ่ม GIF
+    input.accept = "video/mp4,video/webm,video/quicktime,image/gif";
     input.onchange = (e: any) => {
       const file = e.target.files[0];
       if (file) {
-        // 🔥 ตรวจสอบชนิดไฟล์
         const validTypes = [
           "video/mp4",
           "video/webm",
@@ -64,7 +62,6 @@ export default function SubmitWord() {
           return;
         }
 
-        // ตรวจสอบขนาด
         if (file.size > 50 * 1024 * 1024) {
           setErrors({ video: "ไฟล์ต้องไม่เกิน 50MB" });
           return;
@@ -73,6 +70,7 @@ export default function SubmitWord() {
         setVideoFile(file);
         setVideoPreview(URL.createObjectURL(file));
         setErrors((prev: any) => ({ ...prev, video: "" }));
+        setFormData((prev) => ({ ...prev, videoUrl: "" }));
       }
     };
     input.click();
@@ -95,11 +93,6 @@ export default function SubmitWord() {
       newErrors.wordText = "กรุณากรอกคำศัพท์";
     }
 
-    // 🔥 ต้องมีไฟล์ หรือ URL อย่างใดอย่างหนึ่ง
-    if (!videoFile && !formData.videoUrl.trim()) {
-      newErrors.video = "กรุณาอัพโหลดไฟล์ หรือใส่ลิงก์วิดีโอ/GIF";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -107,7 +100,6 @@ export default function SubmitWord() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ตรวจสอบ login ก่อน
     if (!user) {
       setShowLoginMessage(true);
       setErrors({});
@@ -120,51 +112,28 @@ export default function SubmitWord() {
     setUploadProgress(0);
 
     try {
-      let finalVideoUrl = formData.videoUrl;
-      let finalGifUrl = "";
+      setUploadProgress(10);
 
-      // 1. อัพโหลดไฟล์ถ้ามี
-      if (videoFile) {
-        console.log("Uploading file...");
-        setUploadProgress(30);
-
-        const uploadedUrl = await submitWordService.uploadVideo(videoFile);
-
-        setUploadProgress(70);
-
-        // 🔥 เช็คว่าเป็น GIF หรือไม่
-        if (submitWordService.isGifUrl(uploadedUrl)) {
-          finalGifUrl = uploadedUrl;
-          finalVideoUrl = ""; // ล้าง video URL ถ้าเป็น GIF
-        } else {
-          finalVideoUrl = uploadedUrl;
-        }
-      } else if (formData.videoUrl.trim()) {
-        // 🔥 ถ้าใส่ URL มา ให้เช็คว่าเป็น GIF หรือไม่
-        if (submitWordService.isGifUrl(formData.videoUrl)) {
-          finalGifUrl = formData.videoUrl;
-          finalVideoUrl = "";
-        }
-      }
-
-      setUploadProgress(90);
-
-      // 2. ส่งข้อมูลเข้า Database
-      await submitWordService.submitWord({
+      const submitData = {
         word_text: formData.wordText,
-        video_url: finalVideoUrl || undefined,
-        gif_url: finalGifUrl || undefined,
-        description: formData.description,
+        video_url: formData.videoUrl.trim() || undefined,
+        video_file: videoFile || undefined,
+        description: formData.description.trim() || undefined,
         submitter_name: formData.fullName,
         submitter_email: formData.email,
-        user_id: user?.id || undefined,
-      });
+        user_id: user?.id,
+      };
+
+      console.log("Submitting with data:", submitData);
+
+      setUploadProgress(30);
+
+      await submitWordService.submitWord(submitData);
 
       setUploadProgress(100);
 
       alert("ส่งคำศัพท์สำเร็จ! ขอบคุณสำหรับการมีส่วนร่วม");
 
-      // รีเซ็ตฟอร์ม
       setFormData({
         fullName: profile?.full_name || "",
         email: user?.email || profile?.email || "",
@@ -216,7 +185,6 @@ export default function SubmitWord() {
 
           {/* Form */}
           <form className="submit-form" onSubmit={handleSubmit}>
-            {/* แสดงข้อความ login */}
             {showLoginMessage && (
               <div className="login-required-message">
                 <p>
@@ -250,9 +218,6 @@ export default function SubmitWord() {
                   className={errors.fullName ? "error" : ""}
                   disabled={isLoading}
                   readOnly={!!user}
-                  style={{
-                    cursor: user ? "not-allowed" : "text",
-                  }}
                 />
                 {errors.fullName && (
                   <span className="error-text">{errors.fullName}</span>
@@ -269,9 +234,6 @@ export default function SubmitWord() {
                   className={errors.email ? "error" : ""}
                   disabled={isLoading}
                   readOnly={!!user}
-                  style={{
-                    cursor: user ? "not-allowed" : "text",
-                  }}
                 />
                 {errors.email && (
                   <span className="error-text">{errors.email}</span>
@@ -298,7 +260,7 @@ export default function SubmitWord() {
               </div>
 
               <div className="form-field">
-                <label>วิดีโอ/GIF ภาษามือ</label>
+                <label>วิดีโอ/GIF ภาษามือ (ไม่บังคับ)</label>
                 <div className="video-input-group">
                   <input
                     type="text"
@@ -306,7 +268,7 @@ export default function SubmitWord() {
                     onChange={(e) =>
                       handleInputChange("videoUrl", e.target.value)
                     }
-                    placeholder="ลิงก์วิดีโอ (MP4, MOV, WebM) หรือ GIF" // 🔥 อัปเดต placeholder
+                    placeholder="ลิงก์วิดีโอ (MP4, MOV, WebM) หรือ GIF"
                     className={`video-url-input ${errors.video ? "error" : ""}`}
                     disabled={isLoading || !!videoFile}
                   />
@@ -338,7 +300,6 @@ export default function SubmitWord() {
                 {errors.video && (
                   <span className="error-text">{errors.video}</span>
                 )}
-                {/* 🔥 เพิ่มคำแนะนำ */}
                 <small
                   style={{
                     fontSize: "13px",
@@ -369,7 +330,6 @@ export default function SubmitWord() {
               />
             </div>
 
-            {/* 🔥 แสดง Progress Bar */}
             {isLoading && uploadProgress > 0 && (
               <div className="upload-progress">
                 <div className="progress-bar">
@@ -379,7 +339,7 @@ export default function SubmitWord() {
                   ></div>
                 </div>
                 <p className="progress-text">
-                  กำลังอัพโหลด... {uploadProgress}%
+                  กำลังส่งข้อมูล... {uploadProgress}%
                 </p>
               </div>
             )}

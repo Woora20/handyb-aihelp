@@ -4,8 +4,7 @@ import { supabase } from '../lib/supabase';
 export interface SubmittedWord {
   word_text: string;
   video_url?: string;
-  video_file?: File;  // 🔥 เพิ่ม: ไฟล์วิดีโอ
-  gif_url?: string;   // 🔥 เพิ่ม: URL ของ GIF
+  video_file?: File;
   description?: string;
   submitter_name: string;
   submitter_email: string;
@@ -90,30 +89,32 @@ export class SubmitWordService {
   async submitWord(data: SubmittedWord): Promise<void> {
     try {
       let videoUrl = data.video_url;
-      let gifUrl = data.gif_url;
 
       // ถ้ามีไฟล์วิดีโอให้อัพโหลด
       if (data.video_file) {
         console.log('Uploading video file...');
         videoUrl = await this.uploadVideo(data.video_file);
-        
-        // เช็คว่าเป็น GIF หรือไม่
-        if (this.isGifUrl(videoUrl)) {
-          gifUrl = videoUrl;
-        }
       }
 
-      // บันทึกลงฐานข้อมูล
+      console.log('Submitting word with data:', {
+        word_text: data.word_text,
+        video_url: videoUrl || null,
+        description: data.description || null,
+        submitter_name: data.submitter_name,
+        submitter_email: data.submitter_email,
+        user_id: data.user_id || null,
+      });
+
+      // บันทึกลงฐานข้อมูล (ใช้แค่ video_url)
       const { error } = await supabase
         .from('submitted_words')
         .insert([{
           word_text: data.word_text,
-          video_url: videoUrl,
-          gif_url: gifUrl,
-          description: data.description,
+          video_url: videoUrl || null,
+          description: data.description || null,
           submitter_name: data.submitter_name,
           submitter_email: data.submitter_email,
-          user_id: data.user_id,
+          user_id: data.user_id || null,
           status: 'pending',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

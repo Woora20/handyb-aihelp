@@ -2,45 +2,52 @@
 import { supabase } from '../lib/supabase';
 import type { Word, RelatedWord, Category } from '../types/word.types';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 export const wordService = {
   /**
-   * ดึงคำศัพท์ทั้งหมด พร้อม pagination
+   * ดึงคำศัพท์ทั้งหมด พร้อม pagination - ใช้ API
    */
   async getAllWords(limit = 10, offset = 0) {
-    try {
-      const { data, error, count } = await supabase
-        .from('words')
-        .select(`
-          *,
-          category:categories(id, name, name_en)
-        `, { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1);
+    console.log('🔥 API_BASE_URL:', API_BASE_URL);
+    console.log('🔥 Full URL:', `${API_BASE_URL}/phrases?limit=${limit}&offset=${offset}`);
 
-      if (error) throw error;
-      return { data: data || [], count: count || 0 };
+    try {
+      console.log('📡 About to fetch...');
+      const response = await fetch(
+        `${API_BASE_URL}/phrases?limit=${limit}&offset=${offset}`
+      );
+      console.log('✅ Response received:', response.status);
+      const result = await response.json();
+      console.log('📦 Result:', result);
+      
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+      
+      return { 
+        data: result.data || [], 
+        count: result.total || 0 
+      };
     } catch (error) {
-      console.error('Error fetching all words:', error);
+      console.error('❌ Error fetching all words:', error);
       return { data: [], count: 0 };
     }
   },
 
   /**
-   * ดึงคำศัพท์ตาม ID (ไม่เพิ่ม views ที่นี่)
+   * ดึงคำศัพท์ตาม ID - ใช้ API
    */
   async getWordById(id: string): Promise<Word | null> {
     try {
-      const { data, error } = await supabase
-        .from('words')
-        .select(`
-          *,
-          category:categories(id, name, name_en)
-        `)
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
-      return data as Word;
+      const response = await fetch(`${API_BASE_URL}/phrases/${id}`);
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+      
+      return result.data as Word;
     } catch (error) {
       console.error('Error fetching word by ID:', error);
       return null;
@@ -48,79 +55,38 @@ export const wordService = {
   },
 
   /**
-   * เพิ่ม view count (เรียกจาก viewTracker หลังครบ 10 วินาที)
+   * เพิ่ม view count - ใช้ API
    */
   async incrementView(wordId: string): Promise<boolean> {
     try {
-      // ดึงข้อมูลปัจจุบัน
-      const { data: currentWord, error: fetchError } = await supabase
-        .from('words')
-        .select('views')
-        .eq('id', wordId)
-        .single();
-
-      if (fetchError || !currentWord) {
-        console.error('Error fetching current views:', fetchError);
-        return false;
-      }
-
-      // เพิ่ม views
-      const { error: updateError } = await supabase
-        .from('words')
-        .update({ views: currentWord.views + 1 })
-        .eq('id', wordId);
-
-      if (updateError) {
-        console.error('Error incrementing view:', updateError);
-        return false;
-      }
-
-      console.log(`View incremented for word: ${wordId}`);
-      return true;
+      const response = await fetch(`${API_BASE_URL}/phrases/${wordId}/view`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+      return result.success || false;
     } catch (error) {
-      console.error('Error in incrementView:', error);
+      console.error('Error incrementing view:', error);
       return false;
     }
   },
 
   /**
-   * ดึงคำศัพท์ที่เกี่ยวข้อง (เฉพาะคำในหมวดหมู่เดียวกัน)
+   * ดึงคำศัพท์ที่เกี่ยวข้อง - ใช้ API
    */
   async getRelatedWords(wordId: string): Promise<RelatedWord[]> {
     try {
-      const { data: currentWord, error: currentWordError } = await supabase
-        .from('words')
-        .select('category_id')
-        .eq('id', wordId)
-        .single();
-
-      if (currentWordError || !currentWord) {
-        console.error('Error fetching current word:', currentWordError);
-        return [];
+      const response = await fetch(`${API_BASE_URL}/phrases/${wordId}/related`);
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message);
       }
-
-      const { data, error } = await supabase
-        .from('words')
-        .select(`
-          id,
-          word,
-          thumbnail_url,
-          category:categories(name)
-        `)
-        .eq('category_id', currentWord.category_id)
-        .neq('id', wordId)
-        .order('views', { ascending: false })
-        .limit(15);
-
-      if (error) throw error;
-      if (!data) return [];
-
-      return data.map((item: any) => ({
-        id: item.id,
-        word: item.word,
-        category: item.category?.name || 'ไม่ระบุหมวดหมู่',
-        thumbnail_url: item.thumbnail_url
-      }));
+      
+      return result.data || [];
     } catch (error) {
       console.error('Error fetching related words:', error);
       return [];
@@ -128,7 +94,7 @@ export const wordService = {
   },
 
   /**
-   * ค้นหาคำศัพท์
+   * ค้นหาคำศัพท์ - ใช้ Supabase โดยตรง (กรองด้วย category_id)
    */
   async searchWords(query: string, categoryId?: string, limit = 20) {
     try {
@@ -139,11 +105,14 @@ export const wordService = {
           category:categories(id, name, name_en)
         `);
 
+      // ค้นหาจากคำ
       if (query && query.trim()) {
         queryBuilder = queryBuilder.ilike('word', `%${query.trim()}%`);
       }
 
-      if (categoryId) {
+      // กรองตามหมวดหมู่ (ใช้ ID)
+      if (categoryId && categoryId.trim()) {
+        console.log('🔍 Filtering by category_id:', categoryId);
         queryBuilder = queryBuilder.eq('category_id', categoryId);
       }
 
@@ -152,6 +121,8 @@ export const wordService = {
         .limit(limit);
 
       if (error) throw error;
+      
+      console.log('📦 Search result count:', data?.length || 0);
       return data || [];
     } catch (error) {
       console.error('Error searching words:', error);
@@ -160,22 +131,18 @@ export const wordService = {
   },
 
   /**
-   * ดึงคำศัพท์ยอดนิยม (featured)
+   * ดึงคำศัพท์ยอดนิยม (featured) - ใช้ API
    */
   async getFeaturedWords(limit = 4) {
     try {
-      const { data, error } = await supabase
-        .from('words')
-        .select(`
-          *,
-          category:categories(id, name, name_en)
-        `)
-        .eq('is_featured', true)
-        .order('views', { ascending: false })
-        .limit(limit);
-
-      if (error) throw error;
-      return data || [];
+      const response = await fetch(`${API_BASE_URL}/phrases/featured?limit=${limit}`);
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+      
+      return result.data || [];
     } catch (error) {
       console.error('Error fetching featured words:', error);
       return [];
@@ -183,7 +150,7 @@ export const wordService = {
   },
 
   /**
-   * ดึงหมวดหมู่ทั้งหมด
+   * ดึงหมวดหมู่ทั้งหมด - ใช้ Supabase โดยตรง
    */
   async getAllCategories(): Promise<Category[]> {
     try {
@@ -193,6 +160,8 @@ export const wordService = {
         .order('display_order', { ascending: true });
 
       if (error) throw error;
+      
+      console.log('📦 Categories fetched:', data?.length || 0);
       return data || [];
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -201,21 +170,25 @@ export const wordService = {
   },
 
   /**
-   * ดึงคำศัพท์ตามหมวดหมู่
+   * ดึงคำศัพท์ตามหมวดหมู่ - ใช้ Supabase โดยตรง (กรองด้วย category_id)
    */
-  async getWordsByCategory(categoryName: string, limit = 10) {
+  async getWordsByCategory(categoryId: string, limit = 10) {
     try {
+      console.log('🔍 Fetching words for category_id:', categoryId);
+      
       const { data, error } = await supabase
         .from('words')
         .select(`
           *,
-          category:categories!inner(id, name, name_en)
+          category:categories(id, name, name_en)
         `)
-        .eq('category.name', categoryName)
+        .eq('category_id', categoryId)
         .order('views', { ascending: false })
         .limit(limit);
 
       if (error) throw error;
+      
+      console.log('📦 Words found:', data?.length || 0);
       return data || [];
     } catch (error) {
       console.error('Error fetching words by category:', error);

@@ -1,5 +1,5 @@
 // src/contexts/AuthContext.tsx - ไฟล์เต็มที่แก้ไขแล้ว
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react"; // หรือ import แบบ type
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
@@ -88,6 +88,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
+
+     // 🔥 Add this temporarily
+  if (data.session) {
+    console.log('🔑 YOUR TOKEN:', data.session.access_token);
+  }
+  
     return { data, error };
   };
 

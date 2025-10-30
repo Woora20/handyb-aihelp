@@ -12,6 +12,7 @@ import SubmitWord from "./components/forms/SubmitWord";
 import Review from "./components/forms/Review";
 import Search from "./pages/Search";
 import WordDetail from "./pages/WordDetail";
+import News from "./pages/News";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/review" element={<Review />} />
           <Route path="/search" element={<Search />} />
           <Route path="/word/:id" element={<WordDetail />} />
+          <Route path="/news" element={<News />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
