@@ -29,7 +29,7 @@ export default function Footer() {
         <div className="footer-brand">
           <div className="footer-brand-top">
             <img
-              src="/src/assets/logo/logo_handy1.png"
+              src="/logo/logo_handy1.png"
               alt="Handy Bridge"
               className="footer-logo"
             />

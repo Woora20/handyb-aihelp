@@ -119,7 +119,7 @@ export default function Navbar_Handy({
         <div className="navbar-container">
           <Link to="/" className="logo" aria-label="Handy Bridge Home">
             <img
-              src="/src/assets/logo/logo_handy1.png"
+              src="/logo/logo_handy1.png"
               alt="Handy Bridge Logo"
               className="logo-icon"
               width="32"

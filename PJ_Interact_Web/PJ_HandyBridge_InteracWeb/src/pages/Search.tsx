@@ -103,7 +103,7 @@ export default function Search() {
               onClick={() => setSearchMode("text")}
             >
               <img
-                src="/src/assets/icons/text-icon.png"
+                src="/icons/text-icon.png"
                 alt="ข้อความ"
                 className="toggle-icon"
               />
@@ -116,7 +116,7 @@ export default function Search() {
               onClick={() => setSearchMode("hand")}
             >
               <img
-                src="/src/assets/icons/hand-icon.png"
+                src="/icons/hand-icon.png"
                 alt="ภาพมือ"
                 className="toggle-icon"
               />

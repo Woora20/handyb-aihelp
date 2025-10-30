@@ -1,8 +1,8 @@
 // src/components/sections/PartnersSection.tsx
 import React from "react";
-import partner1 from "../../assets/images/partners/kku-logo.png";
-import partner2 from "../../assets/images/partners/deaf-association.png";
-import partner3 from "../../assets/images/partners/dep-logo.png";
+const partner1 = "/images/partners/kku-logo.png";
+const partner2 = "/images/partners/deaf-association.png";
+const partner3 = "/images/partners/dep-logo.png";
 
 export const PartnersSection: React.FC = () => {
   const partners = [

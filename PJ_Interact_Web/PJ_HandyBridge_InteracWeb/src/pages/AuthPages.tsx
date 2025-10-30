@@ -217,7 +217,7 @@ export default function Auth() {
       <div className={`auth-container ${currentPage}`}>
         <div className="auth-image">
           <img
-            src={`/src/assets/images/${currentPage}-hero.jpg`}
+            src={`/images/${currentPage}-hero.jpg`}
             alt="Sign language learning"
           />
         </div>
@@ -225,7 +225,7 @@ export default function Auth() {
         <div className="auth-form-container">
           <div className="auth-brand">
             <div className="auth-logo">
-              <img src="/src/assets/logo/logo_handy1.png" alt="Handy Bridge" />
+              <img src="/logo/logo_handy1.png" alt="Handy Bridge" />
             </div>
             <h1>
               {currentPage === "login" ? "ลงชื่อเข้าใช้" : "สร้างบัญชีผู้ใช้"}

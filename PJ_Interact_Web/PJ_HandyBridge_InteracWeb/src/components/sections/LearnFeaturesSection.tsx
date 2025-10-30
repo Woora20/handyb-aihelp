@@ -1,11 +1,10 @@
 // src/components/sections/LearnFeaturesSection.tsx
 import React from "react";
 // Import รูปภาพ icons
-import aiAssistantIcon from "../../assets/images/features/ai-assistant.png";
-import graduationCapIcon from "../../assets/images/features/graduation-cap.png";
-import devicesIcon from "../../assets/images/features/devices.png";
-// Import รูปภาพหลัก
-import womanLearningImg from "../../assets/images/woman-learning.jpg";
+const aiAssistantIcon = "/images/features/ai-assistant.png";
+const graduationCapIcon = "/images/features/graduation-cap.png";
+const devicesIcon = "/images/features/devices.png";
+const womanLearningImg = "/images/woman-learning.jpg";
 
 export const LearnFeaturesSection: React.FC = () => {
   const features = [

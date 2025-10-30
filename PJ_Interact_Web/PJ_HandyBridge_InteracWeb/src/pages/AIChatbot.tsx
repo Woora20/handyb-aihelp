@@ -16,10 +16,10 @@ import { useAuth } from "../contexts/AuthContext";
 import { useChat } from "../hooks/useChat";
 import "./AIChatbot.css";
 
-import signLanguage1 from "../assets/images/hand-img/sign-language-1.png";
-import signLanguage2 from "../assets/images/hand-img/sign-language-2.png";
-import signLanguage3 from "../assets/images/hand-img/sign-language-3.png";
-import signLanguage4 from "../assets/images/hand-img/sign-language-4.png";
+const signLanguage1 = "/images/hand-img/sign-language-1.png";
+const signLanguage2 = "/images/hand-img/sign-language-2.png";
+const signLanguage3 = "/images/hand-img/sign-language-3.png";
+const signLanguage4 = "/images/hand-img/sign-language-4.png";
 
 interface SuggestionCard {
   icon: string;
@@ -238,7 +238,7 @@ export default function AIChatbot() {
               <div className="sidebar-header">
                 <div className="sidebar-brand">
                   <img
-                    src="/src/assets/logo/logo_handy1.png"
+                    src="/logo/logo_handy1.png"
                     alt="AI Chatbot"
                     className="sidebar-icon"
                   />

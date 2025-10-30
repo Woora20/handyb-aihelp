@@ -15,26 +15,18 @@ export const HeroSection: React.FC = () => {
 
       <div className="hero-buttons">
         <button className="hero-btn" onClick={() => navigate("/search")}>
-          <img
-            src="/src/assets/icons/search-icon.png"
-            className="btn-icon"
-            alt="ค้นหา"
-          />
+          <img src="/icons/search-icon.png" className="btn-icon" alt="ค้นหา" />
           <span className="btn-text">ค้นหาภาษามือ</span>
         </button>
 
         <button className="hero-btn" onClick={() => navigate("/ai-assistant")}>
-          <img
-            src="/src/assets/icons/chatai-icon.png"
-            className="btn-icon"
-            alt="AI"
-          />
+          <img src="/icons/chatai-icon.png" className="btn-icon" alt="AI" />
           <span className="btn-text">AI ผู้ช่วยภาษามือ</span>
         </button>
       </div>
 
       <div className="hero-image">
-        <img src="/src/assets/images/hero-image.png" alt="การเรียนรู้ภาษามือ" />
+        <img src="/images/hero-image.png" alt="การเรียนรู้ภาษามือ" />
       </div>
     </section>
   );
