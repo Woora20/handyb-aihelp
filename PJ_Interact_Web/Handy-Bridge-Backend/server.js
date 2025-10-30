@@ -11,8 +11,9 @@ app.use(
       "http://localhost:5173", // Vite default
       "http://localhost:3000", // React default / Your current frontend
       "http://localhost:5001", // Backend self-call
-      "https://pj-handy-bridge-interac-kihqv8k9j-nns-projects-2b017ccc.vercel.app", // Production Frontend
-      "https://handy-bridge-backend-3huzrxhx2-nns-projects-2b017ccc.vercel.app", // Production Backend
+      "https://handyb-aihelp.vercel.app", // ⭐ Frontend URL จริง
+      "https://handyb-aihelp-*.vercel.app", // ⭐ Preview deployments
+      "https://handyb-aihelp.onrender.com", // ⭐ Backend URL จริง
       process.env.FRONTEND_URL, // จาก .env
     ].filter(Boolean), // ลบ undefined ออก
     credentials: true,
